@@ -17,24 +17,31 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
         $attributes = array('title' => s($fullname), 'class' => 'course_list'.$extra_class_attributes);
 
+        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $perms_to_rollover = has_capability('moodle/course:update', $context);
+        $course_has_content = kent_course_has_content($course->id);
+
+
         $rollover_status = kent_get_current_rollover_status($course->id);
+
         $list_class = '';
         if($rolloverable = kent_rollover_ability($course->id, $rollover_status)){
-            $list_class .= ' class="rollover_'.$rollover_status.'"';
+            if ($perms_to_rollover && !$course_has_content){
+                $list_class = ' class="rollover_'.$rollover_status.'"';
+            }
         }
 
         //Construct link
         $content .= '<li'.$list_class.'>';
-        $content .= html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $fullname, $attributes);
+        $content .= '<span class="title">'.html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $fullname, $attributes) . '</span>';
 
         if(isset($course->summary) && $course->summary != ""){
             $content .= ' <span class="course_description">'.$course->summary.'</span>';
         }
 
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
         //If user has ability to update the course and the course is empty to signify a rollover
-        if ($context != FALSE && $rolloverable && has_capability('moodle/course:update', $context) && !kent_course_has_content($course->id)){
+        if ($rolloverable && $perms_to_rollover && !$course_has_content){
 
             $rollover_path = $CFG->wwwroot.'/local/rollover/index.php#rollover_form_'.$course->id;
 

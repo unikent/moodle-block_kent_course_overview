@@ -1,0 +1,35 @@
+#kent_course_list_overview{
+    list-style: none;
+    list-style-type: none;
+    margin-left: 0px;
+}
+
+#kent_course_list_overview li{
+    margin-bottom: 10px;
+    border-bottom: 1px dotted #ccc;
+    display: block;
+    width: 100%;
+}
+
+#kent_course_list_overview .rollover_complete{
+    background: #FFF;
+}
+
+#kent_course_list_overview .rollover_none{
+    background: #DDD;
+}
+
+#kent_course_list_overview .rollover_processing{
+    background: #AAA;
+}
+
+#kent_course_list_overview .restoreerror,
+#kent_course_list_overview .backuperror{
+    background: #777;
+}
+
+#kent_course_list_overview li span{
+    display: block;
+}
+
+
