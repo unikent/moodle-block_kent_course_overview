@@ -123,55 +123,30 @@ function kent_add_teachers($course, $context){
         $namesarray = array();
         $rusers = array();
 
+        $roles_limit = (int)get_string('roles_limit', 'block_kent_course_overview');
         $roles_string = get_string('ignore_roles', 'block_kent_course_overview');
+
         $ignore_role_ids = explode(",", $roles_string);
+        
+        //prepare roles sql.
+        $roles_sql = '';
+        if(!empty($ignore_role_ids) && $ignore_role_ids[0] != ''){
 
-        if (!isset($course->managers)) {
-
-            //prepare roles sql.
-            $roles_sql = '';
-            if(!empty($ignore_role_ids)){
-
-                foreach($ignore_role_ids as $roles){
-                    $roles_sql .= $roles . ',';
-                }
-
-                $roles_sql = substr($roles_sql, 0, -1);
-                $roles_sql = 'ra.roleid NOT IN (' . $roles_sql . ')';
-
+            foreach($ignore_role_ids as $roles){
+                $roles_sql .= $roles . ',';
             }
 
+            $roles_sql = substr($roles_sql, 0, -1);
+            $roles_sql = 'ra.roleid NOT IN (' . $roles_sql . ')';
 
-            $rusers = get_role_users($managerroles, $context, true,
-                'ra.id AS raid, u.id, u.username, u.firstname, u.lastname,
-                 r.name AS rolename, r.sortorder, r.id AS roleid',
-                'r.sortorder ASC, u.lastname ASC',
-                'u.lastname, u.firstname', '', '', '', $roles_sql);
-
-
-//            $roleid, context $context, $parent = false, $fields = '',
-//        $sort = 'u.lastname, u.firstname', $gethidden_ignored = null, $group = '',
-//        $limitfrom = '', $limitnum = '', $extrawheretest = '', $whereparams = array()
-
-
-        } else {
-            //  use the managers array if we have it for perf reasosn
-            //  populate the datastructure like output of get_role_users();
-
-            
-
-            foreach ($course->managers as $manager) {
-
-                if(!in_array($manager->roleid, $ignore_role_ids)){
-                    $u = new stdClass();
-                    $u = $manager->user;
-                    $u->roleid = $manager->roleid;
-                    $u->rolename = $manager->rolename;
-
-                    $rusers[] = $u;
-                }
-            }
         }
+
+        $rusers = get_role_users($managerroles, $context, true,
+            'ra.id AS raid, u.id, u.username, u.firstname, u.lastname,
+             r.name AS rolename, r.sortorder, r.id AS roleid',
+            'r.sortorder ASC, u.lastname ASC',
+            'u.lastname, u.firstname', '', '', $roles_limit, $roles_sql);
+
 
         /// Rename some of the role names if needed
         if (isset($context)) {
