@@ -25,7 +25,6 @@
  */
 
 require_once($CFG->dirroot.'/blocks/kent_course_overview/lib.php');
-require_once($CFG->dirroot.'/local/rollover/lib.php');
 require_once($CFG->dirroot.'/lib/weblib.php');
 require_once($CFG->dirroot . '/lib/formslib.php');
 
@@ -57,7 +56,11 @@ class block_kent_course_overview extends block_base {
         //Firstly... lets check if the user is an admin, and direct accordingly.
 
         $installed = $DB->get_records('config_plugins', array('plugin'=>'local_rollover'), '', 'plugin');
-
+        //Fetch the rollover lib if its installed
+        if($installed){
+            require_once($CFG->dirroot.'/local/rollover/lib.php');
+        }
+        
         if (has_capability('moodle/site:config', $context) && $installed != FALSE){
 
             $rollover_admin_path = "$CFG->wwwroot/local/rollover/index.php";
@@ -71,8 +74,6 @@ class block_kent_course_overview extends block_base {
         }
 
         //Otherwise lets go and get the user enrolled courses.
-
-
         $content = array();
 
         // limits the number of courses showing up
