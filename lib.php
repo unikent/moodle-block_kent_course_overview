@@ -40,6 +40,8 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
         }
 
 
+        $content .= kent_add_teachers($course, $context);
+
         //If user has ability to update the course and the course is empty to signify a rollover
         if ($rolloverable && $perms_to_rollover && !$course_has_content){
 
@@ -104,4 +106,103 @@ function kent_course_has_content($course_id){
 
     // must be empty, return false
     return FALSE;
+}
+
+
+
+
+function kent_add_teachers($course, $context){
+
+    global $CFG, $DB;
+
+    $string = '';
+
+    /// first find all roles that are supposed to be displayed
+    if (!empty($CFG->coursecontact)) {
+        $managerroles = explode(',', $CFG->coursecontact);
+        $namesarray = array();
+        $rusers = array();
+
+        $roles_string = get_string('ignore_roles', 'block_kent_course_overview');
+        $ignore_role_ids = explode(",", $roles_string);
+
+        if (!isset($course->managers)) {
+
+            //prepare roles sql.
+            $roles_sql = '';
+            if(!empty($ignore_role_ids)){
+
+                foreach($ignore_role_ids as $roles){
+                    $roles_sql .= $roles . ',';
+                }
+
+                $roles_sql = substr($roles_sql, 0, -1);
+                $roles_sql = 'ra.roleid NOT IN (' . $roles_sql . ')';
+
+            }
+
+
+            $rusers = get_role_users($managerroles, $context, true,
+                'ra.id AS raid, u.id, u.username, u.firstname, u.lastname,
+                 r.name AS rolename, r.sortorder, r.id AS roleid',
+                'r.sortorder ASC, u.lastname ASC',
+                'u.lastname, u.firstname', '', '', '', $roles_sql);
+
+
+//            $roleid, context $context, $parent = false, $fields = '',
+//        $sort = 'u.lastname, u.firstname', $gethidden_ignored = null, $group = '',
+//        $limitfrom = '', $limitnum = '', $extrawheretest = '', $whereparams = array()
+
+
+        } else {
+            //  use the managers array if we have it for perf reasosn
+            //  populate the datastructure like output of get_role_users();
+
+            
+
+            foreach ($course->managers as $manager) {
+
+                if(!in_array($manager->roleid, $ignore_role_ids)){
+                    $u = new stdClass();
+                    $u = $manager->user;
+                    $u->roleid = $manager->roleid;
+                    $u->rolename = $manager->rolename;
+
+                    $rusers[] = $u;
+                }
+            }
+        }
+
+        /// Rename some of the role names if needed
+        if (isset($context)) {
+            $aliasnames = $DB->get_records('role_names', array('contextid'=>$context->id), '', 'roleid,contextid,name');
+        }
+
+        $namesarray = array();
+        $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+        foreach ($rusers as $ra) {
+            if (isset($namesarray[$ra->id])) {
+                //  only display a user once with the higest sortorder role
+                continue;
+            }
+
+            if (isset($aliasnames[$ra->roleid])) {
+                $ra->rolename = $aliasnames[$ra->roleid]->name;
+            }
+
+            $fullname = fullname($ra, $canviewfullnames);
+            $namesarray[$ra->id] = format_string($ra->rolename).': '.
+                html_writer::link(new moodle_url('/user/view.php', array('id'=>$ra->id, 'course'=>SITEID)), $fullname);
+        }
+
+        if (!empty($namesarray)) {
+            $string .= html_writer::start_tag('span', array('class'=>'teachers'));
+            foreach ($namesarray as $name) {
+                $string .= html_writer::tag('span', $name);
+            }
+            $string .= html_writer::end_tag('span');
+        }
+    }
+
+    return $string;
 }
