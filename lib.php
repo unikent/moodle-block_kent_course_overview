@@ -26,7 +26,7 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
         $list_class = '';
         if($rolloverable = kent_rollover_ability($course->id, $rollover_status)){
-            if ($perms_to_rollover && !$course_has_content){
+            if ($perms_to_rollover){
                 $list_class = ' class="rollover_'.$rollover_status.'"';
             }
         }
@@ -43,7 +43,7 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
         $content .= kent_add_teachers($course, $context);
 
         //If user has ability to update the course and the course is empty to signify a rollover
-        if ($rolloverable && $perms_to_rollover && !$course_has_content){
+        if ($rolloverable && $perms_to_rollover){
 
             $rollover_path = $CFG->wwwroot.'/local/rollover/index.php#rollover_form_'.$course->id;
 
@@ -82,31 +82,7 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 }
 
 
-/**
- * Check if a specified course has any content based on modules and summaries
- * @param <int> $course_id - Moodle Course ID
- * @return <boolean> false if empty, true if not
- */
-function kent_course_has_content($course_id){
 
-    global $CFG, $DB;
-
-    // count number of modules in this course
-    $no_modules = intval($DB->count_records('course_modules',array('course' => $course_id)));
-
-    // if course has modules return true as it has content
-    if (is_int($no_modules) && $no_modules>0) return TRUE;
-
-    // count number of non-empty summaries
-    $sql = "SELECT COUNT(id) FROM {$CFG->prefix}course_sections WHERE course={$course_id} AND section!=0 AND summary is not null AND summary !=''";
-    $no_modules = (int) $DB->count_records_sql($sql);
-
-    // if there are any non-empty summaries return true as it has content
-    if ($no_modules>0) return TRUE;
-
-    // must be empty, return false
-    return FALSE;
-}
 
 
 
