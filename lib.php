@@ -82,11 +82,9 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 }
 
 
-
-
-
-
-
+/*
+ * Function to pull in teachers linked on a course
+ */
 function kent_add_teachers($course, $context){
 
     global $CFG, $DB;
@@ -156,4 +154,48 @@ function kent_add_teachers($course, $context){
     }
 
     return $string;
+}
+
+
+/*
+ * Add in a Kent Archive moodle link.
+ */
+function kent_archive_moodle_link(){
+    global $CFG;
+    
+    $output = '';
+
+    if(isset($CFG->archive_moodle) && ($CFG->archive_moodle == TRUE)){
+
+        $archive_path = 'https://moodle.kent.ac.uk'; //Initially set a default path
+        if(isset($CFG->archive_moodle_path) || $CFG->archive_moodle_path != ''){
+            $archive_path = $CFG->archive_moodle_path;
+        }
+
+        //Determine link text
+        $archive_link_text = 'Other moodle modules';
+        $archive_link_text = ((!kent_is_archive_moodle() && isset($CFG->archive_old_moodle_link_text) && ($CFG->archive_old_moodle_link_text != '')) ? $CFG->archive_old_moodle_link_text : $archive_link_text);
+        $archive_link_text = ((kent_is_archive_moodle() && isset($CFG->archive_current_moodle_link_text) && ($CFG->archive_current_moodle_link_text != '')) ? $CFG->archive_current_moodle_link_text : $archive_link_text);
+
+        $archive_link = '<a href="'.$archive_path.'">'.$archive_link_text.'</a>';
+
+        $output = $archive_link;
+
+    }
+
+    return $output;
+
+}
+
+
+/*
+ * Helper function to determine if this is archive moodle.
+ */
+function kent_is_archive_moodle(){
+    global $CFG;
+    
+    if (isset($CFG->archive_moodle_this_is_archive) && ($CFG->archive_moodle_this_is_archive == TRUE)){
+        return TRUE;
+    }
+    return FALSE;
 }

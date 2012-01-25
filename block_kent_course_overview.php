@@ -73,9 +73,6 @@ class block_kent_course_overview extends block_base {
 
         }
 
-        //Otherwise lets go and get the user enrolled courses.
-        $content = array();
-
         // limits the number of courses showing up
         $courses_limit = 21;
         // FIXME: this should be a block setting, rather than a global setting
@@ -104,11 +101,23 @@ class block_kent_course_overview extends block_base {
             }
         }
 
+        //Provide link back to Current Moodle, if I am the archive moodle!
+        if (kent_is_archive_moodle()){
+            $this->content->text .= kent_archive_moodle_link();
+        }
+
         if (empty($courses)) {
             $this->content->text .= get_string('nocourses', 'block_kent_course_overview');
         } else {
             $this->content->text .= kent_course_print_overview($courses);
         }
+
+        //Provide link back to Archive Moodle if switched on
+        if (!kent_is_archive_moodle()){
+            $this->content->text .= kent_archive_moodle_link();
+        }
+
+
 
         // if more than 20 courses
         if ($morecourses) {
