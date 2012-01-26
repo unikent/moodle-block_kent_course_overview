@@ -4,32 +4,127 @@
     margin-left: 0px;
 }
 
-#kent_course_list_overview li{
-    margin-bottom: 10px;
-    border-bottom: 1px dotted #ccc;
-    display: block;
-    width: 100%;
-}
+    #kent_course_list_overview li {
+        width: 100%;
+        margin: 0;
+        padding: 10px;
+        display: block;
+        background: transparent;
+        overflow: auto;
+        border-bottom: 1px dotted #e0e0e0;
+    }
+    
+    #kent_course_list_overview li:nth-child(odd) {
+        background: #fafafa;
 
-#kent_course_list_overview .rollover_complete{
-    background: #FFF;
-}
+    }
+    
+        #kent_course_list_overview .course_details_ovrv {
+            float: left;
+            width: 75%;
+        }
+    
+            #kent_course_list_overview .course_details_ovrv .title {
+                padding: 3px 0;
+                font-size: 14px;
+                font-weight: bold;
+                color: #6f6f6f;
+            }
 
-#kent_course_list_overview .rollover_none{
-    background: #DDD;
-}
+                #kent_course_list_overview .course_details_ovrv .title a {
+                    color: #6f6f6f;
+                }
 
-#kent_course_list_overview .rollover_processing{
-    background: #AAA;
-}
+            #kent_course_list_overview .course_details_ovrv .course_description {
+                padding: 10px 0;
+                font-size: 14px;
+                color: #6f6f6f;
+            }  
 
-#kent_course_list_overview .restoreerror,
-#kent_course_list_overview .backuperror{
-    background: #777;
-}
+                #kent_course_list_overview .course_details_ovrv .course_description p {
+                    margin: 0px
+                }
 
-#kent_course_list_overview li span{
-    display: block;
-}
+            #kent_course_list_overview .course_details_ovrv .teachers {
+                padding: 3px 0;
+                font-size: 12px;
+                color: #6f6f6f
+            }
+
+                #kent_course_list_overview .course_details_ovrv .teachers a {
+                    color: #003399;
+                }
+            
+       #kent_course_list_overview  .course_admin_options {
+            height: 66px;
+            width: 15%;
+            padding: 5px 5px 0 0;
+            float: right;
+            diplay: block;
+        }
+        
+            #kent_course_list_overview  .course_admin_options .course_rollover_optns {
+                display: block;
+                padding: 10px;
+                background: #E0E0E0;
+                font-size: 13px;
+                text-align: center;
+                color: #6f6f6f;  
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+            }
+            
+            #kent_course_list_overview  .course_admin_options .new {
+                background-color: #E9FAD0;
+                -webkit-transition: background-color 0.4s linear;
+                -moz-transition: background-color 0.4s linear;
+                -o-transition: background-color 0.4s linear;
+                transition: background-color 0.4s linear;
+            } 
+            
+             #kent_course_list_overview  .course_admin_options .new:hover {
+                background-color: #D6E6BF;
+            }
+            
+            #kent_course_list_overview  .course_admin_options .pending {
+                background-color: #BAC7DF;
+                padding: 20px 0;
+                color: #fff;
+            }
+            
+            #kent_course_list_overview  .course_admin_options .error {
+                background-color: #FAD7D7;
+            }
+            
+            #kent_course_list_overview .course_admin_options .error:hover {
+                -webkit-transition: background-color 0.4s linear;
+                -moz-transition: background-color 0.4s linear;
+                -o-transition: background-color 0.4s linear;
+                transition: background-color 0.4s linear;
+                background-color: #E3C3C3;
+            }
+            
+
+    #kent_course_list_overview .rollover_complete{
+        background: #FFF;
+    }
+
+    #kent_course_list_overview .rollover_none{
+      
+    }
+
+    #kent_course_list_overview .rollover_processing{
+        background: #AAA;
+    }
+
+    #kent_course_list_overview .restoreerror,
+    #kent_course_list_overview .backuperror{
+        background: #777;
+    }
+
+    #kent_course_list_overview li span{
+        display: block;
+    }
 
 

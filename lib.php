@@ -33,6 +33,7 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
         //Construct link
         $content .= '<li'.$list_class.'>';
+        $content .= '<div class="course_details_ovrv">';
         $content .= '<span class="title">'.html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $fullname, $attributes) . '</span>';
 
         if(isset($course->summary) && $course->summary != ""){
@@ -41,32 +42,33 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
 
         $content .= kent_add_teachers($course, $context);
+        
+        $content .= '</div>';
 
         //If user has ability to update the course and the course is empty to signify a rollover
         if ($rolloverable && $perms_to_rollover){
 
             $rollover_path = $CFG->wwwroot.'/local/rollover/index.php#rollover_form_'.$course->id;
 
-            $content .= ' <span class="course_admin_options">';
+            $content .= ' <div class="course_admin_options">';
 
-            $content .= 'Rollover status: ';
 
             switch ($rollover_status) {
                 case 'none':
-                    $content .= '<a href="'.$rollover_path.'">Rollover course</a>';
+                    $content .= '<a class="course_rollover_optns new" href="'.$rollover_path.'">New course. <br / > Click here to <br /><strong>Rollover course</strong></a>';
                     break;
                 case 'complete':
-                    $content .= 'Previous rollover complete - <a href="'.$rollover_path.'">Rollover again</a>';
+                    $content .= '';
                     break;
                 case 'processing':
-                    $content .= 'Rollover in progress';
+                    $content .= '<div class="course_rollover_optns pending">Rollover pending</div>';
                     break;
                 default:
-                    $content .= 'Previous rollover failed - <a href="'.$rollover_path.'">Rollover again</a>';
+                    $content .= '<a class="course_rollover_optns error" href="'.$rollover_path.'">Previous rollover <br /> failed <br /><strong>Rollover again</strong></a>';
             }
 
 
-            $content .= '</span>';
+            $content .= '</div>';
         }
 
         $content .= '</li>';
