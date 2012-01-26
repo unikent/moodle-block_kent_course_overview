@@ -102,7 +102,7 @@ class block_kent_course_overview extends block_base {
         }
 
         //Provide link back to Current Moodle, if I am the archive moodle!
-        if (kent_is_archive_moodle()){
+        if (isset($CFG->archive_moodle) && ($CFG->archive_moodle == TRUE) && kent_is_archive_moodle()){
             $this->content->text .= kent_archive_moodle_link();
         }
 
@@ -113,7 +113,7 @@ class block_kent_course_overview extends block_base {
         }
 
         //Provide link back to Archive Moodle if switched on
-        if (!kent_is_archive_moodle()){
+        if (isset($CFG->archive_moodle) && ($CFG->archive_moodle == TRUE) && !kent_is_archive_moodle()){
             $this->content->text .= kent_archive_moodle_link();
         }
 
