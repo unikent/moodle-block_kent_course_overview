@@ -46,7 +46,7 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
         $content .= '</div>';
 
         //If user has ability to update the course and the course is empty to signify a rollover
-        if ($rolloverable && $perms_to_rollover){
+        if ($rolloverable && $perms_to_rollover && !$course_has_content){
 
             $rollover_path = $CFG->wwwroot.'/local/rollover/index.php#rollover_form_'.$course->id;
 
