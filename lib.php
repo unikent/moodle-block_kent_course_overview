@@ -179,7 +179,7 @@ function kent_archive_moodle_link(){
         $archive_link_text = ((!kent_is_archive_moodle() && isset($CFG->archive_old_moodle_link_text) && ($CFG->archive_old_moodle_link_text != '')) ? $CFG->archive_old_moodle_link_text : $archive_link_text);
         $archive_link_text = ((kent_is_archive_moodle() && isset($CFG->archive_current_moodle_link_text) && ($CFG->archive_current_moodle_link_text != '')) ? $CFG->archive_current_moodle_link_text : $archive_link_text);
 
-        $archive_link = '<a href="'.$archive_path.'">'.$archive_link_text.'</a>';
+        $archive_link = '<div class="archive_link"><a href="'.$archive_path.'">'.$archive_link_text.'</a></div>';
 
         $output = $archive_link;
 
