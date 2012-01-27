@@ -21,7 +21,6 @@
     
         #kent_course_list_overview .course_details_ovrv {
             float: left;
-            width: 75%;
         }
     
             #kent_course_list_overview .course_details_ovrv .title {
@@ -64,9 +63,7 @@
                 }
             
        #kent_course_list_overview  .course_admin_options {
-            height: 66px;
-            width: 15%;
-            padding: 5px 5px 0 0;
+            padding: 0 0 0 10px;
             float: right;
             diplay: block;
         }
