@@ -55,7 +55,7 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
             switch ($rollover_status) {
                 case 'none':
-                    $content .= '<a class="course_rollover_optns new" href="'.$rollover_path.'">New course. <br / > Click here to <br /><strong>Rollover course</strong></a>';
+                    $content .= '<a class="course_rollover_optns new" href="'.$rollover_path.'">Empty course. <br / > Click here to <br /><strong>Rollover course</strong></a>';
                     break;
                 case 'complete':
                     $content .= '';
@@ -64,7 +64,7 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
                     $content .= '<div class="course_rollover_optns pending">Rollover pending</div>';
                     break;
                 default:
-                    $content .= '<a class="course_rollover_optns error" href="'.$rollover_path.'">Previous rollover <br /> failed <br /><strong>Rollover again</strong></a>';
+                    $content .= '<a class="course_rollover_optns error" href="'.$rollover_path.'">Previous rollover <br /> failed <br /><strong> - please contact an admin.</strong></a>';
             }
 
 
