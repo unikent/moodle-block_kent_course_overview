@@ -67,9 +67,9 @@ class block_kent_course_overview extends block_base {
 
             $this->content->text .= $OUTPUT->box_start('generalbox rollover_admin_notification');
             $this->content->text .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
-            $this->content->text .= '<p>&raquo; '.'<a href="'.$rollover_admin_path.'">Rollover admin page</a></p>';
+            $this->content->text .= '<p>'.'<a href="'.$rollover_admin_path.'">Rollover admin page</a></p>';
             $this->content->text .= $OUTPUT->box_end();
-            $this->content->text .= '<br/>';
+            //$this->content->text .= '<br/>';
 
         }
 
@@ -107,7 +107,7 @@ class block_kent_course_overview extends block_base {
         }
 
         if (empty($courses)) {
-            $this->content->text .= get_string('nocourses', 'block_kent_course_overview');
+            $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
         } else {
             $this->content->text .= kent_course_print_overview($courses);
         }

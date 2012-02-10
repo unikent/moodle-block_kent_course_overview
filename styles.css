@@ -1,17 +1,47 @@
+.block_kent_course_overview.block div.content {
+    padding: 0px;
+}
+
+.block_kent_course_overview.block div.content .rollover_admin_notification {
+    border:none;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    background: #fafafa;
+    padding: 10px;
+    color: #6f6f6f;
+}
+
+    .block_kent_course_overview.block div.content .rollover_admin_notification p {
+        margin-bottom: 0;
+    }
+    
+    .block_kent_course_overview.block div.content .rollover_admin_notification a {
+        display: block;
+        margin-top:10px;
+        color: #264F9C;
+    }
+
+.block_kent_course_overview.block div.content .co_no_crs {
+    border-top: 1px solid #e3e3e3;
+    padding: 30px 10px 20px 10px;
+    font-size: 14px;
+    color: #6f6f6f;
+}
+
 #kent_course_list_overview{
     list-style: none;
     list-style-type: none;
-    margin-left: 0px;
+    margin: 0px;
+    margin-bottom: 10px;
 }
 
     #kent_course_list_overview li {
         width: 100%;
         margin: 0;
-        padding: 10px;
         display: block;
         background: transparent;
         overflow: auto;
-        border-bottom: 1px dotted #e0e0e0;
+        border-bottom: 1px dotted #e0e0e0; 
     }
     
     #kent_course_list_overview li:nth-child(odd) {
@@ -21,6 +51,7 @@
     
         #kent_course_list_overview .course_details_ovrv {
             float: left;
+            padding: 10px;
         }
     
             #kent_course_list_overview .course_details_ovrv .title {
@@ -63,7 +94,7 @@
                 }
             
        #kent_course_list_overview  .course_admin_options {
-            padding: 0 0 0 10px;
+            padding: 15px;
             float: right;
             diplay: block;
         }
@@ -133,7 +164,7 @@
     }
 
 .archive_link {
-    padding:10px;
+    padding: 10px 10px 20px 10px;
 }
 
     .archive_link a, .archive_link a:visited {
