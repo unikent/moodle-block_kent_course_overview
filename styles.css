@@ -8,7 +8,7 @@
     border-bottom: 1px solid #fff;
     background: #fafafa;
     padding: 10px;
-    color: #6f6f6f;
+    color: #333;
 }
 
     .block_kent_course_overview.block div.content .rollover_admin_notification p {
@@ -25,7 +25,7 @@
     border-top: 1px solid #e3e3e3;
     padding: 30px 10px 20px 10px;
     font-size: 14px;
-    color: #6f6f6f;
+    color: #333;
 }
 
 #kent_course_list_overview{
@@ -44,7 +44,7 @@
         border-bottom: 1px dotted #e0e0e0; 
     }
     
-    #kent_course_list_overview li:nth-child(odd) {
+    #kent_course_list_overview li:nth-child(even) {
         background: #fafafa;
 
     }
@@ -57,13 +57,13 @@
     
             #kent_course_list_overview .course_details_ovrv .title {
                 padding: 3px 0;
-                font-size: 14px;
+                font-size: 16px;
                 font-weight: bold;
-                color: #6f6f6f;
+                color: #333;
             }
 
                 #kent_course_list_overview .course_details_ovrv .title a {
-                    color: #6f6f6f;
+                    color: #333;
                 }
                 
                 #kent_course_list_overview .course_details_ovrv .title a:hover {
@@ -100,6 +100,10 @@
             diplay: block;
             width: 20%;
         }
+
+            #kent_course_list_overview  .course_admin_options a:hover {
+                text-decoration: none;
+            }
         
             #kent_course_list_overview  .course_admin_options .course_rollover_optns {
                 display: block;
@@ -148,10 +152,6 @@
         background: #FFF;
     }
 
-    #kent_course_list_overview .rollover_none{
-      
-    }
-
     #kent_course_list_overview .rollover_processing{
         background: #AAA;
     }
@@ -175,18 +175,20 @@
         background: #EEE;
         font-size: 14px;
         font-weight: bold;
-        color: #6f6f6f;
+        text-decoration: none;
+        color: #333;
         -webkit-border-radius: 5px;
         -moz-border-radius: 5px;
         border-radius: 5px;
-        -webkit-transition: background-color .4s linear;
-        -moz-transition: background-color .4s linear;
-        -o-transition: background-color .4s linear;
-        transition: background-color .4s linear;
+        -webkit-transition: background-color .2s linear;
+        -moz-transition: background-color .2s linear;
+        -o-transition: background-color .2s linear;
+        transition: background-color .2s linear;
     }
     
-    .archive_link a:hover {
+    #page-content .archive_link a:hover {
         background: #E6E6E6;
+        text-decoration: none;
     }
 
 
