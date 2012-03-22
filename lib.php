@@ -176,8 +176,26 @@ function kent_archive_moodle_link(){
 
         //Determine link text
         $archive_link_text = 'Other moodle modules';
-        $archive_link_text = ((!kent_is_archive_moodle() && isset($CFG->archive_old_moodle_link_text) && ($CFG->archive_old_moodle_link_text != '')) ? $CFG->archive_old_moodle_link_text : $archive_link_text);
-        $archive_link_text = ((kent_is_archive_moodle() && isset($CFG->archive_current_moodle_link_text) && ($CFG->archive_current_moodle_link_text != '')) ? $CFG->archive_current_moodle_link_text : $archive_link_text);
+
+        if(!kent_is_archive_moodle()){
+            $archive_link_text = ((isset($CFG->archive_old_moodle_link_text) && ($CFG->archive_old_moodle_link_text != '')) ? $CFG->archive_old_moodle_link_text : $archive_link_text);
+
+            //Check if there is any overriding language file modifications to the link text
+            $lang_link_text = get_string('archive_old_moodle_link_text', 'block_kent_course_overview');
+            if($lang_link_text != '[[archive_old_moodle_link_text]]' && $lang_link_text != ''){
+                $archive_link_text = $lang_link_text;
+            }
+            
+        } else {
+            $archive_link_text = ((isset($CFG->archive_current_moodle_link_text) && ($CFG->archive_current_moodle_link_text != '')) ? $CFG->archive_current_moodle_link_text : $archive_link_text);
+
+            //Check if there is any overriding language file modifications to the link text
+            $lang_link_text = get_string('archive_current_moodle_link_text', 'block_kent_course_overview');
+            if($lang_link_text != '[[archive_current_moodle_link_text]]' && $lang_link_text != ''){
+                $archive_link_text = $lang_link_text;
+            }
+
+        }
 
         $archive_link = '<div class="archive_link"><a href="'.$archive_path.'">'.$archive_link_text.'</a></div>';
 
