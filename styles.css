@@ -6,9 +6,9 @@
     border:none;
     border-top: 1px solid #fff;
     border-bottom: 1px solid #fff;
-    background: #fafafa;
     padding: 10px;
     color: #333;
+    border
 }
 
     .block_kent_course_overview.block div.content .rollover_admin_notification p {
@@ -41,11 +41,11 @@
         display: block;
         background: transparent;
         overflow: auto;
-        border-bottom: 1px dotted #e0e0e0; 
+        border-bottom: 3px solid #e0e0e0;
+        border-bottom: 3px solid #eee;
     }
     
     #kent_course_list_overview li:nth-child(even) {
-        background: #fafafa;
 
     }
     
