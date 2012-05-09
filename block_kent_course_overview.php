@@ -64,10 +64,12 @@ class block_kent_course_overview extends block_base {
         if (has_capability('moodle/site:config', $context) && $installed != FALSE){
 
             $rollover_admin_path = "$CFG->wwwroot/local/rollover/index.php";
+            $connect_admin_path = $CFG->wwwroot . '/local/connect/';
 
             $this->content->text .= $OUTPUT->box_start('generalbox rollover_admin_notification');
             $this->content->text .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
             $this->content->text .= '<p>'.'<a href="'.$rollover_admin_path.'">Rollover admin page</a></p>';
+            $this->content->text .= '<p><a href="'.$connect_admin_path.'">Departmental administrator pages</a></p>';
             $this->content->text .= $OUTPUT->box_end();
             //$this->content->text .= '<br/>';
 
