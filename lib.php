@@ -19,15 +19,21 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         $perms_to_rollover = has_capability('moodle/course:update', $context);
-        $course_has_content = kent_course_has_content($course->id);
 
-
-        $rollover_status = kent_get_current_rollover_status($course->id);
+        //Ensure Rollover is installed before we do anything and that the course doesn't have content.
+        $rollover_installed = $DB->get_records('config_plugins', array('plugin'=>'local_rollover'), '', 'plugin');
 
         $list_class = '';
-        if($rolloverable = kent_rollover_ability($course->id, $rollover_status)){
-            if ($perms_to_rollover){
-                $list_class = ' class="rollover_'.$rollover_status.'"';
+
+        if($rollover_installed){
+            //Fetch the rollover lib to leverage some functions
+            require_once($CFG->dirroot.'/local/rollover/lib.php');
+            $rollover_status = kent_get_current_rollover_status($course->id);
+
+            if($rolloverable = kent_rollover_ability($course->id, $rollover_status)){
+                if ($perms_to_rollover){
+                    $list_class = ' class="rollover_'.$rollover_status.'"';
+                }
             }
         }
 
@@ -46,7 +52,7 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
         $content .= '</div>';
 
         //If user has ability to update the course and the course is empty to signify a rollover
-        if ($rolloverable || $perms_to_rollover){
+        if($rollover_installed && $perms_to_rollover){
 
             $rollover_path = $CFG->wwwroot.'/local/rollover/index.php#rollover_form_'.$course->id;
 
@@ -54,7 +60,9 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
             switch ($rollover_status) {
                 case 'none':
-                    $content .= '<a class="course_rollover_optns new" href="'.$rollover_path.'">Empty course. <br / > Click here to <br /><strong>Rollover course</strong></a>';
+                    if($rolloverable){
+                        $content .= '<a class="course_rollover_optns new" href="'.$rollover_path.'">Empty course. <br / > Click here to <br /><strong>Rollover course</strong></a>';
+                    }
                     break;
                 case 'complete':
                     $content .= '';
