@@ -226,3 +226,114 @@ function kent_is_archive_moodle(){
     }
     return FALSE;
 }
+
+
+/**
+ * Returns list of courses current $USER is enrolled in and can access
+ *
+ * - $fields is an array of field names to ADD
+ *   so name the fields you really need, which will
+ *   be added and uniq'd
+ *
+ * @param string|array $fields
+ * @param string $sort
+ * @param int $limit max number of courses
+ * @return array
+ */
+function kent_enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortorder ASC', $page, $perpage) {
+    global $DB, $USER;
+
+    // Guest account does not have any courses
+    if (isguestuser() or !isloggedin()) {
+        return(array());
+    }
+
+    $basefields = array('id', 'category', 'sortorder',
+                        'shortname', 'fullname', 'idnumber',
+                        'startdate', 'visible',
+                        'groupmode', 'groupmodeforce');
+
+    if (empty($fields)) {
+        $fields = $basefields;
+    } else if (is_string($fields)) {
+        // turn the fields from a string to an array
+        $fields = explode(',', $fields);
+        $fields = array_map('trim', $fields);
+        $fields = array_unique(array_merge($basefields, $fields));
+    } else if (is_array($fields)) {
+        $fields = array_unique(array_merge($basefields, $fields));
+    } else {
+        throw new coding_exception('Invalid $fileds parameter in enrol_get_my_courses()');
+    }
+    if (in_array('*', $fields)) {
+        $fields = array('*');
+    }
+
+    $orderby = "";
+    $sort    = trim($sort);
+    if (!empty($sort)) {
+        $rawsorts = explode(',', $sort);
+        $sorts = array();
+        foreach ($rawsorts as $rawsort) {
+            $rawsort = trim($rawsort);
+            if (strpos($rawsort, 'c.') === 0) {
+                $rawsort = substr($rawsort, 2);
+            }
+            $sorts[] = trim($rawsort);
+        }
+        $sort = 'c.'.implode(',c.', $sorts);
+        $orderby = "ORDER BY $sort";
+    }
+
+    $wheres = array("c.id <> :siteid");
+    $params = array('siteid'=>SITEID);
+
+    if (isset($USER->loginascontext) and $USER->loginascontext->contextlevel == CONTEXT_COURSE) {
+        // list _only_ this course - anything else is asking for trouble...
+        $wheres[] = "courseid = :loginas";
+        $params['loginas'] = $USER->loginascontext->instanceid;
+    }
+
+    $coursefields = 'c.' .join(',c.', $fields);
+    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $wheres = implode(" AND ", $wheres);
+
+    //note: we can not use DISTINCT + text fields due to Oracle and MS limitations, that is why we have the subselect there
+
+    $sql = "SELECT $coursefields $ccselect
+              FROM {course} c
+              JOIN (SELECT DISTINCT e.courseid
+                      FROM {enrol} e
+                      JOIN {user_enrolments} ue ON (ue.enrolid = e.id AND ue.userid = :userid)
+                     WHERE ue.status = :active AND e.status = :enabled AND ue.timestart < :now1 AND (ue.timeend = 0 OR ue.timeend > :now2)
+                   ) en ON (en.courseid = c.id)
+           $ccjoin
+             WHERE $wheres
+          $orderby";
+    $params['userid']  = $USER->id;
+    $params['active']  = ENROL_USER_ACTIVE;
+    $params['enabled'] = ENROL_INSTANCE_ENABLED;
+    $params['now1']    = round(time(), -2); // improves db caching
+    $params['now2']    = $params['now1'];
+
+    $totalcourses = count($DB->get_records_sql($sql, $params));
+    $courses = $DB->get_records_sql($sql, $params, $page, $perpage);
+
+    // preload contexts and check visibility
+    foreach ($courses as $id=>$course) {
+        context_instance_preload($course);
+        if (!$course->visible) {
+            if (!$context = get_context_instance(CONTEXT_COURSE, $id)) {
+                unset($courses[$id]);
+                continue;
+            }
+            if (!has_capability('moodle/course:viewhiddencourses', $context)) {
+                unset($courses[$id]);
+                continue;
+            }
+        }
+        $courses[$id] = $course;
+    }
+
+    return array('totalcourses' => $totalcourses, 'courses' => $courses);
+}

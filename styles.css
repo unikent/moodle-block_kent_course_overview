@@ -28,6 +28,10 @@
     color: #333;
 }
 
+.block_kent_course_overview .paging{
+    padding: 10px;
+}
+
 #kent_course_list_overview{
     list-style: none;
     list-style-type: none;

@@ -42,10 +42,13 @@ class block_kent_course_overview extends block_base {
      * @return object
      */
     public function get_content() {
-        global $USER, $CFG, $OUTPUT, $DB;
+        global $USER, $CFG, $OUTPUT, $DB, $PAGE;
         if($this->content !== NULL) {
             return $this->content;
         }
+
+        $page = optional_param('page', 0, PARAM_INT);
+        $perpage = optional_param('perpage', 15, PARAM_INT);        // how many per page
 
         $this->content = new stdClass();
         $this->content->text = '';
@@ -75,31 +78,24 @@ class block_kent_course_overview extends block_base {
 
         }
 
-        // limits the number of courses showing up
-        $courses_limit = 21;
-        // FIXME: this should be a block setting, rather than a global setting
-        if (isset($CFG->mycoursesperpage)) {
-            $courses_limit = $CFG->mycoursesperpage;
-        }
+        $courses = kent_enrol_get_my_courses('id, shortname, modinfo, summary', 'visible DESC,shortname ASC', $page*$perpage, $perpage);
 
-        $morecourses = false;
-        if ($courses_limit > 0) {
-            $courses_limit = $courses_limit + 1;
-        }
+        $baseurl = new moodle_url($PAGE->URL, array('perpage' => $perpage));
+        $coursecount = $courses['totalcourses'];
+        $this->content->text .= $OUTPUT->paging_bar($coursecount, $page, $perpage, $baseurl);
 
-        $courses = enrol_get_my_courses('id, shortname, modinfo, summary', 'visible DESC,sortorder ASC', $courses_limit);
         $site = get_site();
         $course = $site; //just in case we need the old global $course hack
 
-        if (array_key_exists($site->id,$courses)) {
-            unset($courses[$site->id]);
+        if (array_key_exists($site->id,$courses['courses'])) {
+            unset($courses['courses'][$site->id]);
         }
 
-        foreach ($courses as $c) {
+        foreach ($courses['courses'] as $c) {
             if (isset($USER->lastcourseaccess[$c->id])) {
-                $courses[$c->id]->lastaccess = $USER->lastcourseaccess[$c->id];
+                $courses['courses'][$c->id]->lastaccess = $USER->lastcourseaccess[$c->id];
             } else {
-                $courses[$c->id]->lastaccess = 0;
+                $courses['courses'][$c->id]->lastaccess = 0;
             }
         }
 
@@ -108,22 +104,17 @@ class block_kent_course_overview extends block_base {
             $this->content->text .= kent_archive_moodle_link();
         }
 
-        if (empty($courses)) {
+        if (empty($courses['courses'])) {
             $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
         } else {
-            $this->content->text .= kent_course_print_overview($courses);
+            $this->content->text .= kent_course_print_overview($courses['courses']);
         }
+
+        $this->content->text .= $OUTPUT->paging_bar($coursecount, $page, $perpage, $baseurl);
 
         //Provide link back to Archive Moodle if switched on
         if (isset($CFG->archive_moodle) && ($CFG->archive_moodle == TRUE) && !kent_is_archive_moodle()){
             $this->content->text .= kent_archive_moodle_link();
-        }
-
-
-
-        // if more than 20 courses
-        if ($morecourses) {
-            $this->content->text .= '<br />...';
         }
 
         return $this->content;
