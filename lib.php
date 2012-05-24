@@ -316,24 +316,28 @@ function kent_enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortord
     $params['now1']    = round(time(), -2); // improves db caching
     $params['now2']    = $params['now1'];
 
-    $totalcourses = count($DB->get_records_sql($sql, $params));
-    $courses = $DB->get_records_sql($sql, $params, $page, $perpage);
+    //$totalcourses = count($DB->get_records_sql($sql, $params));
+    //$courses = $DB->get_records_sql($sql, $params, $page, $perpage);
+    $courses = $DB->get_records_sql($sql, $params);
+
+    $totalcourses = count($courses);
+    $courseset = array_slice($courses, $page, $perpage, true);
 
     // preload contexts and check visibility
-    foreach ($courses as $id=>$course) {
+    foreach ($courseset as $id=>$course) {
         context_instance_preload($course);
         if (!$course->visible) {
             if (!$context = get_context_instance(CONTEXT_COURSE, $id)) {
-                unset($courses[$id]);
+                unset($courseset[$id]);
                 continue;
             }
             if (!has_capability('moodle/course:viewhiddencourses', $context)) {
-                unset($courses[$id]);
+                unset($courseset[$id]);
                 continue;
             }
         }
-        $courses[$id] = $course;
+        $courseset[$id] = $course;
     }
 
-    return array('totalcourses' => $totalcourses, 'courses' => $courses);
+    return array('totalcourses' => $totalcourses, 'courses' => $courseset);
 }

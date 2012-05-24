@@ -48,7 +48,7 @@ class block_kent_course_overview extends block_base {
         }
 
         $page = optional_param('page', 0, PARAM_INT);
-        $perpage = optional_param('perpage', 15, PARAM_INT);        // how many per page
+        $perpage = optional_param('perpage', 20, PARAM_INT);        // how many per page
 
         $this->content = new stdClass();
         $this->content->text = '';
