@@ -25,6 +25,8 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
         $list_class = '';
 
+        $admin_hide = 'admin_hide';
+
         if($rollover_installed){
             //Fetch the rollover lib to leverage some functions
             require_once($CFG->dirroot.'/local/rollover/lib.php');
@@ -32,6 +34,8 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
             if($rolloverable = kent_rollover_ability($course->id, $rollover_status)){
                 if ($perms_to_rollover){
+                    $width = 'admin_width';
+                    $admin_hide = '';
                     $list_class = ' class="rollover_'.$rollover_status.'"';
                 }
             }
@@ -39,7 +43,7 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
         //Construct link
         $content .= '<li'.$list_class.'>';
-        $content .= '<div class="course_details_ovrv">';
+        $content .= '<div class="course_details_ovrv '.$width.'"" >';
         $content .= '<span class="title">'.html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $fullname, $attributes) . '</span>';
 
         if(isset($course->summary) && $course->summary != ""){
@@ -56,7 +60,7 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
             $rollover_path = $CFG->wwwroot.'/local/rollover/index.php#rollover_form_'.$course->id;
 
-            $content .= ' <div class="course_admin_options">';
+            $content .= ' <div class="course_admin_options '.$admin_hide.'">';
 
             switch ($rollover_status) {
                 case 'none':
@@ -153,12 +157,15 @@ function kent_add_teachers($course, $context){
                 html_writer::link(new moodle_url('/user/view.php', array('id'=>$ra->id, 'course'=>SITEID)), $fullname);
         }
 
+
         if (!empty($namesarray)) {
-            $string .= html_writer::start_tag('span', array('class'=>'teachers'));
+
+            $string .= '<div class="teachers_show_hide">'.get_string('staff_toggle', 'block_kent_course_overview').'</div>';
+            $string .= html_writer::start_tag('div', array('class'=>'teachers'));
             foreach ($namesarray as $name) {
                 $string .= html_writer::tag('span', $name);
             }
-            $string .= html_writer::end_tag('span');
+            $string .= html_writer::end_tag('div');
         }
     }
 

@@ -82,7 +82,13 @@ class block_kent_course_overview extends block_base {
 
         $baseurl = new moodle_url($PAGE->URL, array('perpage' => $perpage));
         $coursecount = $courses['totalcourses'];
-        $this->content->text .= $OUTPUT->paging_bar($coursecount, $page, $perpage, $baseurl);
+
+        $paging = $OUTPUT->paging_bar($coursecount, $page, $perpage, $baseurl);
+        if($paging != '<div class="paging"></div>') {
+            $this->content->text .= $paging;
+        }
+        
+
 
         $site = get_site();
         $course = $site; //just in case we need the old global $course hack
@@ -110,12 +116,17 @@ class block_kent_course_overview extends block_base {
             $this->content->text .= kent_course_print_overview($courses['courses']);
         }
 
-        $this->content->text .= $OUTPUT->paging_bar($coursecount, $page, $perpage, $baseurl);
+        if($paging != '<div class="paging"></div>') {
+            $this->content->text .= $paging;
+        }
 
         //Provide link back to Archive Moodle if switched on
         if (isset($CFG->archive_moodle) && ($CFG->archive_moodle == TRUE) && !kent_is_archive_moodle()){
             $this->content->text .= kent_archive_moodle_link();
         }
+
+        $this->content->text .= '<script src="' . $CFG->wwwroot . '/lib/jquery/jquery-1.7.1.min.js" type="text/javascript"></script>';
+        $this->content->text .= '<script src="' . $CFG->wwwroot . '/blocks/kent_course_overview/js/showhide.js" type="text/javascript"></script>';
 
         return $this->content;
     }
