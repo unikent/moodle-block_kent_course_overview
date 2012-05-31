@@ -47,8 +47,41 @@ class block_kent_course_overview extends block_base {
             return $this->content;
         }
 
+        // get hide/show params (for quick visbility changes)
+        $hide = optional_param('hide', 0, PARAM_INT);
+        $show = optional_param('show', 0, PARAM_INT);
         $page = optional_param('page', 0, PARAM_INT);
         $perpage = optional_param('perpage', 20, PARAM_INT);        // how many per page
+
+        // generate page url for page actions from current params
+        $params = array();
+        if ($page) {
+            $params['page'] = $page;
+        }
+        if ($perpage) {
+            $params['perpage'] = $perpage;
+        }
+        $baseactionurl = new moodle_url($PAGE->URL, $params);
+
+        // process show/hide if there is one
+        if (!empty($hide) or !empty($show)) {
+            if (!empty($hide)) {
+                $course = $DB->get_record('course', array('id' => $hide));
+                $visible = 0;
+            } else {
+                $course = $DB->get_record('course', array('id' => $show));
+                $visible = 1;
+            }
+
+            if ($course) {
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                require_capability('moodle/course:visibility', $coursecontext);
+                // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
+                $DB->update_record('course', array('id' => $course->id, 'visible' => $visible, 'visibleold' => $visible, 'timemodified' => time()));
+            }
+        }
+
+        
 
         $this->content = new stdClass();
         $this->content->text = '';
@@ -78,7 +111,7 @@ class block_kent_course_overview extends block_base {
 
         }
 
-        $courses = kent_enrol_get_my_courses('id, shortname, modinfo, summary', 'visible DESC,shortname ASC', $page*$perpage, $perpage);
+        $courses = kent_enrol_get_my_courses('id, shortname, modinfo, summary, visible', 'shortname ASC', $page*$perpage, $perpage);
 
         $baseurl = new moodle_url($PAGE->URL, array('perpage' => $perpage));
         $coursecount = $courses['totalcourses'];
@@ -110,10 +143,12 @@ class block_kent_course_overview extends block_base {
             $this->content->text .= kent_archive_moodle_link();
         }
 
+
+
         if (empty($courses['courses'])) {
             $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
         } else {
-            $this->content->text .= kent_course_print_overview($courses['courses']);
+            $this->content->text .= kent_course_print_overview($courses['courses'], $baseactionurl);
         }
 
         if($paging != '<div class="paging"></div>') {

@@ -61,9 +61,13 @@
     }
     
         #kent_course_list_overview .course_details_ovrv {
-            float: left;
+            /*float: left;*/
             padding: 10px;
         }
+
+            #kent_course_list_overview .course_details_ovrv .course_adjust_visibility {
+                float: right;
+            }
 
         #kent_course_list_overview .course_details_ovrv.admin_width {
             width: 70%;

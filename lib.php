@@ -2,7 +2,7 @@
 /* 
  * Overriding the god awful print overview function in lib
  */
-function kent_course_print_overview($courses, array $remote_courses=array()) {
+function kent_course_print_overview($courses, $baseurl, array $remote_courses=array()) {
     global $CFG, $USER, $DB, $OUTPUT;
 
     $content = '';
@@ -15,7 +15,7 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
             $extra_class_attributes = ' dimmed';
         }
 
-        $attributes = array('title' => s($fullname), 'class' => 'course_list'.$extra_class_attributes);
+        $attributes = array('title' => s($fullname), 'class' => 'course_list');
 
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         $perms_to_rollover = has_capability('moodle/course:update', $context);
@@ -45,8 +45,25 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
         //Construct link
         $content .= '<li'.$list_class.'>';
-        $content .= '<div class="course_details_ovrv '.$width.'"" >';
+        $content .= '<div class="course_details_ovrv '.$width.(!$course->visible ? ' course_unavailable' : '') . '" >';
+        if ($course->user_can_adjust_visibility && $course->user_can_view) {
+            // if user can view hidden and can adjust visibility, we'll let them change it from here
+            if (!empty($course->visible)) {
+                $url = new moodle_url($baseurl, array('hide' => $course->id));
+                $img = $OUTPUT->action_icon($url, new pix_icon('t/hide', get_string('hide')));
+            } else {
+                $url = new moodle_url($baseurl, array('show' => $course->id));
+                $img = $OUTPUT->action_icon($url, new pix_icon('t/show', get_string('show')));
+            }
+            $content .= "<div class='course_adjust_visibility'>" . $img . "</div>";
+        }
         $content .= '<span class="title">'.html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $fullname, $attributes) . '</span>';
+
+        if (!$course->visible) {
+            $content .= <<<html
+            <div class='course_unavailable_block'>&rsaquo; You are enrolled on this course but the convenor has not yet made it available for viewing.</div>
+html;
+        }
 
         if(isset($course->summary) && $course->summary != ""){
             $content .= ' <span class="course_description">'.$course->summary.'</span>';
@@ -249,7 +266,7 @@ function kent_is_archive_moodle(){
  * @param int $limit max number of courses
  * @return array
  */
-function kent_enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortorder ASC', $page, $perpage) {
+function kent_enrol_get_my_courses($fields = NULL, $sort = 'sortorder ASC', $page, $perpage) {
     global $DB, $USER;
 
     // Guest account does not have any courses
@@ -272,7 +289,7 @@ function kent_enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortord
     } else if (is_array($fields)) {
         $fields = array_unique(array_merge($basefields, $fields));
     } else {
-        throw new coding_exception('Invalid $fileds parameter in enrol_get_my_courses()');
+        throw new coding_exception('Invalid $fields parameter in enrol_get_my_courses()');
     }
     if (in_array('*', $fields)) {
         $fields = array('*');
@@ -335,7 +352,7 @@ function kent_enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortord
     // preload contexts and check visibility
     foreach ($courseset as $id=>$course) {
         context_instance_preload($course);
-        if (!$course->visible) {
+        /*if (!$course->visible) {
             if (!$context = get_context_instance(CONTEXT_COURSE, $id)) {
                 unset($courseset[$id]);
                 continue;
@@ -343,6 +360,18 @@ function kent_enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortord
             if (!has_capability('moodle/course:viewhiddencourses', $context)) {
                 unset($courseset[$id]);
                 continue;
+            }
+        }*/
+        if ($context = get_context_instance(CONTEXT_COURSE, $id)) {
+            if (has_capability('moodle/course:viewhiddencourses', $context)) {
+                $course->user_can_view = true;
+            } else {
+                $course->user_can_view = false;
+            }
+            if (has_capability('moodle/course:visibility', $context)) {
+                $course->user_can_adjust_visibility = true;
+            } else {
+                $course->user_can_adjust_visibility = false;
             }
         }
         $courseset[$id] = $course;
