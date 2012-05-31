@@ -27,6 +27,8 @@ function kent_course_print_overview($courses, array $remote_courses=array()) {
 
         $admin_hide = 'admin_hide';
 
+        $width = '';
+
         if($rollover_installed){
             //Fetch the rollover lib to leverage some functions
             require_once($CFG->dirroot.'/local/rollover/lib.php');
