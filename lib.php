@@ -38,14 +38,13 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
                 if ($perms_to_rollover){
                     $width = 'admin_width';
                     $admin_hide = '';
-                    $list_class = ' class="rollover_'.$rollover_status.'"';
+                    $list_class = 'rollover_'.$rollover_status.' ';
                 }
             }
         }
 
         //Construct link
-        $content .= '<li'.$list_class.'>';
-        $content .= '<div class="course_details_ovrv '.$width.(!$course->visible ? ' course_unavailable' : '') . '" >';
+        $content .= '<li class="'.$list_class.(!$course->visible ? 'course_unavailable' : '').'">';
         if ($course->user_can_adjust_visibility && $course->user_can_view) {
             // if user can view hidden and can adjust visibility, we'll let them change it from here
             if (!empty($course->visible)) {
@@ -55,15 +54,17 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
                 $url = new moodle_url($baseurl, array('show' => $course->id));
                 $img = $OUTPUT->action_icon($url, new pix_icon('t/show', get_string('show')));
             }
-            $content .= "<div class='course_adjust_visibility'>" . $img . "</div>";
+            $content .= "<div class='visibility_tri'></div><div class='course_adjust_visibility'>" . $img . "</div>";
         }
+        $content .= '<div class="course_details_ovrv '.$width. '" >';
+        
         $content .= '<span class="title">'.html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $fullname, $attributes) . '</span>';
 
-        if (!$course->visible) {
+        /*if (!$course->visible) {
             $content .= <<<html
             <div class='course_unavailable_block'>&rsaquo; You are enrolled on this course but the convenor has not yet made it available for viewing.</div>
 html;
-        }
+        }*/
 
         if(isset($course->summary) && $course->summary != ""){
             $content .= ' <span class="course_description">'.$course->summary.'</span>';
@@ -98,7 +99,7 @@ html;
             }
 
 
-            $content .= '</div>';
+            $content .= '</div><div style="clear: both"></div>';
         }
 
         $content .= '</li>';
