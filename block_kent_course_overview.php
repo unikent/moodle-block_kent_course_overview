@@ -33,7 +33,7 @@ class block_kent_course_overview extends block_base {
      * block initializations
      */
     public function init() {
-        $this->title   = get_string('blocktitle', 'block_kent_course_overview');
+        $this->title   = get_string('pluginname', 'block_kent_course_overview');
     }
 
     /**
@@ -81,7 +81,7 @@ class block_kent_course_overview extends block_base {
             }
         }
 
-        
+        $courses = kent_enrol_get_my_courses('id, shortname, modinfo, summary, visible', 'shortname ASC', $page*$perpage, $perpage);
 
         $this->content = new stdClass();
         $this->content->text = '';
@@ -96,8 +96,14 @@ class block_kent_course_overview extends block_base {
         if($installed){
             require_once($CFG->dirroot.'/local/rollover/lib.php');
         }
-        
-        if (has_capability('moodle/site:config', $context) && $installed != FALSE){
+
+        $sql = 'SELECT "user", userid, COUNT(*) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE name = "Teacher (sds)" OR name = "Convenor (sds)" LIMIT 1)';
+        $can_rollover = $DB->get_records_sql($sql);
+
+        $sql = 'SELECT "user", userid, COUNT(*) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE name = "Departmental Administrator" OR name = "Departmental Administrator Delegate" LIMIT 1)';
+        $dep_admin = $DB->get_records_sql($sql);
+
+        if ($can_rollover['user']->count > 0 || has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM))){
 
             $rollover_admin_path = "$CFG->wwwroot/local/rollover/";
             $connect_admin_path = $CFG->wwwroot . '/local/connect/';
@@ -105,13 +111,14 @@ class block_kent_course_overview extends block_base {
             $this->content->text .= $OUTPUT->box_start('generalbox rollover_admin_notification');
             $this->content->text .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
             $this->content->text .= '<p>'.'<a href="'.$rollover_admin_path.'">Rollover admin page</a></p>';
-            $this->content->text .= '<p><a href="'.$connect_admin_path.'">Departmental administrator pages</a></p>';
+
+            if($dep_admin['user']->count > 0 || has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM))) {
+                $this->content->text .= '<p><a href="'.$connect_admin_path.'">Departmental administrator pages</a></p>';
+            }
             $this->content->text .= $OUTPUT->box_end();
             //$this->content->text .= '<br/>';
 
         }
-
-        $courses = kent_enrol_get_my_courses('id, shortname, modinfo, summary, visible', 'shortname ASC', $page*$perpage, $perpage);
 
         $baseurl = new moodle_url($PAGE->URL, array('perpage' => $perpage));
         $coursecount = $courses['totalcourses'];

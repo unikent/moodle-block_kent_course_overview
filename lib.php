@@ -10,6 +10,7 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
 
     foreach ($courses as $course) {
         $fullname = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+        $shortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
         
         if (empty($course->visible)) {
             $extra_class_attributes = ' dimmed';
@@ -58,7 +59,14 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
         }
         $content .= '<div class="course_details_ovrv '.$width. '" >';
         
-        $content .= '<span class="title">'.html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $fullname, $attributes) . '</span>';
+        $name = $fullname;
+        if(isset($CFG->courselistshortnames)) {
+            if($CFG->courselistshortnames === '1') {
+                $name = $shortname . ': ' . $fullname;
+            }
+        }
+
+        $content .= '<span class="title">'.html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $name, $attributes) . '</span>';
 
         if(isset($course->summary) && $course->summary != ""){
             $content .= ' <span class="course_description">'.$course->summary.'</span>';

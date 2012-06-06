@@ -7,5 +7,10 @@ $string['roles_limit'] = ''; //Amount of roles to show under each course, set bl
 
 $string['archive_old_moodle_link_text'] = '';
 $string['archive_current_moodle_link_text'] = '';
+
 $string['admin_course_text'] = 'Below are the modules on which users are enrolled. Admin users may not be enrolled onto any modules. If you need to rollover any modules, or manage your SDS deliveries, please use the links below.';
 $string['staff_toggle'] = 'Teaching staff';
+
+$string['kent_course_overview:editcourse'] = 'View rollover options';
+$string['kent_course_overview:departmentaladmin'] = 'View departmental admin link';
+
