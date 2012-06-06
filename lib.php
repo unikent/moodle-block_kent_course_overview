@@ -60,12 +60,6 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
         
         $content .= '<span class="title">'.html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $fullname, $attributes) . '</span>';
 
-        /*if (!$course->visible) {
-            $content .= <<<html
-            <div class='course_unavailable_block'>&rsaquo; You are enrolled on this course but the convenor has not yet made it available for viewing.</div>
-html;
-        }*/
-
         if(isset($course->summary) && $course->summary != ""){
             $content .= ' <span class="course_description">'.$course->summary.'</span>';
         }
@@ -85,7 +79,7 @@ html;
             switch ($rollover_status) {
                 case 'none':
                     if($rolloverable){
-                        $content .= '<a class="course_rollover_optns new" href="'.$rollover_path.'">Empty course. <br / > Click here to <br /><strong>Rollover course</strong></a>';
+                        $content .= '<a class="course_rollover_optns new" href="'.$rollover_path.'">Empty module. <br / > Click here to <br /><strong>Rollover module</strong></a>';
                     }
                     break;
                 case 'complete':
