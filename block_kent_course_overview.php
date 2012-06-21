@@ -111,23 +111,32 @@ class block_kent_course_overview extends block_base {
 
         $sql = 'SELECT "user", userid, COUNT(ra.id) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE name = "Departmental Administrator" OR name = "Departmental Administrator Delegate" LIMIT 1)';
         $dep_admin = $DB->get_records_sql($sql);
-
+        $box_text = "";
         if ($can_rollover['user']->count > 0 || has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM))){
 
             $rollover_admin_path = "$CFG->wwwroot/local/rollover/";
             $connect_admin_path = $CFG->wwwroot . '/local/connect/';
 
-            $this->content->text .= $OUTPUT->box_start('generalbox rollover_admin_notification');
-            $this->content->text .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
-            $this->content->text .= '<p>'.'<a href="'.$rollover_admin_path.'">Rollover admin page</a></p>';
+            $box_text .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
+            $box_text .= '<p>'.'<a href="'.$rollover_admin_path.'">Rollover admin page</a></p>';
 
             if($dep_admin['user']->count > 0 || has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM))) {
-                $this->content->text .= '<p><a href="'.$connect_admin_path.'">Departmental administrator pages</a></p>';
+                $box_text .= '<p><a href="'.$connect_admin_path.'">Departmental administrator pages</a></p>';
             }
-            $this->content->text .= $OUTPUT->box_end();
+
             //$this->content->text .= '<br/>';
 
         }
+
+        if(has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM)) || has_capability('mod/cla:manage',get_context_instance(CONTEXT_SYSTEM))){
+           $cla_path = $CFG->wwwroot . '/mod/cla/admin.php';
+           $box_text .= '<p><a href="'.$cla_path.'">CLA administration</a></p>';
+        }
+
+        if ($box_text != ""){
+            $this->content->text .= $OUTPUT->box_start('generalbox rollover_admin_notification') . $box_text . $OUTPUT->box_end();
+        }
+
 
         $baseurl = new moodle_url($PAGE->URL, array('perpage' => $perpage));
         $coursecount = $courses['totalcourses'];
