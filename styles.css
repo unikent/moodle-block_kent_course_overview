@@ -2,9 +2,48 @@
     padding: 0px;
 }
 
+.block_kent_course_overview.block div.content .form_container {
+    background: #efefef;
+    border-bottom: 1px solid #fff;
+    height: 35px;
+}
+
+    .block_kent_course_overview.block div.content .form_container #coursesearchbox{
+        width: 89%;
+        padding: 4px;
+        border-color: #dcdcdc;
+        margin: 5px 0 0 5px;
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
+        -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
+        -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .block_kent_course_overview.block div.content .form_container #coursesearchbox:focus{
+       border-color: #90A6C8; 
+    }
+    .block_kent_course_overview.block div.content .form_container .courseoverview_search_sub {
+        width: 8%;
+        border-left: 0px;
+        border-color: #dcdcdc;
+        -webkit-border-radius: 4px;
+        -webkit-border-top-left-radius: 0px;
+        -webkit-border-bottom-left-radius: 0px;
+        -moz-border-radius: 4px;
+        -moz-border-radius-topleft: 0px;
+        -moz-border-radius-bottomleft: 0px;
+        border-radius: 4px;
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+        vertical-align: inherit;
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
+        -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
+        -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
+    }
+
+
 .block_kent_course_overview.block div.content .rollover_admin_notification {
     border:none;
-    border-top: 1px solid #fff;
+    border-top: 1px solid #e3e3e3;
     border-bottom: 1px solid #fff;
     padding: 10px;
     color: #333;
