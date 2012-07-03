@@ -111,12 +111,15 @@ class block_kent_course_overview extends block_base {
 
         $sql = 'SELECT "user", userid, COUNT(ra.id) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE name = "Departmental Administrator" OR name = "Departmental Administrator Delegate" LIMIT 1)';
         $dep_admin = $DB->get_records_sql($sql);
-        
-        $searchform .= '<div class="form_container"><form id="module_search" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-            $searchform .= '<input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" />';
-            $searchform .= '<input class="courseoverview_search_sub" type="submit" value="go" />';
-        $searchform .= '</form></div>';
-        $this->content->text .= $searchform;
+
+        if(isset($CFG->kent_course_overview_search) && $CFG->kent_course_overview_search === true) {
+          $searchform = '';
+          $searchform .= '<div class="form_container"><form id="module_search" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+          $searchform .= '<input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" />';
+          $searchform .= '<input class="courseoverview_search_sub" type="submit" value="go" />';
+          $searchform .= '</form></div>';
+          $this->content->text .= $searchform;
+        }
 
         $box_text = "";
         if ($can_rollover['user']->count > 0 || has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM))){
