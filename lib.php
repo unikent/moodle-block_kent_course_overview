@@ -101,7 +101,7 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
                     $content .= '<div class="course_rollover_optns pending">Rollover in process</div>';
                     break;
                 default:
-                    $content .= '<a class="course_rollover_optns error" href="'.$rollover_path.'">Previous rollover <br /> failed <br /><strong> - please contact an admin.</strong></a>';
+                    $content .= '<a class="course_rollover_optns error" href="'.$rollover_path.'">Previous rollover <br /> failed <br /><strong> - Please contact your FLT if this problem still remains after an hour.</strong></a>';
             }
 
 
