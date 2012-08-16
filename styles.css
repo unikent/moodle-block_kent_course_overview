@@ -40,6 +40,44 @@
         -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
     }
 
+.mymobilecontent .block_kent_course_overview.block div.content .form_container {
+    background: transparent;
+    margin-bottom: 6px;
+}
+
+    .mymobilecontent .block_kent_course_overview.block div.content .form_container #coursesearchbox {
+        -moz-border-radius: 0.6em 0 0 0.6em;
+        -webkit-border-radius: 0.6em 0 0 0.6em;
+        border-radius: 0.6em 0 0 0.6em;
+        margin: 0px;
+        padding: 0px;
+        width: 78%;
+        height: 27px;
+        float: left;
+        text-indent: 8px;
+    }
+
+    .mymobilecontent .block_kent_course_overview.block div.content .form_container .ui-btn {
+        margin: 0px;
+        width: 20%;
+        height: 27px;
+        float: left;
+        border-left: 0px;
+        -moz-border-radius: 0 0.6em 0.6em 0;
+        -webkit-border-radius: 0 0.6em 0.6em 0;
+        border-radius: 0 0.6em 0.6em 0;
+        -moz-box-shadow: 0px 0px 0px /*{global-box-shadow-size}*/ rgba(0,0,0,.3) /*{global-box-shadow-color}*/;
+        -webkit-box-shadow: 0px 0px 0px /*{global-box-shadow-size}*/ rgba(0, 0, 0, .3) /*{global-box-shadow-color}*/;
+        box-shadow: 0px 0px 0px /*{global-box-shadow-size}*/ rgba(0, 0, 0, .3) /*{global-box-shadow-color}*/;
+    }
+
+        .mymobilecontent .block_kent_course_overview.block div.content .form_container .ui-btn .ui-btn-inner {
+            padding: 3px 0 0 0;
+        }
+
+            .mymobilecontent .block_kent_course_overview.block div.content .form_container .ui-btn .courseoverview_search_sub {
+                width: 100%;
+            } 
 
 .block_kent_course_overview.block div.content .rollover_admin_notification {
     border:none;
