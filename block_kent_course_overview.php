@@ -126,11 +126,13 @@ class block_kent_course_overview extends block_base {
 
             $rollover_admin_path = "$CFG->wwwroot/local/rollover/";
             $connect_admin_path = $CFG->wwwroot . '/local/connect/';
+            $meta_admin_path = $CFG->wwwroot . '/local/kentmetacourse';
             $box_text .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
             $box_text .= '<p>'.'<a href="'.$rollover_admin_path.'">Rollover admin page</a></p>';
 
             if($dep_admin['user']->count > 0 || has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM))) {
                 $box_text .= '<p><a href="'.$connect_admin_path.'">Departmental administrator pages</a></p>';
+                $box_text .= '<p><a href="'.$meta_admin_path.'">Kent meta enrollment pages</a></p>';
             }
 
             //$this->content->text .= '<br/>';
