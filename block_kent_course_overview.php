@@ -97,10 +97,19 @@ class block_kent_course_overview extends block_base {
             require_once($CFG->dirroot.'/local/rollover/lib.php');
         }
 
-        $sql = 'SELECT "user", userid, COUNT(*) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE name = "Teacher (sds)" OR name = "Convenor (sds)" LIMIT 1)';
-        $can_rollover = $DB->get_records_sql($sql);
+        //$sql = 'SELECT "user", userid, COUNT(*) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE name = "Teacher (sds)" OR name = "Convenor (sds)" LIMIT 1)';
+        $params['capability'] = 'moodle/course:update';
+        $sql = "SELECT 'user', userid, COUNT(ra.id) as count
+                FROM mdl_role_assignments ra 
+                WHERE userid ={$USER->id} AND roleid IN (
+                    SELECT DISTINCT roleid
+                    FROM {$CFG->prefix}role_capabilities rc
+                    WHERE rc.capability=:capability AND rc.permission=1 ORDER BY rc.roleid ASC
+                )";
 
-        $sql = 'SELECT "user", userid, COUNT(*) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE name = "Departmental Administrator" OR name = "Departmental Administrator Delegate" LIMIT 1)';
+        $can_rollover = $DB->get_records_sql($sql, $params);
+
+        $sql = 'SELECT "user", userid, COUNT(ra.id) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE name = "Departmental Administrator" OR name = "Departmental Administrator Delegate" LIMIT 1)';
         $dep_admin = $DB->get_records_sql($sql);
 
         if ($can_rollover['user']->count > 0 || has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM))){
