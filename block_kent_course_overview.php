@@ -109,7 +109,7 @@ class block_kent_course_overview extends block_base {
 
         $can_rollover = $DB->get_records_sql($sql, $params);
 
-        $sql = 'SELECT "user", userid, COUNT(ra.id) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE name = "Departmental Administrator" OR name = "Departmental Administrator Delegate" LIMIT 1)';
+        $sql = 'SELECT "user", userid, COUNT(ra.id) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE shortname = "dep_admin" LIMIT 1)';
         $dep_admin = $DB->get_records_sql($sql);
 
         if(isset($CFG->kent_course_overview_search) && $CFG->kent_course_overview_search === true) {
