@@ -256,11 +256,11 @@
             
 
     #kent_course_list_overview .rollover_complete{
-        background: #FFF;
+        background: #fff;
     }
 
     #kent_course_list_overview .rollover_processing{
-        background: #AAA;
+        background: #fff;
     }
 
     #kent_course_list_overview .restoreerror,
