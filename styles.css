@@ -289,7 +289,8 @@
                 text-decoration: none;
             }
         
-            #kent_course_list_overview  .course_admin_options .course_rollover_optns {
+            #kent_course_list_overview  .course_admin_options .course_rollover_optns,
+            #kent_course_list_overview  .course_admin_options .course_clear_optns {
                 display: block;
                 padding: 10px;
                 background: #E0E0E0;
@@ -405,3 +406,12 @@ border-bottom-left-radius: 5px;
     }
 
 
+#dialog_sure,
+#dialog_clear_error{
+    display: none;
+}
+
+.blockui_loading{
+    padding: 150px 20px 30px;
+    background: url('/pix/i/loading.gif') no-repeat center 30px;
+}

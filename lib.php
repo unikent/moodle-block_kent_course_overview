@@ -81,17 +81,27 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
         if($rollover_installed && $perms_to_rollover){
 
             $rollover_path = $CFG->wwwroot.'/local/rollover/index.php#rollover_form_'.$course->id;
+            $clear_path = $CFG->wwwroot.'/local/rollover/clear.php';
+
+            if($rollover_status == "none" && !($rolloverable) && !empty($CFG->block_kent_course_overview_clearmodule)){
+                $admin_hide = '';
+            }
 
             $content .= ' <div class="course_admin_options '.$admin_hide.'">';
-
             switch ($rollover_status) {
                 case 'none':
                     if($rolloverable){
                         $content .= '<a class="course_rollover_optns new" href="'.$rollover_path.'">Empty module. <br / > Click here to <br /><strong>Rollover module</strong></a>';
+                    } elseif(!empty($CFG->block_kent_course_overview_clearmodule)) {
+                        $admin_hide = '';
+                        $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.get_string('clearmodulebutton', 'block_kent_course_overview').'</a>'; 
                     }
                     break;
                 case 'complete':
-                    $content .= '';
+                    if(!empty($CFG->block_kent_course_overview_clearmodule)){
+                        $admin_hide = '';
+                        $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.get_string('clearmodulebutton', 'block_kent_course_overview').'</a>';
+                    }
                     break;
                 case 'requested':
                     $content .= '<div class="course_rollover_optns pending">Rollover pending</div>';

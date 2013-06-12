@@ -14,3 +14,10 @@ $string['staff_toggle'] = 'Teaching staff';
 $string['kent_course_overview:editcourse'] = 'View rollover options';
 $string['kent_course_overview:departmentaladmin'] = 'View departmental admin link';
 
+$string['areyousure'] = 'Are you sure you want to do this?  Action cannot be reversed if you click yes.';
+$string['clearerror'] = 'Sorry, there was a problem clearing out your module.  It may have been taking too long to clear.  Please report this issue to an administrator.';
+$string['clearmodulebutton'] = 'Empty this module';
+$string['rolledoverclearmodulebutton'] = 'Rollover complete. Empty this module';
+
+$string['clearmoduleoption'] = 'Enable clear module option';
+$string['configclearmoduleoption'] = 'Enabling this option will give course editors and admins the option of clearing their module.';

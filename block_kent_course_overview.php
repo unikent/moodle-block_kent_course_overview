@@ -198,6 +198,13 @@ class block_kent_course_overview extends block_base {
 
         $this->content->text .= '<script src="' . $CFG->wwwroot . '/lib/jquery/jquery-1.7.1.min.js" type="text/javascript"></script>';
         $this->content->text .= '<script src="' . $CFG->wwwroot . '/blocks/kent_course_overview/js/showhide.js" type="text/javascript"></script>';
+        $this->content->text .= '<script type="text/javascript"> window.clearCourseUrl = "'.$CFG->wwwroot.'/local/rollover/clear.php";</script>';
+        $this->content->text .= '<script src="' . $CFG->wwwroot . '/local/rollover/scripts/js/jquery.blockUI.js" type="text/javascript"></script>';
+        $this->content->text .= '<script src="' . $CFG->wwwroot . '/local/rollover/scripts/js/jquery-ui-1.8.17.custom.min.js" type="text/javascript"></script>';
+        $this->content->text .= '<script src="' . $CFG->wwwroot . '/blocks/kent_course_overview/js/clear-course.js" type="text/javascript"></script>'; 
+        $this->content->text .= '<link rel="stylesheet" href="' . $CFG->wwwroot . '/local/rollover/scripts/css/ui-lightness/jquery-ui-1.8.17.custom.css" type="text/css" />';
+        $this->content->text .= '<div id="dialog_sure">'.get_string('areyousure', 'block_kent_course_overview').'</div>';
+        $this->content->text .= '<div id="dialog_clear_error">'.get_string('clearerror', 'block_kent_course_overview').'</div>';
 
         return $this->content;
     }
@@ -208,7 +215,7 @@ class block_kent_course_overview extends block_base {
      * @return boolean
      */
     public function has_config() {
-        return false;
+        return true;
     }
 
     /**
