@@ -238,7 +238,7 @@
                 }
 
             #kent_course_list_overview .course_details_ovrv .teachers_show_hide {
-                background: url(../blocks/kent_course_overview/pix/switch_plus.png) no-repeat left center;
+                background: url(/blocks/kent_course_overview/pix/switch_plus.png) no-repeat left center;
                 font-size: 14px;
                 color: #264F9C;
                 padding-left: 20px;
@@ -247,7 +247,7 @@
             }
 
             #kent_course_list_overview .course_details_ovrv .teachers_show_hide.hide {
-                background: url(../blocks/kent_course_overview/pix/switch_minus.png) no-repeat left center;
+                background: url(/blocks/kent_course_overview/pix/switch_minus.png) no-repeat left center;
             }
 
             #kent_course_list_overview .course_details_ovrv .teachers_show_hide:hover {
