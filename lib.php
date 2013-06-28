@@ -247,7 +247,7 @@ function kent_archive_moodle_link(){
 
         }
 
-        $archive_link = '<div class="archive_link"><a href="'.$archive_path.'">'.$archive_link_text.'</a></div>';
+        $archive_link = '<div class="archive_link">'.get_string('archives_text', 'block_kent_course_overview').'</div>';
 
         $output = $archive_link;
 
