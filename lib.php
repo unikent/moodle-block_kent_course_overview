@@ -368,7 +368,10 @@ function kent_enrol_get_my_courses($fields = NULL, $sort = 'sortorder ASC', $pag
 
     // preload contexts and check visibility
     foreach ($courseset as $id=>$course) {
+        
+        // TODO: context_instance_preload depricated feature in 2.2 removed 2.5
         context_instance_preload($course);
+        
         /*if (!$course->visible) {
             if (!$context = get_context_instance(CONTEXT_COURSE, $id)) {
                 unset($courseset[$id]);
@@ -395,4 +398,122 @@ function kent_enrol_get_my_courses($fields = NULL, $sort = 'sortorder ASC', $pag
     }
 
     return array('totalcourses' => $totalcourses, 'courses' => $courseset);
+}
+
+function kent_enrol_get_my_categories($fields = NULL, $sort = 'sortorder ASC') {
+    global $DB, $USER;
+
+    // Guest account does not have any courses
+    if (isguestuser() or !isloggedin()) {
+        return(array());
+    }
+
+    $basefields = array('cc.id', 'cc.name', 'cc.sortorder');
+
+    if (empty($fields)) {
+        $fields = $basefields;
+    } else if (is_string($fields)) {
+        // turn the fields from a string to an array
+        $fields = explode(',', $fields);
+        $fields = array_map('trim', $fields);
+        $fields = array_unique(array_merge($basefields, $fields));
+    } else if (is_array($fields)) {
+        $fields = array_unique(array_merge($basefields, $fields));
+    } else {
+        throw new coding_exception('Invalid $fields parameter in kent_enrol_get_my_categories()');
+    }
+    if (in_array('*', $fields)) {
+        $fields = array('*');
+    }
+
+    $orderby = "";
+    $sort    = trim($sort);
+    if (!empty($sort)) {
+        $rawsorts = explode(',', $sort);
+        $sorts = array();
+        foreach ($rawsorts as $rawsort) {
+            $rawsort = trim($rawsort);
+            if (strpos($rawsort, 'c.') === 0) {
+                $rawsort = substr($rawsort, 2);
+            }
+            $sorts[] = trim($rawsort);
+        }
+        $sort = 'c.'.implode(',c.', $sorts);
+        $orderby = "ORDER BY $sort";
+    }
+
+    $wheres = array("u.id = :userid");
+
+    $coursefields = 'c.' .join(',c.', $fields);
+
+    $wheres = implode(" AND ", $wheres);
+
+    //note: we can not use DISTINCT + text fields due to Oracle and MS limitations, that is why we have the subselect there
+
+        /*
+        SELECT cc.name, cc.id, u.*
+        from mdl_course_categories cc
+        JOIN mdl_context c
+        ON cc.id=c.instanceid
+        AND c.contextlevel=40 -- Magic number
+        JOIN mdl_role_assignments ra
+        ON ra.contextid=c.id
+        JOIN mdl_user u
+        ON ra.userid=u.id
+        */
+
+
+    $sql = "SELECT cc.name, cc.id, cc.sortorder
+            FROM {course_categories} cc
+            JOIN {context} c
+            ON cc.id=c.instanceid
+            AND c.contextlevel=40 -- Magic number
+            JOIN {role_assignments} ra
+            ON ra.contextid=c.id
+            JOIN {user} u
+            ON ra.userid=u.id
+            WHERE $wheres
+            $orderby";
+    $params['userid']  = $USER->id;
+
+    //$totalcategories = count($DB->get_records_sql($sql, $params));
+    //$categories = $DB->get_records_sql($sql, $params, $page, $perpage);
+    $categories = $DB->get_records_sql($sql, $params);
+
+    $totalcategories = count($categories);
+
+    //echo var_dump(array('totalcategories' => $totalcategories, 'categories' => $categories));
+
+    return array('totalcategories' => $totalcategories, 'categories' => $categories);
+}
+
+
+function kent_category_print_overview($categories, $baseurl) {
+    global $CFG, $USER, $DB, $OUTPUT;
+
+    $content = '';
+    $extra_class_attributes = '';
+
+    foreach ($categories as $category) {
+        $width='';
+        $attributes = array('title' => s($category->name), 'class' => 'course_list');
+
+        //Construct link
+        $content .= '<li class="course">';
+        $content .= '<div class="course_details_ovrv '.$width. '" >';
+        
+        $content .= '<span class="title">'.html_writer::link(new moodle_url('/course/category.php', array('id' => $category->id)), $category->name, $attributes) . '</span>';
+
+        $content .= '</div><div style="clear: both"></div>';
+
+        $content .= '</li>';
+
+    }
+
+    if($content != ''){
+        $content = '<ul id="kent_category_list_overview">'.$content.'</ul>';
+    }
+
+    return $content;
+
 }

@@ -81,7 +81,41 @@ class block_kent_course_overview extends block_base {
             }
         }
 
-        $courses = kent_enrol_get_my_courses('id, shortname, modinfo, summary, visible', 'shortname ASC', $page*$perpage, $perpage);
+        // Fetch the Categories that user is enrolled in 
+        $categories = kent_enrol_get_my_categories('*','');
+        //echo var_dump($categories);
+        $offset=isset($categories['totalcategories'])?$categories['totalcategories']:0;
+
+        // Calculate courses to add after category records
+        // TODO: Clean up so if more that perpage categories ($offset) are available then pagination works?
+
+        if ($offset>$perpage && $page==0) {
+            $pagelength=0;
+            $pagestart=0;
+        } elseif ($offset>0 && $page==0) {
+            $pagelength = $perpage-$offset;
+            $pagestart=0;
+        } elseif ($offset>0 && $page>0) {
+            // TODO: check logic for page 1+ 
+            $pagelength = $perpage;
+            if ($offset<=$perpage) {
+                $pagestart=$page*$perpage-$offset;
+            } else {
+                $pagestart=($page-1)*$perpage;
+            }
+        } else {
+            $pagelength = $perpage;
+            $pagestart=$page*$perpage;
+        }
+
+        // Get the courses for the current page
+
+        if ($pagelength>0) {
+            $courses = kent_enrol_get_my_courses('id, shortname, modinfo, summary, visible', 'shortname ASC', $pagestart, $pagelength);
+        } else {
+            $courses = kent_enrol_get_my_courses('id, shortname, modinfo, summary, visible', 'shortname ASC', 0, 1);
+            $courses['courses']=array();
+        }
 
         $this->content = new stdClass();
         $this->content->text = '';
@@ -180,7 +214,14 @@ class block_kent_course_overview extends block_base {
         }
 
 
+        //Print the category enrollment information
+        if (empty($categories['categories'])) {
+            $this->content->text .= '<div class="co_no_crs">' . get_string('nocategories', 'block_kent_course_overview') . '</div>';
+        } else {
+            $this->content->text .= kent_category_print_overview($categories['categories'], $baseactionurl);
+        }
 
+        //Print the course enrollment information
         if (empty($courses['courses'])) {
             $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
         } else {

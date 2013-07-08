@@ -1,7 +1,10 @@
 <?php
 $string['pluginname'] = 'Kent course overview';
 $string['blocktitle'] = 'My modules';
+
+$string['nocategories'] = 'Sorry, there are no category enrollments to show.';
 $string['nocourses'] = 'Sorry, there is currently no module information to show.';
+
 $string['ignore_roles'] = ''; //Comma separated list of role ids to ignore from the course overview list
 $string['roles_limit'] = ''; //Amount of roles to show under each course, set blank for no limit
 
