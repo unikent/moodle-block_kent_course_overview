@@ -184,7 +184,7 @@ class block_kent_course_overview extends block_base {
 
 
         $baseurl = new moodle_url($PAGE->URL, array('perpage' => $perpage));
-        $coursecount = $courses['totalcourses'];
+        $coursecount = $courses['totalcourses']+$categories['totalcategories'];
 
         $paging = $OUTPUT->paging_bar($coursecount, $page, $perpage, $baseurl);
         if($paging != '<div class="paging"></div>') {
@@ -215,9 +215,7 @@ class block_kent_course_overview extends block_base {
 
 
         //Print the category enrollment information
-        if (empty($categories['categories'])) {
-            $this->content->text .= '<div class="co_no_crs">' . get_string('nocategories', 'block_kent_course_overview') . '</div>';
-        } else {
+        if (!empty($categories['categories']) && ($page == 0)) {
             $this->content->text .= kent_category_print_overview($categories['categories'], $baseactionurl);
         }
 
