@@ -97,7 +97,7 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
                         $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.get_string('clearmodulebutton', 'block_kent_course_overview').'</a>'; 
                     }
                     break;
-                case 'complete':
+                case 'completed':
                     if(!empty($CFG->block_kent_course_overview_clearmodule)){
                         $admin_hide = '';
                         $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.get_string('clearmodulebutton', 'block_kent_course_overview').'</a>';
