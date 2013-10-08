@@ -453,5 +453,5 @@ border-bottom-left-radius: 5px;
 
 .blockui_loading{
     padding: 150px 20px 30px;
-    background: url('/pix/i/loading.gif') no-repeat center 30px;
+    background: url([[pix:theme|i/loading.gif]]) no-repeat center 30px;
 }
