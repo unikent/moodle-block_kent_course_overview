@@ -74,7 +74,7 @@ class block_kent_course_overview extends block_base {
             }
 
             if ($course) {
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+                $coursecontext = context_course::instance($course->id);
                 require_capability('moodle/course:visibility', $coursecontext);
                 // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
                 $DB->update_record('course', array('id' => $course->id, 'visible' => $visible, 'visibleold' => $visible, 'timemodified' => time()));

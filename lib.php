@@ -9,8 +9,8 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
     $extra_class_attributes = '';
 
     foreach ($courses as $course) {
-        $fullname = format_string($course->fullname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
-        $shortname = format_string($course->shortname, true, array('context' => get_context_instance(CONTEXT_COURSE, $course->id)));
+        $fullname = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
+        $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
         
         if (empty($course->visible)) {
             $extra_class_attributes = ' dimmed';
@@ -18,7 +18,7 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
 
         $attributes = array('title' => s($fullname), 'class' => 'course_list');
 
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
+        $context = context_course::instance($course->id);
         $perms_to_rollover = has_capability('moodle/course:update', $context);
 
         //Ensure Rollover is installed before we do anything and that the course doesn't have content.
@@ -376,7 +376,7 @@ function kent_enrol_get_my_courses($fields = NULL, $sort = 'sortorder ASC', $pag
         context_instance_preload($course);
         
         /*if (!$course->visible) {
-            if (!$context = get_context_instance(CONTEXT_COURSE, $id)) {
+            if (!$context = context_course::instance($id)) {
                 unset($courseset[$id]);
                 continue;
             }
@@ -385,7 +385,7 @@ function kent_enrol_get_my_courses($fields = NULL, $sort = 'sortorder ASC', $pag
                 continue;
             }
         }*/
-        if ($context = get_context_instance(CONTEXT_COURSE, $id)) {
+        if ($context = context_course::instance($id)) {
             if (has_capability('moodle/course:viewhiddencourses', $context)) {
                 $course->user_can_view = true;
             } else {
