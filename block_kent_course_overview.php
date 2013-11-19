@@ -121,7 +121,7 @@ class block_kent_course_overview extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        $context = get_context_instance(CONTEXT_SYSTEM);
+        $context = context_system::instance();
 
         //Firstly... lets check if the user is an admin, and direct accordingly.
 
@@ -156,7 +156,7 @@ class block_kent_course_overview extends block_base {
         }
 
         $box_text = "";
-        if ($can_rollover['user']->count > 0 || has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM))){
+        if ($can_rollover['user']->count > 0 || has_capability('moodle/site:config',context_system::instance())){
 
             $rollover_admin_path = "$CFG->wwwroot/local/rollover/";
             $connect_admin_path = $CFG->wwwroot . '/local/connect/';
@@ -164,7 +164,7 @@ class block_kent_course_overview extends block_base {
             $box_text .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
             $box_text .= '<p>'.'<a href="'.$rollover_admin_path.'">Rollover admin page</a></p>';
 
-            if($dep_admin['user']->count > 0 || has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM))) {
+            if($dep_admin['user']->count > 0 || has_capability('moodle/site:config',context_system::instance())) {
                 $box_text .= '<p><a href="'.$connect_admin_path.'">Departmental administrator pages</a></p>';
                 $box_text .= '<p><a href="'.$meta_admin_path.'">Kent meta enrollment pages</a></p>';
             }
@@ -173,7 +173,7 @@ class block_kent_course_overview extends block_base {
 
         }
 
-        if(has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM)) || has_capability('mod/cla:manage',get_context_instance(CONTEXT_SYSTEM))){
+        if(has_capability('moodle/site:config',context_system::instance()) || has_capability('mod/cla:manage',context_system::instance())){
            $cla_path = $CFG->wwwroot . '/mod/cla/admin.php';
            $box_text .= '<p><a href="'.$cla_path.'">CLA administration</a></p>';
         }
