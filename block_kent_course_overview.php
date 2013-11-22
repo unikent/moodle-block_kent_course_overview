@@ -266,4 +266,3 @@ class block_kent_course_overview extends block_base {
         return array('my-index'=>true);
     }
 }
-?>
