@@ -123,26 +123,29 @@ class block_kent_course_overview extends block_base {
         $this->content->footer = '';
 
         $context = context_system::instance();
+        $isSiteAdmin = has_capability('moodle/site:config', $context);
 
         //Firstly... lets check if the user is an admin, and direct accordingly.
-
-        //$sql = 'SELECT "user", userid, COUNT(*) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE name = "Teacher (sds)" OR name = "Convenor (sds)" LIMIT 1)';
-        $params['capability'] = 'moodle/course:update';
-        $params['userid'] = $USER->id;
-        $sql = "SELECT 'user', userid, COUNT(ra.id) as count
-                FROM {role_assignments} ra 
-                WHERE userid = :userid AND roleid IN (
-                    SELECT DISTINCT roleid
-                    FROM {role_capabilities} rc
-                    WHERE rc.capability = :capability AND rc.permission = 1 ORDER BY rc.roleid ASC
-                )";
-
-        $can_rollover = $DB->get_records_sql($sql, $params);
+        $can_rollover = $isSiteAdmin;
+        if (!$can_rollover) {
+            $sql = "SELECT 'user', userid, COUNT(ra.id) as count
+                    FROM {role_assignments} ra 
+                    WHERE userid = :userid AND roleid IN (
+                        SELECT DISTINCT roleid
+                        FROM {role_capabilities} rc
+                        WHERE rc.capability = :capability AND rc.permission = 1 ORDER BY rc.roleid ASC
+                    )";
+            $query = $DB->get_records_sql($sql, array(
+                'capability' => 'moodle/course:update',
+                'userid' => $USER->id
+            ));
+            $can_rollover = $query['user']->count > 0;
+        }
 
         $sql = 'SELECT "user", userid, COUNT(ra.id) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE shortname = "dep_admin" LIMIT 1)';
         $dep_admin = $DB->get_records_sql($sql);
 
-        if(isset($CFG->kent_course_overview_search) && $CFG->kent_course_overview_search === true) {
+        if (isset($CFG->kent_course_overview_search) && $CFG->kent_course_overview_search === true) {
           $searchform = '';
           $searchform .= '<div class="form_container"><form id="module_search" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
           $searchform .= '<input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" />';
@@ -152,7 +155,7 @@ class block_kent_course_overview extends block_base {
         }
 
         $box_text = "";
-        if ($can_rollover['user']->count > 0 || has_capability('moodle/site:config',context_system::instance())){
+        if ($can_rollover) {
 
             $rollover_admin_path = "$CFG->wwwroot/local/rollover/";
             $connect_admin_path = $CFG->wwwroot . '/local/connect/';
@@ -160,16 +163,13 @@ class block_kent_course_overview extends block_base {
             $box_text .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
             $box_text .= '<p>'.'<a href="'.$rollover_admin_path.'">Rollover admin page</a></p>';
 
-            if($dep_admin['user']->count > 0 || has_capability('moodle/site:config',context_system::instance())) {
+            if ($dep_admin['user']->count > 0 || $isSiteAdmin) {
                 $box_text .= '<p><a href="'.$connect_admin_path.'">Departmental administrator pages</a></p>';
                 $box_text .= '<p><a href="'.$meta_admin_path.'">Kent meta enrollment pages</a></p>';
             }
-
-            //$this->content->text .= '<br/>';
-
         }
 
-        if(has_capability('moodle/site:config',context_system::instance()) || has_capability('mod/cla:manage',context_system::instance())){
+        if ($isSiteAdmin || has_capability('mod/cla:manage', context_system::instance())){
            $cla_path = $CFG->wwwroot . '/mod/cla/admin.php';
            $box_text .= '<p><a href="'.$cla_path.'">CLA administration</a></p>';
         }
@@ -178,17 +178,14 @@ class block_kent_course_overview extends block_base {
             $this->content->text .= $OUTPUT->box_start('generalbox rollover_admin_notification') . $box_text . $OUTPUT->box_end();
         }
 
-
         $baseurl = new moodle_url($PAGE->URL, array('perpage' => $perpage));
-        $coursecount = $courses['totalcourses']+$categories['totalcategories'];
+        $coursecount = $courses['totalcourses'] + $categories['totalcategories'];
 
         $paging = $OUTPUT->paging_bar($coursecount, $page, $perpage, $baseurl);
-        if($paging != '<div class="paging"></div>') {
+        if ($paging != '<div class="paging"></div>') {
             $this->content->text .= $paging;
         }
         
-
-
         $site = get_site();
         $course = $site; //just in case we need the old global $course hack
 

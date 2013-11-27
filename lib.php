@@ -226,7 +226,6 @@ function kent_add_teachers($course, $context){
 function kent_enrol_get_my_courses($fields = NULL, $sort = 'sortorder ASC', $page, $perpage) {
     $courses = enrol_get_my_courses($fields, $sort);
     $courseset = array_slice($courses, $page, $perpage, true);
-
     return array('totalcourses' => count($courses), 'courses' => $courseset);
 }
 
