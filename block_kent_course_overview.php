@@ -43,17 +43,18 @@ class block_kent_course_overview extends block_base {
      */
     public function get_content() {
         global $USER, $CFG, $OUTPUT, $DB, $PAGE;
-        if($this->content !== NULL) {
+
+        if ($this->content !== NULL) {
             return $this->content;
         }
 
-        // get hide/show params (for quick visbility changes)
+        // Get hide/show params (for quick visbility changes)
         $hide = optional_param('hide', 0, PARAM_INT);
         $show = optional_param('show', 0, PARAM_INT);
         $page = optional_param('page', 0, PARAM_INT);
-        $perpage = optional_param('perpage', 20, PARAM_INT);        // how many per page
+        $perpage = optional_param('perpage', 20, PARAM_INT);
 
-        // generate page url for page actions from current params
+        // Generate page url for page actions from current params
         $params = array();
         if ($page) {
             $params['page'] = $page;
@@ -63,7 +64,7 @@ class block_kent_course_overview extends block_base {
         }
         $baseactionurl = new moodle_url($PAGE->URL, $params);
 
-        // process show/hide if there is one
+        // Process show/hide if there is one
         if (!empty($hide) or !empty($show)) {
             if (!empty($hide)) {
                 $course = $DB->get_record('course', array('id' => $hide));
