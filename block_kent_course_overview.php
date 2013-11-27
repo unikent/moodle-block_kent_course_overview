@@ -122,13 +122,21 @@ class block_kent_course_overview extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        $context = context_system::instance();
-        $isSiteAdmin = has_capability('moodle/site:config', $context);
+        // Build the search box
+        $searchform = '';
+        $searchform .= '<div class="form_container"><form id="module_search" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
+        $searchform .= '<input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" />';
+        $searchform .= '<input class="courseoverview_search_sub" type="submit" value="go" />';
+        $searchform .= '</form></div>';
+        $this->content->text .= $searchform;
 
-        //Firstly... lets check if the user is an admin, and direct accordingly.
+        // Are we an admin?
+        $isSiteAdmin = has_capability('moodle/site:config', context_system::instance());
+
+        // Can we rollover any module?
         $can_rollover = $isSiteAdmin;
         if (!$can_rollover) {
-            $sql = "SELECT 'user', userid, COUNT(ra.id) as count
+            $sql = "SELECT 'user', COUNT(ra.id) as count
                     FROM {role_assignments} ra 
                     WHERE userid = :userid AND roleid IN (
                         SELECT DISTINCT roleid
@@ -142,41 +150,51 @@ class block_kent_course_overview extends block_base {
             $can_rollover = $query['user']->count > 0;
         }
 
-        $sql = 'SELECT "user", userid, COUNT(ra.id) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE shortname = "dep_admin" LIMIT 1)';
-        $dep_admin = $DB->get_records_sql($sql);
-
-        if (isset($CFG->kent_course_overview_search) && $CFG->kent_course_overview_search === true) {
-          $searchform = '';
-          $searchform .= '<div class="form_container"><form id="module_search" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-          $searchform .= '<input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" />';
-          $searchform .= '<input class="courseoverview_search_sub" type="submit" value="go" />';
-          $searchform .= '</form></div>';
-          $this->content->text .= $searchform;
+        // Can we see the DA pages?
+        $dep_admin = $isSiteAdmin;
+        if (!$dep_admin) {
+            $sql = "SELECT 'user', COUNT(ra.id) as count 
+                    FROM {role_assignments} ra
+                    WHERE userid = :userid AND roleid = (
+                        SELECT id FROM {role} WHERE shortname = :shortname LIMIT 1
+                    )";
+            $query = $DB->get_records_sql($sql, array(
+                'userid' => $USER->id,
+                'shortname' => 'dep_admin'
+            ));
+            $dep_admin = $query['user']->count > 0;
         }
 
+        // ----------------------------------------------------------------------------------------------------------------------
+        // Main admin box
+        
+        // Build the main admin box
         $box_text = "";
         if ($can_rollover) {
+            $box_text .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
 
             $rollover_admin_path = "$CFG->wwwroot/local/rollover/";
-            $connect_admin_path = $CFG->wwwroot . '/local/connect/';
-            $meta_admin_path = $CFG->wwwroot . '/local/kentmetacourse';
-            $box_text .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
             $box_text .= '<p>'.'<a href="'.$rollover_admin_path.'">Rollover admin page</a></p>';
 
-            if ($dep_admin['user']->count > 0 || $isSiteAdmin) {
+            if ($dep_admin) {
+                $connect_admin_path = $CFG->wwwroot . '/local/connect/';
                 $box_text .= '<p><a href="'.$connect_admin_path.'">Departmental administrator pages</a></p>';
+                
+                $meta_admin_path = $CFG->wwwroot . '/local/kentmetacourse';
                 $box_text .= '<p><a href="'.$meta_admin_path.'">Kent meta enrollment pages</a></p>';
             }
         }
-
-        if ($isSiteAdmin || has_capability('mod/cla:manage', context_system::instance())){
+        if ($isSiteAdmin || has_capability('mod/cla:manage', context_system::instance())) {
            $cla_path = $CFG->wwwroot . '/mod/cla/admin.php';
            $box_text .= '<p><a href="'.$cla_path.'">CLA administration</a></p>';
         }
 
-        if ($box_text != ""){
+        // Finalise the main admin block
+        if ($box_text != "") {
             $this->content->text .= $OUTPUT->box_start('generalbox rollover_admin_notification') . $box_text . $OUTPUT->box_end();
         }
+
+        // ----------------------------------------------------------------------------------------------------------------------
 
         $baseurl = new moodle_url($PAGE->URL, array('perpage' => $perpage));
         $coursecount = $courses['totalcourses'] + $categories['totalcategories'];
