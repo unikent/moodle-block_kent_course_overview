@@ -112,9 +112,9 @@ class block_kent_course_overview extends block_base {
         // Get the courses for the current page
 
         if ($pagelength>0) {
-            $courses = kent_enrol_get_my_courses('id, shortname, modinfo, summary, visible', 'shortname ASC', $pagestart, $pagelength);
+            $courses = kent_enrol_get_my_courses('id, shortname, summary, visible', 'shortname ASC', $pagestart, $pagelength);
         } else {
-            $courses = kent_enrol_get_my_courses('id, shortname, modinfo, summary, visible', 'shortname ASC', 0, 1);
+            $courses = kent_enrol_get_my_courses('id, shortname, summary, visible', 'shortname ASC', 0, 1);
             $courses['courses']=array();
         }
 
@@ -126,20 +126,15 @@ class block_kent_course_overview extends block_base {
 
         //Firstly... lets check if the user is an admin, and direct accordingly.
 
-        $installed = $DB->get_records('config_plugins', array('plugin'=>'local_rollover'), '', 'plugin');
-        //Fetch the rollover lib if its installed
-        if($installed){
-            require_once($CFG->dirroot.'/local/rollover/lib.php');
-        }
-
         //$sql = 'SELECT "user", userid, COUNT(*) as count FROM mdl_role_assignments ra WHERE userid ='. $USER->id.' AND roleid = (SELECT id FROM mdl_role WHERE name = "Teacher (sds)" OR name = "Convenor (sds)" LIMIT 1)';
         $params['capability'] = 'moodle/course:update';
+        $params['userid'] = $USER->id;
         $sql = "SELECT 'user', userid, COUNT(ra.id) as count
-                FROM mdl_role_assignments ra 
-                WHERE userid ={$USER->id} AND roleid IN (
+                FROM {role_assignments} ra 
+                WHERE userid = :userid AND roleid IN (
                     SELECT DISTINCT roleid
-                    FROM {$CFG->prefix}role_capabilities rc
-                    WHERE rc.capability=:capability AND rc.permission=1 ORDER BY rc.roleid ASC
+                    FROM {role_capabilities} rc
+                    WHERE rc.capability = :capability AND rc.permission = 1 ORDER BY rc.roleid ASC
                 )";
 
         $can_rollover = $DB->get_records_sql($sql, $params);
