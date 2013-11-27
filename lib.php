@@ -9,8 +9,9 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
     $extra_class_attributes = '';
 
     foreach ($courses as $course) {
-        $fullname = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
-        $shortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
+        $context = context_course::instance($course->id);
+        $fullname = format_string($course->fullname, true, array('context' => $context));
+        $shortname = format_string($course->shortname, true, array('context' => $context));
         
         if (empty($course->visible)) {
             $extra_class_attributes = ' dimmed';
@@ -18,7 +19,6 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
 
         $attributes = array('title' => s($fullname), 'class' => 'course_list');
 
-        $context = context_course::instance($course->id);
         $perms_to_rollover = has_capability('moodle/course:update', $context);
 
         //Ensure Rollover is installed before we do anything and that the course doesn't have content.
@@ -46,7 +46,7 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
 
         //Construct link
         $content .= '<li class="'.$list_class.(!$course->visible ? 'course_unavailable' : '').'">';
-        if ($course->user_can_adjust_visibility && $course->user_can_view) {
+        if (has_capability('moodle/course:visibility', $context) && has_capability('moodle/course:viewhiddencourses', $context)) {
             // if user can view hidden and can adjust visibility, we'll let them change it from here
             if (!empty($course->visible)) {
                 $url = new moodle_url($baseurl, array('hide' => $course->id));
