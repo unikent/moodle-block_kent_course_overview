@@ -84,38 +84,36 @@ class block_kent_course_overview extends block_base {
 
         // Fetch the Categories that user is enrolled in 
         $categories = kent_enrol_get_my_categories('*','');
-        //echo var_dump($categories);
-        $offset=isset($categories['totalcategories'])?$categories['totalcategories']:0;
+        $offset = isset($categories['totalcategories']) ? $categories['totalcategories'] : 0;
 
         // Calculate courses to add after category records
-        // TODO: Clean up so if more that perpage categories ($offset) are available then pagination works?
-
-        if ($offset>$perpage && $page==0) {
-            $pagelength=0;
-            $pagestart=0;
-        } elseif ($offset>0 && $page==0) {
-            $pagelength = $perpage-$offset;
-            $pagestart=0;
-        } elseif ($offset>0 && $page>0) {
-            // TODO: check logic for page 1+ 
+        if ($offset > $perpage && $page == 0) {
+            $pagelength = 0;
+            $pagestart  = 0;
+        }
+        elseif ($offset > 0 && $page == 0) {
+            $pagelength = $perpage - $offset;
+            $pagestart  = 0;
+        }
+        elseif ($offset > 0 && $page > 0) {
             $pagelength = $perpage;
-            if ($offset<=$perpage) {
-                $pagestart=$page*$perpage-$offset;
+            if ($offset <= $perpage) {
+                $pagestart = $page * $perpage - $offset;
             } else {
-                $pagestart=($page-1)*$perpage;
+                $pagestart = ($page - 1) * $perpage;
             }
         } else {
             $pagelength = $perpage;
-            $pagestart=$page*$perpage;
+            $pagestart  = $page * $perpage;
         }
 
         // Get the courses for the current page
 
-        if ($pagelength>0) {
+        if ($pagelength > 0) {
             $courses = kent_enrol_get_my_courses('id, shortname, summary, visible', 'shortname ASC', $pagestart, $pagelength);
         } else {
             $courses = kent_enrol_get_my_courses('id, shortname, summary, visible', 'shortname ASC', 0, 1);
-            $courses['courses']=array();
+            $courses['courses'] = array();
         }
 
         $this->content = new stdClass();
@@ -205,7 +203,6 @@ class block_kent_course_overview extends block_base {
         }
         
         $site = get_site();
-        $course = $site; //just in case we need the old global $course hack
 
         if (array_key_exists($site->id,$courses['courses'])) {
             unset($courses['courses'][$site->id]);
@@ -224,19 +221,19 @@ class block_kent_course_overview extends block_base {
             $this->content->text .= '<div class="archive_link">'.get_string('current_text', 'block_kent_course_overview').'</div>';
         }
 
-        //Print the category enrollment information
+        // Print the category enrollment information
         if (!empty($categories['categories']) && ($page == 0)) {
             $this->content->text .= kent_category_print_overview($categories['categories'], $baseactionurl);
         }
 
-        //Print the course enrollment information
+        // Print the course enrollment information
         if (empty($courses['courses'])) {
             $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
         } else {
             $this->content->text .= kent_course_print_overview($courses['courses'], $baseactionurl);
         }
 
-        if($paging != '<div class="paging"></div>') {
+        if ($paging != '<div class="paging"></div>') {
             $this->content->text .= $paging;
         }
 
