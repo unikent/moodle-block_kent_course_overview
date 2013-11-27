@@ -211,19 +211,6 @@ function kent_add_teachers($course, $context){
     return $string;
 }
 
-/*
- * Helper function to determine if this is archive moodle.
- */
-function kent_is_archive_moodle(){
-    global $CFG;
-    
-    if (isset($CFG->archive_moodle_this_is_archive) && ($CFG->archive_moodle_this_is_archive == TRUE)){
-        return TRUE;
-    }
-    return FALSE;
-}
-
-
 /**
  * Returns list of courses current $USER is enrolled in and can access
  *
