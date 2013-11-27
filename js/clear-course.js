@@ -33,7 +33,7 @@ jQuery(document).ready(function() {
 							'<div class="blockui_loading">Please wait, clearing module.  This may take a little while.</div>' });
 
 						return jQuery.ajax({
-							url: window.clearCourseUrl,
+							url: M.cfg.wwwroot + "/local/rollover/clear.php",
 				            type: "POST",
 				            data: o,
                             statusCode: {

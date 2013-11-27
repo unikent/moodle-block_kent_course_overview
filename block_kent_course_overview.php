@@ -48,6 +48,10 @@ class block_kent_course_overview extends block_base {
         $this->page->requires->jquery_plugin('ui');
         $this->page->requires->jquery_plugin('ui-css');
         $this->page->requires->jquery_plugin('blockui', 'theme_kent');
+
+        // And some custom things
+        $this->page->requires->js('/blocks/kent_course_overview/js/showhide.js');
+        $this->page->requires->js('/blocks/kent_course_overview/js/clear-course.js');
     }
 
     /**
@@ -216,12 +220,13 @@ class block_kent_course_overview extends block_base {
             $this->content->text .= $paging;
         }
         
+        // Remove main site course
         $site = get_site();
-
-        if (array_key_exists($site->id,$courses['courses'])) {
+        if (array_key_exists($site->id, $courses['courses'])) {
             unset($courses['courses'][$site->id]);
         }
 
+        // Update access times
         foreach ($courses['courses'] as $c) {
             if (isset($USER->lastcourseaccess[$c->id])) {
                 $courses['courses'][$c->id]->lastaccess = $USER->lastcourseaccess[$c->id];
@@ -255,10 +260,6 @@ class block_kent_course_overview extends block_base {
         if ($CFG->kent->distribution === "2013") {
             $this->content->text .= '<div class="archive_link">'.get_string('archives_text', 'block_kent_course_overview').'</div>';
         }
-
-        $this->content->text .= '<script src="' . $CFG->wwwroot . '/blocks/kent_course_overview/js/showhide.js" type="text/javascript"></script>';
-        $this->content->text .= '<script type="text/javascript"> window.clearCourseUrl = "'.$CFG->wwwroot.'/local/rollover/clear.php";</script>';
-        $this->content->text .= '<script src="' . $CFG->wwwroot . '/blocks/kent_course_overview/js/clear-course.js" type="text/javascript"></script>';
 
         $this->content->text .= '<div id="dialog_sure">'.get_string('areyousure', 'block_kent_course_overview').'</div>';
         $this->content->text .= '<div id="dialog_clear_error">'.get_string('clearerror', 'block_kent_course_overview').'</div>';
