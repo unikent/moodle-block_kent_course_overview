@@ -204,11 +204,10 @@ class block_kent_course_overview extends block_base {
             }
         }
 
-        //Provide link back to Current Moodle, if I am the archive moodle!
-        if (isset($CFG->archive_moodle) && ($CFG->archive_moodle == TRUE) && kent_is_archive_moodle()){
-            $this->content->text .= kent_archive_moodle_link();
+        // Provide link back to Current Moodle, if I am the archive moodle!
+        if ($CFG->kent->distribution === "2012" || $CFG->kent->distribution === "archive") {
+            $this->content->text .= '<div class="archive_link">'.get_string('current_text', 'block_kent_course_overview').'</div>';
         }
-
 
         //Print the category enrollment information
         if (!empty($categories['categories']) && ($page == 0)) {
@@ -226,9 +225,9 @@ class block_kent_course_overview extends block_base {
             $this->content->text .= $paging;
         }
 
-        //Provide link back to Archive Moodle if switched on
-        if (isset($CFG->archive_moodle) && ($CFG->archive_moodle == TRUE) && !kent_is_archive_moodle()){
-            $this->content->text .= kent_archive_moodle_link();
+        // Provide link back to Archive Moodle if switched on
+        if ($CFG->kent->distribution === "2013") {
+            $this->content->text .= '<div class="archive_link">'.get_string('archives_text', 'block_kent_course_overview').'</div>';
         }
 
         $this->content->text .= '<script src="' . $CFG->wwwroot . '/lib/jquery/jquery-1.7.1.min.js" type="text/javascript"></script>';

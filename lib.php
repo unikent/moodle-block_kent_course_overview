@@ -211,56 +211,6 @@ function kent_add_teachers($course, $context){
     return $string;
 }
 
-
-/*
- * Add in a Kent Archive moodle link.
- */
-function kent_archive_moodle_link(){
-    global $CFG;
-    
-    $output = '';
-
-    if(isset($CFG->archive_moodle) && ($CFG->archive_moodle == TRUE)){
-
-        $archive_path = 'https://moodle.kent.ac.uk'; //Initially set a default path
-        if(isset($CFG->archive_moodle_path) || $CFG->archive_moodle_path != ''){
-            $archive_path = $CFG->archive_moodle_path;
-        }
-
-        //Determine link text
-        $archive_link_text = 'Other moodle modules';
-
-        if(!kent_is_archive_moodle()){
-            $archive_link_text = ((isset($CFG->archive_old_moodle_link_text) && ($CFG->archive_old_moodle_link_text != '')) ? $CFG->archive_old_moodle_link_text : $archive_link_text);
-
-            //Check if there is any overriding language file modifications to the link text
-            $lang_link_text = get_string('archive_old_moodle_link_text', 'block_kent_course_overview');
-            if($lang_link_text != '[[archive_old_moodle_link_text]]' && $lang_link_text != ''){
-                $archive_link_text = $lang_link_text;
-            }
-            
-        } else {
-            $archive_link_text = ((isset($CFG->archive_current_moodle_link_text) && ($CFG->archive_current_moodle_link_text != '')) ? $CFG->archive_current_moodle_link_text : $archive_link_text);
-
-            //Check if there is any overriding language file modifications to the link text
-            $lang_link_text = get_string('archive_current_moodle_link_text', 'block_kent_course_overview');
-            if($lang_link_text != '[[archive_current_moodle_link_text]]' && $lang_link_text != ''){
-                $archive_link_text = $lang_link_text;
-            }
-
-        }
-
-        $archive_link = '<div class="archive_link">'.get_string('archives_text', 'block_kent_course_overview').'</div>';
-
-        $output = $archive_link;
-
-    }
-
-    return $output;
-
-}
-
-
 /*
  * Helper function to determine if this is archive moodle.
  */
