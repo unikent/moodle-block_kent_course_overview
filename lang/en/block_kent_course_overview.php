@@ -2,6 +2,9 @@
 $string['pluginname'] = 'Kent course overview';
 $string['blocktitle'] = 'My modules';
 
+$string['kent_course_overview:addinstance'] = 'Add a new Kent course overview block';
+$string['kent_course_overview:myaddinstance'] = 'Add a new Kent course overview block to My home';
+
 $string['nocategories'] = 'Sorry, there are no category enrollments to show.';
 $string['nocourses'] = 'Sorry, there is currently no module information to show.';
 
