@@ -95,10 +95,10 @@ class block_kent_course_overview extends block_base {
         }
 
         // MUC - Can we grab from cache?
-        $cache = cache::make('block_kent_course_overview', 'kent_course_overview');
-        $cacheKey = 'content-' . $page . '-' . $perpage;
+        //$cache = cache::make('block_kent_course_overview', 'kent_course_overview');
+        //$cacheKey = 'content-' . $page . '-' . $perpage;
 
-        $cache_content = $cache->get($cacheKey);
+        //$cache_content = $cache->get($cacheKey);
 
         if ($canCache && $cache_content !== false) {
             $this->content = $cache_content;
@@ -279,7 +279,7 @@ class block_kent_course_overview extends block_base {
         $this->content->text .= '<div id="dialog_sure">'.get_string('areyousure', 'block_kent_course_overview').'</div>';
         $this->content->text .= '<div id="dialog_clear_error">'.get_string('clearerror', 'block_kent_course_overview').'</div>';
 
-        $cache->set($cacheKey, $this->content);
+        //$cache->set($cacheKey, $this->content);
 
         return $this->content;
     }
