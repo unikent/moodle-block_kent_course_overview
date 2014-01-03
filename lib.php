@@ -80,10 +80,12 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
         //If user has ability to update the course and the course is empty to signify a rollover
         if($rollover_installed && $perms_to_rollover){
 
+            $clearmodule = get_config('block_kent_course_overview', 'clearmodule');
+
             $rollover_path = $CFG->wwwroot.'/local/rollover/index.php#rollover_form_'.$course->id;
             $clear_path = $CFG->wwwroot.'/local/rollover/clear.php';
 
-            if($rollover_status == "none" && !($rolloverable) && !empty($CFG->block_kent_course_overview_clearmodule)){
+            if($rollover_status == "none" && !($rolloverable) && $clearmodule){
                 $admin_hide = '';
             }
 
@@ -92,13 +94,13 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
                 case 'none':
                     if($rolloverable){
                         $content .= '<a class="course_rollover_optns new" href="'.$rollover_path.'">Empty module. <br / > Click here to <br /><strong>Rollover module</strong></a>';
-                    } elseif(!empty($CFG->block_kent_course_overview_clearmodule)) {
+                    } elseif($clearmodule) {
                         $admin_hide = '';
                         $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.get_string('clearmodulebutton', 'block_kent_course_overview').'</a>'; 
                     }
                     break;
                 case 'completed':
-                    if(!empty($CFG->block_kent_course_overview_clearmodule)){
+                    if($clearmodule){
                         $admin_hide = '';
                         $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.get_string('clearmodulebutton', 'block_kent_course_overview').'</a>';
                     }
@@ -107,11 +109,10 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
                     $content .= '<div class="course_rollover_optns pending">Rollover pending</div>';
                     break;
                 case 'processing':
-                    
                     $content .= '<div class="course_rollover_optns pending">Rollover in process</div>';
                     break;
                 default:
-                    if(!empty($CFG->block_kent_course_overview_clearmodule)){
+                    if($clearmodule){
                         $admin_hide = '';
                         $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.get_string('clearmodulebutton', 'block_kent_course_overview').'</a>';
                     }
@@ -125,7 +126,7 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
 
     }
 
-    if($content != ''){
+    if($content != '') {
         $content = '<ul id="kent_course_list_overview">'.$content.'</ul>';
     }
 

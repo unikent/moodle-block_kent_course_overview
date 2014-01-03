@@ -28,6 +28,9 @@ $string['rolledoverclearmodulebutton'] = 'Rollover complete. Empty this module';
 $string['clearmoduleoption'] = 'Enable clear module option';
 $string['configclearmoduleoption'] = 'Enabling this option will give course editors and admins the option of clearing their module.';
 
+$string['showmissingmoduleslinkoption'] = 'Enable show missing modules link';
+$string['configshowmissingmoduleslinkoption'] = 'Enabling this option will provide students with a link to fix their enrolments.';
+
 $string['current_text'] = 'For current Moodle, please see the navigation bar at the top of the page.';
 $string['archives_text'] = 'To see a previous years Moodle, please see the navigation bar at the top of the page.';
 
