@@ -101,8 +101,8 @@ class block_kent_course_overview extends block_base {
         $cache_content = $cache->get($cacheKey);
 
         if ($canCache && $cache_content !== false) {
-            //$this->content = $cache_content;
-            //return $this->content;
+            $this->content = $cache_content;
+            return $this->content;
         }
 
         // Generate page url for page actions from current params
