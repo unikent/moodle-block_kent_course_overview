@@ -385,6 +385,17 @@
         background: #777;
     }
 
+    .block_kent_course_overview .enrolment_fix_link {
+        background: #efefef;
+        border-top: 1px solid #e3e3e3;
+        text-align: right;
+    }
+
+    .block_kent_course_overview .enrolment_fix_link a {
+        display: block;
+        padding: 2px 5px;
+    }
+
     #kent_course_list_overview li span,
     #kent_category_list_overview li span{
         display: block;
