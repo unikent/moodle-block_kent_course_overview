@@ -156,8 +156,8 @@ class block_kent_course_overview extends block_base {
         // Build the search box
         $searchform = '';
         $searchform .= '<div class="form_container"><form id="module_search" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $searchform .= '<input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" />';
-        $searchform .= '<input class="courseoverview_search_sub" type="submit" value="go" />';
+        $searchform .= '<div class="left"><input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" /></div>';
+        $searchform .= '<div class="right"><input class="courseoverview_search_sub" type="submit" value="go" /></div>';
         $searchform .= '</form></div>';
         $this->content->text .= $searchform;
 
