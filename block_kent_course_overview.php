@@ -281,7 +281,7 @@ class block_kent_course_overview extends block_base {
 
         // Do we want to show the missing modules link?
         $showMissingLink = get_config('block_kent_course_overview', 'showmissingmoduleslink');
-        if ($showMissingLink) {
+        if ($showMissingLink && \local_connect\utils::is_enabled()) {
             $this->content->text .= '<div class="enrolment_fix_link"><a href="'.$CFG->wwwroot.'/local/connect/enrolment.php">Missing any modules?</a></div>';
         }
 
