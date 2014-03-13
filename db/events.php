@@ -26,17 +26,17 @@ $observers = array (
 
     array (
         'eventname' => '\core\event\user_enrolment_created',
-        'callback' => '\blocks_kent_course_overview\observers::clear_cache',
+        'callback' => '\block_kent_course_overview\observers::clear_cache',
     ),
 
     array (
         'eventname' => '\core\event\user_enrolment_deleted',
-        'callback' => '\blocks_kent_course_overview\observers::clear_cache',
+        'callback' => '\block_kent_course_overview\observers::clear_cache',
     ),
 
     array (
         'eventname' => '\core\event\user_enrolment_updated',
-        'callback' => '\blocks_kent_course_overview\observers::clear_cache',
+        'callback' => '\block_kent_course_overview\observers::clear_cache',
     ),
 
 );
