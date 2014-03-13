@@ -94,6 +94,14 @@ class block_kent_course_overview extends block_base {
             $canCache = false;
         }
 
+        // If a user enrolment has changed, we cannot use the cache.
+        {
+            $cache = cache::make('block_kent_course_overview', 'kent_course_overview_reset');
+            if ($cache->get("kco_reset_" . $USER->id) !== false) {
+                $canCache = false;
+            }
+        }
+
         // MUC - Can we grab from cache?
         $cache = cache::make('block_kent_course_overview', 'kent_course_overview');
         $cacheKey = 'content-' . $page . '-' . $perpage;
