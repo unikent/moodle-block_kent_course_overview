@@ -96,7 +96,7 @@ class block_kent_course_overview extends block_base {
         // If a user enrolment has changed, we cannot use the cache.
         {
             $cache = cache::make('block_kent_course_overview', 'kent_course_overview_reset');
-            if ($cache->get("kco_reset_" . $USER->id) !== false) {
+            if ($cache->get("kco_reset_" . $USER->id) === true) {
                 $canCache = false;
             }
         }
