@@ -41,7 +41,7 @@ class block_kent_course_overview extends block_base {
      */
     public function get_required_javascript() {
         parent::get_required_javascript();
-        
+
         // We need jQuery
         $this->page->requires->jquery();
         $this->page->requires->jquery_plugin('migrate');
@@ -62,7 +62,7 @@ class block_kent_course_overview extends block_base {
     public function get_content() {
         global $USER, $CFG, $OUTPUT, $DB, $PAGE;
 
-        if ($this->content !== NULL) {
+        if ($this->content !== null) {
             return $this->content;
         }
 
@@ -117,12 +117,14 @@ class block_kent_course_overview extends block_base {
         if ($page) {
             $params['page'] = $page;
         }
+
         if ($perpage) {
             $params['perpage'] = $perpage;
         }
+
         $baseactionurl = new moodle_url($PAGE->URL, $params);
 
-        // Fetch the Categories that user is enrolled in 
+        // Fetch the Categories that user is enrolled in.
         $categories = kent_enrol_get_my_categories('*','');
         $offset = isset($categories['totalcategories']) ? $categories['totalcategories'] : 0;
 
@@ -130,12 +132,10 @@ class block_kent_course_overview extends block_base {
         if ($offset > $perpage && $page == 0) {
             $pagelength = 0;
             $pagestart  = 0;
-        }
-        elseif ($offset > 0 && $page == 0) {
+        } else if ($offset > 0 && $page == 0) {
             $pagelength = $perpage - $offset;
             $pagestart  = 0;
-        }
-        elseif ($offset > 0 && $page > 0) {
+        } else if ($offset > 0 && $page > 0) {
             $pagelength = $perpage;
             if ($offset <= $perpage) {
                 $pagestart = $page * $perpage - $offset;
@@ -205,7 +205,7 @@ class block_kent_course_overview extends block_base {
 
         // ----------------------------------------------------------------------------------------------------------------------
         // Main admin box
-        
+
         // Build the main admin box
         $box_text = "";
         if ($can_rollover) {
@@ -217,11 +217,12 @@ class block_kent_course_overview extends block_base {
             if ($dep_admin) {
                 $connect_admin_path = $CFG->wwwroot . '/local/connect/';
                 $box_text .= '<p><a href="'.$connect_admin_path.'">Departmental administrator pages</a></p>';
-                
+
                 $meta_admin_path = $CFG->wwwroot . '/local/kentmetacourse';
                 $box_text .= '<p><a href="'.$meta_admin_path.'">Kent meta enrollment pages</a></p>';
             }
         }
+
         if ($isSiteAdmin || has_capability('mod/cla:manage', context_system::instance())) {
            $cla_path = $CFG->wwwroot . '/mod/cla/admin.php';
            $box_text .= '<p><a href="'.$cla_path.'">CLA administration</a></p>';
@@ -241,7 +242,7 @@ class block_kent_course_overview extends block_base {
         if ($paging != '<div class="paging"></div>') {
             $this->content->text .= $paging;
         }
-        
+
         // Remove main site course
         $site = get_site();
         if (array_key_exists($site->id, $courses['courses'])) {
@@ -299,6 +300,7 @@ class block_kent_course_overview extends block_base {
 
     /**
      * allow the block to have a configuration page
+     * Moodle override.
      *
      * @return boolean
      */
@@ -308,10 +310,13 @@ class block_kent_course_overview extends block_base {
 
     /**
      * locations where block can be displayed
+     * Moodle override.
      *
      * @return array
      */
     public function applicable_formats() {
-        return array('my-index'=>true);
+        return array(
+            'my-index' => true
+        );
     }
 }
