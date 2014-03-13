@@ -89,9 +89,8 @@ class block_kent_course_overview extends block_base {
                 require_capability('moodle/course:visibility', $coursecontext);
                 // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
                 $DB->update_record('course', array('id' => $course->id, 'visible' => $visible, 'visibleold' => $visible, 'timemodified' => time()));
+                $canCache = false;
             }
-
-            $canCache = false;
         }
 
         // If a user enrolment has changed, we cannot use the cache.
