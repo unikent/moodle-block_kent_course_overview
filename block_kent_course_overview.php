@@ -98,6 +98,7 @@ class block_kent_course_overview extends block_base {
             $cache = cache::make('block_kent_course_overview', 'kent_course_overview_reset');
             if ($cache->get("kco_reset_" . $USER->id) === true) {
                 $canCache = false;
+                $cache->delete("kco_reset_" . $USER->id);
             }
         }
 
