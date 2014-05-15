@@ -288,12 +288,6 @@ class block_kent_course_overview extends block_base {
         $this->content->text .= '<div id="dialog_sure">'.get_string('areyousure', 'block_kent_course_overview').'</div>';
         $this->content->text .= '<div id="dialog_clear_error">'.get_string('clearerror', 'block_kent_course_overview').'</div>';
 
-        // Do we want to show the missing modules link?
-        $showMissingLink = get_config('block_kent_course_overview', 'showmissingmoduleslink');
-        if ($showMissingLink && \local_connect\utils::is_enabled()) {
-            $this->content->text .= '<div class="enrolment_fix_link"><a href="'.$CFG->wwwroot.'/local/connect/enrolment.php">Missing any modules?</a></div>';
-        }
-
         $cache->set($cacheKey, $this->content);
 
         return $this->content;
