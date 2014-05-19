@@ -34,5 +34,4 @@ $string['configshowmissingmoduleslinkoption'] = 'Enabling this option will provi
 $string['current_text'] = 'For current Moodle, please see the navigation bar at the top of the page.';
 $string['archives_text'] = 'To see a previous years Moodle, please see the navigation bar at the top of the page.';
 
-$string['cachedef_kent_course_overview'] = 'Course Overview';
-$string['cachedef_kent_course_overview_reset'] = 'Course Overview Reset';
+$string['cachedef_data'] = 'KCO Data (Paged)';
