@@ -66,7 +66,7 @@ class block_kent_course_overview extends block_base {
             return $this->content;
         }
 
-        $canCache = true;
+        $cancache = true;
 
         // Get hide/show params (for quick visbility changes)
         $hide = optional_param('hide', 0, PARAM_INT);
@@ -89,31 +89,27 @@ class block_kent_course_overview extends block_base {
                 require_capability('moodle/course:visibility', $coursecontext);
                 // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
                 $DB->update_record('course', array('id' => $course->id, 'visible' => $visible, 'visibleold' => $visible, 'timemodified' => time()));
-                $canCache = false;
+                $cancache = false;
             }
         }
 
         // If a user enrolment has changed, we cannot use the cache.
-        {
-            $cache = cache::make('block_kent_course_overview', 'kent_course_overview_reset');
-            if ($cache->get("kco_reset_" . $USER->id) === true) {
-                $canCache = false;
-                $cache->delete("kco_reset_" . $USER->id);
+
+        // MUC - Can we grab from cache?
+        $cache = cache::make('block_kent_course_overview', 'data');
+        $cachekey = 'full_' . $USER->id;
+        $cachekey2 = $page . '_' . $perpage;
+
+        $cachecontent = $cache->get($cachekey);
+
+        if ($cancache && $cachecontent !== false) {
+            if (isset($cachecontent[$cachekey2])) {
+                $this->content = $cachecontent[$cachekey2];
+                return $this->content;
             }
         }
 
-        // MUC - Can we grab from cache?
-        $cache = cache::make('block_kent_course_overview', 'kent_course_overview');
-        $cacheKey = 'content-' . $page . '-' . $perpage;
-
-        $cache_content = $cache->get($cacheKey);
-
-        if ($canCache && $cache_content !== false) {
-            $this->content = $cache_content;
-            return $this->content;
-        }
-
-        // Generate page url for page actions from current params
+        // Generate page url for page actions from current params.
         $params = array();
         if ($page) {
             $params['page'] = $page;
@@ -288,7 +284,9 @@ class block_kent_course_overview extends block_base {
         $this->content->text .= '<div id="dialog_sure">'.get_string('areyousure', 'block_kent_course_overview').'</div>';
         $this->content->text .= '<div id="dialog_clear_error">'.get_string('clearerror', 'block_kent_course_overview').'</div>';
 
-        $cache->set($cacheKey, $this->content);
+        $cachecontent[$cachekey2] = $this->content;
+
+        $cache->set($cachekey, $cachecontent);
 
         return $this->content;
     }
