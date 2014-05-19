@@ -39,4 +39,9 @@ $observers = array (
         'callback' => '\block_kent_course_overview\observers::clear_cache',
     ),
 
+    array (
+        'eventname' => '\core\event\role_assigned',
+        'callback' => '\block_kent_course_overview\observers::clear_cache',
+    ),
+
 );

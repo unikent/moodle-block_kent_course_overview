@@ -38,8 +38,8 @@ class observers {
      * @return unknown
      */
     public static function clear_cache($event) {
-        $cache = \cache::make('block_kent_course_overview', 'kent_course_overview_reset');
-        $cache->set("kco_reset_" . $event->relateduserid, true);
+        $cache = \cache::make('block_kent_course_overview', 'data');
+        $cache->delete("full_" . $event->relateduserid);
         return true;
     }
 }
