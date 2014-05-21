@@ -168,8 +168,9 @@ function kent_add_teachers($course, $context){
 
         }
 
+        $userfields = get_all_user_name_fields(true, 'u');
         $rusers = get_role_users($managerroles, $context, true,
-            'ra.id AS raid, u.id, u.username, u.firstname, u.lastname,
+            'ra.id AS raid, u.id, u.username, '.$userfields.',
              r.name AS rolename, r.sortorder, r.id AS roleid',
             'r.sortorder ASC, u.lastname ASC',
             'u.lastname, u.firstname', '', '', $roles_limit, $roles_sql);
