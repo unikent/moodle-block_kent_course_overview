@@ -296,17 +296,18 @@ function kent_enrol_get_my_categories($fields = NULL, $sort = 'sortorder ASC') {
         */
 
 
-    $sql = "SELECT cc.name, cc.id, cc.sortorder
+    $sql = "SELECT cc.id, cc.name, cc.sortorder
             FROM {course_categories} cc
-            JOIN {context} c
-            ON cc.id=c.instanceid
-            AND c.contextlevel=40 -- Magic number
-            JOIN {role_assignments} ra
-            ON ra.contextid=c.id
-            JOIN {user} u
-            ON ra.userid=u.id
+            INNER JOIN {context} c
+                ON cc.id=c.instanceid
+                    AND c.contextlevel=40 -- Magic number
+            INNER JOIN {role_assignments} ra
+                ON ra.contextid=c.id
+            INNER JOIN {user} u
+                ON ra.userid=u.id
             WHERE $wheres
-            $orderby";
+            $orderby
+            GROUP BY cc.id";
     $params['userid']  = $USER->id;
 
     //$totalcategories = count($DB->get_records_sql($sql, $params));
