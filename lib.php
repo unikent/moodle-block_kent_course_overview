@@ -30,7 +30,7 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
 
         $width = '';
 
-        if($rollover_installed){
+        if($rollover_installed && \local_kent\util\sharedb::available()){
             //Fetch the rollover lib to leverage some functions
             require_once($CFG->dirroot.'/local/rollover/lib.php');
             $rollover_status = kent_get_current_rollover_status($course->id);
