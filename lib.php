@@ -23,6 +23,7 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
 
         //Ensure Rollover is installed before we do anything and that the course doesn't have content.
         $rollover_installed = $DB->get_records('config_plugins', array('plugin'=>'local_rollover'), '', 'plugin');
+        $rollover_installed &= \local_kent\util\sharedb::available();
 
         $list_class = '';
 
@@ -30,7 +31,7 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
 
         $width = '';
 
-        if($rollover_installed && \local_kent\util\sharedb::available()){
+        if($rollover_installed){
             //Fetch the rollover lib to leverage some functions
             require_once($CFG->dirroot.'/local/rollover/lib.php');
             $rollover_status = kent_get_current_rollover_status($course->id);
