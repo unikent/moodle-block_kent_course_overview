@@ -22,8 +22,7 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
         $perms_to_rollover = has_capability('moodle/course:update', $context);
 
         //Ensure Rollover is installed before we do anything and that the course doesn't have content.
-        $rollover_installed = $DB->get_records('config_plugins', array('plugin'=>'local_rollover'), '', 'plugin');
-        $rollover_installed &= \local_kent\util\sharedb::available();
+        $rollover_installed = \local_kent\util\sharedb::available();
 
         $list_class = '';
 
