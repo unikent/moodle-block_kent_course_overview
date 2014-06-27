@@ -9,6 +9,8 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
     $extra_class_attributes = '';
 
     foreach ($courses as $course) {
+        $rollover = new \local_rollover\Course($course->id);
+
         $context = context_course::instance($course->id);
         $fullname = format_string($course->fullname, true, array('context' => $context));
         $shortname = format_string($course->shortname, true, array('context' => $context));
@@ -31,11 +33,10 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
         $width = '';
 
         if($rollover_installed){
-            //Fetch the rollover lib to leverage some functions
-            require_once($CFG->dirroot.'/local/rollover/lib.php');
-            $rollover_status = kent_get_current_rollover_status($course->id);
+            $rollover_status = $rollover->get_status();
+            $rolloverable = $rollover->can_rollover();
 
-            if($rolloverable = kent_rollover_ability($course->id, $rollover_status)){
+            if ($rolloverable) {
                 if ($perms_to_rollover){
                     $width = 'admin_width';
                     $admin_hide = '';
@@ -85,13 +86,13 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
             $rollover_path = $CFG->wwwroot.'/local/rollover/index.php?srch='.$course->shortname;
             $clear_path = $CFG->wwwroot.'/local/rollover/clear.php';
 
-            if($rollover_status == "none" && !($rolloverable) && $clearmodule){
+            if ($rollover_status == \local_rollover\Rollover::STATUS_NONE && !($rolloverable) && $clearmodule) {
                 $admin_hide = '';
             }
 
             $content .= ' <div class="course_admin_options '.$admin_hide.'">';
             switch ($rollover_status) {
-                case 'none':
+                case \local_rollover\Rollover::STATUS_NONE:
                     if($rolloverable){
                         $content .= '<a class="course_rollover_optns new" href="'.$rollover_path.'">Empty module. <br / > Click here to <br /><strong>Rollover module</strong></a>';
                     } elseif($clearmodule) {
@@ -99,20 +100,21 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
                         $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.get_string('clearmodulebutton', 'block_kent_course_overview').'</a>'; 
                     }
                     break;
-                case 'completed':
+                case \local_rollover\Rollover::STATUS_COMPLETE:
                     if($clearmodule){
                         $admin_hide = '';
                         $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.get_string('clearmodulebutton', 'block_kent_course_overview').'</a>';
                     }
                     break;
-                case 'requested':
+                case \local_rollover\Rollover::STATUS_SCHEDULED:
                     $content .= '<div class="course_rollover_optns pending">Rollover pending</div>';
                     break;
-                case 'processing':
+                case \local_rollover\Rollover::STATUS_BACKED_UP:
+                case \local_rollover\Rollover::STATUS_IN_PROGRESS:
                     $content .= '<div class="course_rollover_optns pending">Rollover in process</div>';
                     break;
                 default:
-                    if($clearmodule){
+                    if ($clearmodule) {
                         $admin_hide = '';
                         $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.get_string('clearmodulebutton', 'block_kent_course_overview').'</a>';
                     }
