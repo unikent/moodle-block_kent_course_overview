@@ -97,7 +97,7 @@ class block_kent_course_overview extends block_base {
 
         // MUC - Can we grab from cache?
         $cache = cache::make('block_kent_course_overview', 'data');
-        $cachekey = 'full_' . $USER->id;
+        $cachekey = 'full_v2_' . $USER->id;
         $cachekey2 = $page . '_' . $perpage;
 
         $cachecontent = $cache->get($cachekey);
