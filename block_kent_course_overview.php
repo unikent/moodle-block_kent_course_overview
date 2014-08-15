@@ -215,8 +215,8 @@ class block_kent_course_overview extends block_base {
                 $connect_admin_path = $CFG->wwwroot . '/local/connect/';
                 $box_text .= '<p><a href="'.$connect_admin_path.'">Departmental administrator pages</a></p>';
 
-                $meta_admin_path = $CFG->wwwroot . '/local/kentmetacourse';
-                $box_text .= '<p><a href="'.$meta_admin_path.'">Kent meta enrollment pages</a></p>';
+                $meta_admin_path = $CFG->wwwroot . '/admin/tool/meta';
+                $box_text .= '<p><a href="'.$meta_admin_path.'">Kent meta enrolment pages</a></p>';
             }
         }
 
