@@ -171,33 +171,33 @@ class block_kent_course_overview extends block_base {
         // Can we rollover any module?
         $can_rollover = $isSiteAdmin;
         if (!$can_rollover) {
-            $sql = "SELECT 'user', COUNT(ra.id) as count
+            $sql = "SELECT COUNT(ra.id) as count
                     FROM {role_assignments} ra 
                     WHERE userid = :userid AND roleid IN (
                         SELECT DISTINCT roleid
                         FROM {role_capabilities} rc
                         WHERE rc.capability = :capability AND rc.permission = 1 ORDER BY rc.roleid ASC
                     )";
-            $query = $DB->get_records_sql($sql, array(
+            $count = $DB->count_records_sql($sql, array(
                 'capability' => 'moodle/course:update',
                 'userid' => $USER->id
             ));
-            $can_rollover = $query['user']->count > 0;
+            $can_rollover = $count > 0;
         }
 
         // Can we see the DA pages?
         $dep_admin = $isSiteAdmin;
         if (!$dep_admin) {
-            $sql = "SELECT 'user', COUNT(ra.id) as count 
+            $sql = "SELECT COUNT(ra.id) as count 
                     FROM {role_assignments} ra
                     WHERE userid = :userid AND roleid = (
                         SELECT id FROM {role} WHERE shortname = :shortname LIMIT 1
                     )";
-            $query = $DB->get_records_sql($sql, array(
+            $count = $DB->count_records_sql($sql, array(
                 'userid' => $USER->id,
                 'shortname' => 'dep_admin'
             ));
-            $dep_admin = $query['user']->count > 0;
+            $dep_admin = $count > 0;
         }
 
         // ----------------------------------------------------------------------------------------------------------------------
