@@ -84,7 +84,6 @@ function kent_course_print_overview($courses, $baseurl, array $remote_courses=ar
             $clearmodule = get_config('block_kent_course_overview', 'clearmodule');
 
             $rollover_path = $CFG->wwwroot.'/local/rollover/index.php?srch='.$course->shortname;
-            $clear_path = $CFG->wwwroot.'/local/rollover/clear.php';
 
             if ($rollover_status == \local_rollover\Rollover::STATUS_NONE && !($rolloverable) && $clearmodule) {
                 $admin_hide = '';
