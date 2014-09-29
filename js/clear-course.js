@@ -34,7 +34,7 @@ jQuery(document).ready(function() {
                             data: {
                                 'course': button.attr('href').replace("#", "")
                             },
-                            success: {
+                            success: function() {
                                 button.after('<p><b>Module cleared</b></p>');
                                 button.remove();
                                 jQuery.unblockUI();
