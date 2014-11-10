@@ -98,32 +98,24 @@ function kent_course_print_overview($courses, $baseurl) {
 
             $content .= ' <div class="course_admin_options '.$adminhide.'">';
             switch ($rolloverstatus) {
-                case \local_rollover\Rollover::STATUS_NONE:
-                    if ($rolloverable) {
-                        $content .= '<a class="course_rollover_optns new" href="'.$rolloverpath.'">Empty module. <br / > ';
-                        $content .= 'Click here to <br /><strong>Rollover module</strong></a>';
-                    } else if ($clearmodule) {
-                        $adminhide = '';
-                        $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.$clearmodulebutton.'</a>';
-                    }
+                case $rolloverable && \local_rollover\Rollover::STATUS_NONE:
+                case $rolloverable && \local_rollover\Rollover::STATUS_DELETED:
+                    $content .= '<a class="course_rollover_optns new" href="'.$rolloverpath.'">Empty module. <br / > ';
+                    $content .= 'Click here to <br /><strong>Rollover module</strong></a>';
                 break;
 
-                case \local_rollover\Rollover::STATUS_COMPLETE:
-                    if ($clearmodule) {
-                        $adminhide = '';
-                        $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.$clearmodulebutton.'</a>';
-                    }
-                break;
-
-                case \local_rollover\Rollover::STATUS_SCHEDULED:
+                case \local_rollover\Rollover::STATUS_WAITING_SCHEDULE:
                     $content .= '<div class="course_rollover_optns pending">Rollover pending</div>';
                 break;
 
                 case \local_rollover\Rollover::STATUS_BACKED_UP:
                 case \local_rollover\Rollover::STATUS_IN_PROGRESS:
+                case \local_rollover\Rollover::STATUS_SCHEDULED:
                     $content .= '<div class="course_rollover_optns pending">Rollover in process</div>';
                 break;
 
+                case \local_rollover\Rollover::STATUS_COMPLETE:
+                case \local_rollover\Rollover::STATUS_ERROR:
                 default:
                     if ($clearmodule) {
                         $adminhide = '';
