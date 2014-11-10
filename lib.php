@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Overriding the god awful print overview function in lib
+ * Print course overview.
  */
 function kent_course_print_overview($courses, $baseurl) {
     global $CFG, $USER, $DB, $OUTPUT;
@@ -148,7 +148,7 @@ function kent_course_print_overview($courses, $baseurl) {
 
 
 /*
- * Function to pull in teachers linked on a course
+ * Function to pull in teachers linked on a course.
  */
 function kent_add_teachers($course, $context) {
 
@@ -160,38 +160,7 @@ function kent_add_teachers($course, $context) {
     if (!empty($CFG->coursecontact)) {
         $managerroles = explode(',', $CFG->coursecontact);
         $namesarray = array();
-        $rusers = array();
-
-        $roleslimit = (int)get_string('roles_limit', 'block_kent_course_overview');
-        $rolesstring = get_string('ignore_roles', 'block_kent_course_overview');
-
-        $ignoreroleids = explode(",", $rolesstring);
-
-        // Prepare roles sql.
-        $rolessql = '';
-        if (!empty($ignoreroleids) && $ignoreroleids[0] != '') {
-
-            foreach ($ignoreroleids as $roles) {
-                $rolessql .= $roles . ',';
-            }
-
-            $rolessql = substr($rolessql, 0, -1);
-            $rolessql = 'ra.roleid NOT IN (' . $rolessql . ')';
-        }
-
-        $userfields = get_all_user_name_fields(true, 'u');
-        $rusers = get_role_users($managerroles, $context, true,
-            'ra.id AS raid, u.id, u.username, '.$userfields.',
-             r.name AS rolename, r.sortorder, r.id AS roleid',
-            'r.sortorder ASC, u.lastname ASC',
-            'u.lastname, u.firstname', '', '', $roleslimit, $rolessql);
-
-        // Rename some of the role names if needed.
-        if (isset($context)) {
-            $aliasnames = $DB->get_records('role_names', array(
-                'contextid' => $context->id
-            ), '', 'roleid,contextid,name');
-        }
+        $rusers = get_role_users($managerroles, $context, true);
 
         $namesarray = array();
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
@@ -201,20 +170,15 @@ function kent_add_teachers($course, $context) {
                 continue;
             }
 
-            if (isset($aliasnames[$ra->roleid])) {
-                $ra->rolename = $aliasnames[$ra->roleid]->name;
-            }
-
             $fullname = fullname($ra, $canviewfullnames);
+            $rolename = !empty($ra->rolename) ? $ra->rolename : $ra->roleshortname;
 
             $nameurl = new moodle_url('/user/view.php', array(
                 'id' => $ra->id,
                 'course' => SITEID
             ));
 
-            $namestr = format_string($ra->rolename) . ': ';
-            $namestr .= html_writer::link($nameurl, $fullname);
-            $namesarray[$ra->id] = $namestr;
+            $namesarray[$ra->id] = s($rolename) . ': ' . html_writer::link($nameurl, $fullname);
         }
 
         if (!empty($namesarray)) {
