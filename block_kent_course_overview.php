@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,14 +17,12 @@
 /**
  * Course overview block
  *
- * Currently, just a copy-and-paste from the old My Moodle.
- *
  * @package   blocks
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->dirroot.'/blocks/kent_course_overview/lib.php');
-require_once($CFG->dirroot.'/lib/weblib.php');
+require_once($CFG->dirroot . '/blocks/kent_course_overview/lib.php');
+require_once($CFG->dirroot . '/lib/weblib.php');
 require_once($CFG->dirroot . '/lib/formslib.php');
 
 class block_kent_course_overview extends block_base {
@@ -42,14 +39,14 @@ class block_kent_course_overview extends block_base {
     public function get_required_javascript() {
         parent::get_required_javascript();
 
-        // We need jQuery
+        // We need jQuery.
         $this->page->requires->jquery();
         $this->page->requires->jquery_plugin('migrate');
         $this->page->requires->jquery_plugin('ui');
         $this->page->requires->jquery_plugin('ui-css');
         $this->page->requires->jquery_plugin('blockui', 'theme_kent');
 
-        // And some custom things
+        // And some custom things.
         $this->page->requires->js('/blocks/kent_course_overview/js/showhide.js');
         $this->page->requires->js('/blocks/kent_course_overview/js/clear-course.js');
     }
@@ -66,15 +63,15 @@ class block_kent_course_overview extends block_base {
             return $this->content;
         }
 
-        $cancache = true;
+        $cancache = false;
 
-        // Get hide/show params (for quick visbility changes)
+        // Get hide/show params (for quick visbility changes).
         $hide = optional_param('hide', 0, PARAM_INT);
         $show = optional_param('show', 0, PARAM_INT);
         $page = optional_param('page', 0, PARAM_INT);
         $perpage = optional_param('perpage', 20, PARAM_INT);
 
-        // Process show/hide if there is one
+        // Process show/hide if there is one.
         if (!empty($hide) or !empty($show)) {
             if (!empty($hide)) {
                 $course = $DB->get_record('course', array('id' => $hide));
@@ -87,15 +84,20 @@ class block_kent_course_overview extends block_base {
             if ($course) {
                 $coursecontext = context_course::instance($course->id);
                 require_capability('moodle/course:visibility', $coursecontext);
+
                 // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
-                $DB->update_record('course', array('id' => $course->id, 'visible' => $visible, 'visibleold' => $visible, 'timemodified' => time()));
+                $DB->update_record('course', array(
+                    'id' => $course->id,
+                    'visible' => $visible,
+                    'visibleold' => $visible,
+                    'timemodified' => time()
+                ));
+
                 $cancache = false;
             }
         }
 
-        // If a user enrolment has changed, we cannot use the cache.
-
-        // MUC - Can we grab from cache?
+        // Cache block data.
         $cache = cache::make('block_kent_course_overview', 'data');
         $cachekey = 'full_' . $USER->id;
         $cachekey2 = $page . '_' . $perpage;
@@ -122,10 +124,10 @@ class block_kent_course_overview extends block_base {
         $baseactionurl = new moodle_url($PAGE->URL, $params);
 
         // Fetch the Categories that user is enrolled in.
-        $categories = kent_enrol_get_my_categories('*','');
+        $categories = kent_enrol_get_my_categories();
         $offset = isset($categories['totalcategories']) ? $categories['totalcategories'] : 0;
 
-        // Calculate courses to add after category records
+        // Calculate courses to add after category records.
         if ($offset > $perpage && $page == 0) {
             $pagelength = 0;
             $pagestart  = 0;
@@ -144,7 +146,7 @@ class block_kent_course_overview extends block_base {
             $pagestart  = $page * $perpage;
         }
 
-        // Get the courses for the current page
+        // Get the courses for the current page.
 
         if ($pagelength > 0) {
             $courses = kent_enrol_get_my_courses('id, shortname, summary, visible', 'shortname ASC', $pagestart, $pagelength);
@@ -157,22 +159,28 @@ class block_kent_course_overview extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        // Build the search box
-        $searchform = '';
-        $searchform .= '<div class="form_container"><form id="module_search" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $searchform .= '<div class="left"><input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" /></div>';
-        $searchform .= '<div class="right"><input class="courseoverview_search_sub" type="submit" value="go" /></div>';
-        $searchform .= '</form></div>';
-        $this->content->text .= $searchform;
+        // Build the search box.
+        $this->content->text .= <<<HTML
+            <div class="form_container">
+                <form id="module_search" action="{$CFG->wwwroot}/course/search.php" method="get">
+                    <div class="left">
+                        <input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" />
+                    </div>
+                    <div class="right">
+                        <input class="courseoverview_search_sub" type="submit" value="go" />
+                    </div>
+                </form>
+            </div>
+HTML;
 
         // Are we an admin?
-        $isSiteAdmin = has_capability('moodle/site:config', context_system::instance());
+        $isadmin = has_capability('moodle/site:config', context_system::instance());
 
         // Can we rollover any module?
-        $can_rollover = $isSiteAdmin;
-        if (!$can_rollover) {
+        $canrollover = $isadmin;
+        if (!$canrollover) {
             $sql = "SELECT COUNT(ra.id) as count
-                    FROM {role_assignments} ra 
+                    FROM {role_assignments} ra
                     WHERE userid = :userid AND roleid IN (
                         SELECT DISTINCT roleid
                         FROM {role_capabilities} rc
@@ -182,52 +190,51 @@ class block_kent_course_overview extends block_base {
                 'capability' => 'moodle/course:update',
                 'userid' => $USER->id
             ));
-            $can_rollover = $count > 0;
+            $canrollover = $count > 0;
         }
 
-        // Can we see the DA pages?
-        $dep_admin = $isSiteAdmin;
-        if (!$dep_admin) {
-            $sql = "SELECT COUNT(ra.id) as count 
-                    FROM {role_assignments} ra
-                    WHERE userid = :userid AND roleid = (
-                        SELECT id FROM {role} WHERE shortname = :shortname LIMIT 1
-                    )";
-            $count = $DB->count_records_sql($sql, array(
-                'userid' => $USER->id,
-                'shortname' => 'dep_admin'
-            ));
-            $dep_admin = $count > 0;
-        }
+        // Build the main admin box.
+        $boxtext = "";
 
-        // ----------------------------------------------------------------------------------------------------------------------
-        // Main admin box
+        // Add the rollover links.
+        if ($canrollover) {
+            $boxtext .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
 
-        // Build the main admin box
-        $box_text = "";
-        if ($can_rollover) {
-            $box_text .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
+            $rolloveradminpath = "$CFG->wwwroot/local/rollover/";
+            $boxtext .= '<p>'.'<a href="'.$rolloveradminpath.'">Rollover admin page</a></p>';
 
-            $rollover_admin_path = "$CFG->wwwroot/local/rollover/";
-            $box_text .= '<p>'.'<a href="'.$rollover_admin_path.'">Rollover admin page</a></p>';
+            // Can we see the DA pages?
+            $depadmin = $isadmin;
+            if (!$depadmin) {
+                $sql = "SELECT COUNT(ra.id) as count
+                        FROM {role_assignments} ra
+                        WHERE userid = :userid AND roleid = (
+                            SELECT id FROM {role} WHERE shortname = :shortname LIMIT 1
+                        )";
+                $count = $DB->count_records_sql($sql, array(
+                    'userid' => $USER->id,
+                    'shortname' => 'depadmin'
+                ));
+                $depadmin = $count > 0;
+            }
 
-            if ($dep_admin) {
-                $connect_admin_path = $CFG->wwwroot . '/local/connect/';
-                $box_text .= '<p><a href="'.$connect_admin_path.'">Departmental administrator pages</a></p>';
+            if ($depadmin) {
+                $connectadminpath = "$CFG->wwwroot/local/connect/";
+                $boxtext .= '<p><a href="' . $connectadminpath . '">Departmental administrator pages</a></p>';
 
-                $meta_admin_path = $CFG->wwwroot . '/admin/tool/meta';
-                $box_text .= '<p><a href="'.$meta_admin_path.'">Kent meta enrolment pages</a></p>';
+                $metaadminpath = "$CFG->wwwroot/admin/tool/meta";
+                $boxtext .= '<p><a href="' . $metaadminpath . '">Kent meta enrolment pages</a></p>';
             }
         }
 
-        if ($isSiteAdmin || has_capability('mod/cla:manage', context_system::instance())) {
-           $cla_path = $CFG->wwwroot . '/mod/cla/admin.php';
-           $box_text .= '<p><a href="'.$cla_path.'">CLA administration</a></p>';
+        if ($isadmin || has_capability('mod/cla:manage', context_system::instance())) {
+            $clapath = $CFG->wwwroot . '/mod/cla/admin.php';
+            $boxtext .= '<p><a href="' . $clapath . '">CLA administration</a></p>';
         }
 
-        // Finalise the main admin block
-        if ($box_text != "") {
-            $this->content->text .= $OUTPUT->box_start('generalbox rollover_admin_notification') . $box_text . $OUTPUT->box_end();
+        // Finalise the main admin block.
+        if (!empty($boxtext)) {
+            $this->content->text .= $OUTPUT->box($boxtext, 'generalbox rollover_admin_notification');
         }
 
         // ----------------------------------------------------------------------------------------------------------------------
@@ -240,13 +247,13 @@ class block_kent_course_overview extends block_base {
             $this->content->text .= $paging;
         }
 
-        // Remove main site course
+        // Remove main site course.
         $site = get_site();
         if (array_key_exists($site->id, $courses['courses'])) {
             unset($courses['courses'][$site->id]);
         }
 
-        // Update access times
+        // Update access times.
         foreach ($courses['courses'] as $c) {
             if (isset($USER->lastcourseaccess[$c->id])) {
                 $courses['courses'][$c->id]->lastaccess = $USER->lastcourseaccess[$c->id];
@@ -255,17 +262,12 @@ class block_kent_course_overview extends block_base {
             }
         }
 
-        // Provide link back to Current Moodle, if I am the archive moodle!
-        if ($CFG->kent->distribution === "2012" || $CFG->kent->distribution === "archive") {
-            $this->content->text .= '<div class="archive_link">'.get_string('current_text', 'block_kent_course_overview').'</div>';
-        }
-
-        // Print the category enrollment information
+        // Print the category enrollment information.
         if (!empty($categories['categories']) && ($page == 0)) {
             $this->content->text .= kent_category_print_overview($categories['categories'], $baseactionurl);
         }
 
-        // Print the course enrollment information
+        // Print the course enrollment information.
         if (empty($courses['courses'])) {
             $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
         } else {
@@ -274,11 +276,6 @@ class block_kent_course_overview extends block_base {
 
         if ($paging != '<div class="paging"></div>') {
             $this->content->text .= $paging;
-        }
-
-        // Provide link back to Archive Moodle if switched on
-        if ($CFG->kent->distribution === LIVE_MOODLE) {
-            $this->content->text .= '<div class="archive_link">'.get_string('archives_text', 'block_kent_course_overview').'</div>';
         }
 
         $this->content->text .= '<div id="dialog_sure">'.get_string('areyousure', 'block_kent_course_overview').'</div>';
