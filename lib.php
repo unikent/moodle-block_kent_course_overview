@@ -218,6 +218,9 @@ function kent_enrol_get_my_courses($fields = null, $sort = 'sortorder ASC', $pag
     return array('totalcourses' => count($courses), 'courses' => $courseset);
 }
 
+/**
+ * Returns a list of categories we are enrolled in.
+ */
 function kent_enrol_get_my_categories() {
     global $DB, $USER;
 
@@ -248,6 +251,9 @@ function kent_enrol_get_my_categories() {
     return array('totalcategories' => $totalcategories, 'categories' => $categories);
 }
 
+/**
+ * Prints an overview of the categories.
+ */
 function kent_category_print_overview($categories, $baseurl) {
     $content = '';
 
