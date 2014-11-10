@@ -88,7 +88,7 @@ function kent_course_print_overview($courses, $baseurl) {
         if ($rolloverinstalled && $permstorollover) {
 
             $clearmodule = get_config('block_kent_course_overview', 'clearmodule');
-            $clearmodulebutton = $clearmodulebutton;
+            $clearmodulebutton = get_string('clearmodulebutton', 'block_kent_course_overview');
 
             $rolloverpath = $CFG->wwwroot.'/local/rollover/index.php?srch='.$course->shortname;
 
