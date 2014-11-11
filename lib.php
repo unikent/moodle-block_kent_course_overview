@@ -266,8 +266,8 @@ function kent_category_print_overview($categories, $baseurl) {
         );
 
         // Construct link.
-        $url = new moodle_url('/course/category.php', array(
-            'id' => $category->id
+        $url = new moodle_url('/course/index.php', array(
+            'categoryid' => $category->id
         ));
         $link = html_writer::link($url, $category->name, $attributes);
 
