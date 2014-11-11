@@ -157,7 +157,7 @@ function kent_add_teachers($course, $context) {
     if (!empty($CFG->coursecontact)) {
         $managerroles = explode(',', $CFG->coursecontact);
         $namesarray = array();
-        $rusers = get_role_users($managerroles, $context, true);
+        $rusers = get_role_users($managerroles, $context, false);
 
         $namesarray = array();
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
