@@ -164,7 +164,6 @@ function kent_add_teachers($course, $context) {
             'r.sortorder ASC, u.lastname ASC',
             'u.lastname, u.firstname');
 
-        $namesarray = array();
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
         foreach ($rusers as $ra) {
             if (isset($namesarray[$ra->id])) {
