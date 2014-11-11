@@ -83,7 +83,7 @@ function kent_course_print_overview($courses, $baseurl) {
                 $summary = \core_text::substr($summary, 0, 252) . '...';
                 $summary = strip_tags($summary);
             }
-            $content .= ' <span class="course_description">' . s($summary) . '</span>';
+            $content .= ' <span class="course_description">' . $summary . '</span>';
         }
 
         $content .= kent_add_teachers($course, $context);
