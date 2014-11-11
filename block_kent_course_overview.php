@@ -63,7 +63,7 @@ class block_kent_course_overview extends block_base {
             return $this->content;
         }
 
-        $cancache = false;
+        $cancache = true;
 
         // Get hide/show params (for quick visbility changes).
         $hide = optional_param('hide', 0, PARAM_INT);
