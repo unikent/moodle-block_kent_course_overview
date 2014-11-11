@@ -213,7 +213,7 @@ HTML;
                         )";
                 $count = $DB->count_records_sql($sql, array(
                     'userid' => $USER->id,
-                    'shortname' => 'depadmin'
+                    'shortname' => 'dep_admin'
                 ));
                 $depadmin = $count > 0;
             }
