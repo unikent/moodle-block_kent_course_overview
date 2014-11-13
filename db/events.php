@@ -44,4 +44,9 @@ $observers = array (
         'callback' => '\block_kent_course_overview\observers::clear_cache',
     ),
 
+    array (
+        'eventname' => '\core\event\course_updated',
+        'callback' => '\block_kent_course_overview\observers::clear_course_cache',
+    ),
+
 );

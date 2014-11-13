@@ -63,7 +63,7 @@ class block_kent_course_overview extends block_base {
             return $this->content;
         }
 
-        $cancache = false;
+        $cancache = true;
 
         // Get hide/show params (for quick visbility changes).
         $hide = optional_param('hide', 0, PARAM_INT);
@@ -179,18 +179,7 @@ HTML;
         // Can we rollover any module?
         $canrollover = $isadmin;
         if (!$canrollover) {
-            $sql = "SELECT COUNT(ra.id) as count
-                    FROM {role_assignments} ra
-                    WHERE userid = :userid AND roleid IN (
-                        SELECT DISTINCT roleid
-                        FROM {role_capabilities} rc
-                        WHERE rc.capability = :capability AND rc.permission = 1 ORDER BY rc.roleid ASC
-                    )";
-            $count = $DB->count_records_sql($sql, array(
-                'capability' => 'moodle/course:update',
-                'userid' => $USER->id
-            ));
-            $canrollover = $count > 0;
+            $canrollover = \local_kent\User::has_course_update_role($USER->id);
         }
 
         // Build the main admin box.
@@ -213,9 +202,9 @@ HTML;
                         )";
                 $count = $DB->count_records_sql($sql, array(
                     'userid' => $USER->id,
-                    'shortname' => 'depadmin'
+                    'shortname' => 'dep_admin'
                 ));
-                $depadmin = $count > 0;
+                $depadmin = \local_kent\User::is_dep_admin($USER->id);
             }
 
             if ($depadmin) {

@@ -83,7 +83,7 @@ function kent_course_print_overview($courses, $baseurl) {
                 $summary = \core_text::substr($summary, 0, 252) . '...';
                 $summary = strip_tags($summary);
             }
-            $content .= ' <span class="course_description">' . s($summary) . '</span>';
+            $content .= ' <span class="course_description">' . $summary . '</span>';
         }
 
         $content .= kent_add_teachers($course, $context);
@@ -157,9 +157,13 @@ function kent_add_teachers($course, $context) {
     if (!empty($CFG->coursecontact)) {
         $managerroles = explode(',', $CFG->coursecontact);
         $namesarray = array();
-        $rusers = get_role_users($managerroles, $context, true);
 
-        $namesarray = array();
+        $userfields = get_all_user_name_fields(true, 'u');
+        $rusers = get_role_users($managerroles, $context, true,
+            'ra.id AS raid, u.id, u.username, '.$userfields.', r.name AS rolename, r.shortname as roleshortname, r.sortorder, r.id AS roleid',
+            'r.sortorder ASC, u.lastname ASC',
+            'u.lastname, u.firstname');
+
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
         foreach ($rusers as $ra) {
             if (isset($namesarray[$ra->id])) {
@@ -261,8 +265,8 @@ function kent_category_print_overview($categories, $baseurl) {
         );
 
         // Construct link.
-        $url = new moodle_url('/course/category.php', array(
-            'id' => $category->id
+        $url = new moodle_url('/course/index.php', array(
+            'categoryid' => $category->id
         ));
         $link = html_writer::link($url, $category->name, $attributes);
 
