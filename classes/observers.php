@@ -30,16 +30,46 @@ defined('MOODLE_INTERNAL') || die();
  * Kent Course Overview observers
  */
 class observers {
-
     /**
      * Triggered when an enrolment is updated.
      *
      * @param object $event
-     * @return unknown
      */
     public static function clear_cache($event) {
         $cache = \cache::make('block_kent_course_overview', 'data');
         $cache->delete("full_" . $event->relateduserid);
+        return true;
+    }
+
+    /**
+     * Triggered when a course is updated.
+     *
+     * @param object $event
+     */
+    public static function clear_course_cache($event) {
+        global $DB;
+
+        $cache = \cache::make('block_kent_course_overview', 'data');
+
+        // Delete cache for everyone who is related to this course (roughly).
+        $rs = $DB->get_recordset_sql("
+            SELECT ra.userid
+            FROM {role_assignments} ra
+            INNER JOIN {context} ctx
+                ON ctx.id=ra.contextid
+            WHERE ctx.contextlevel=:level AND ctx.instanceid=:courseid
+            GROUP BY ra.userid
+        ", array(
+            "level" => \CONTEXT_COURSE,
+            "courseid" => $event->objectid
+        ));
+
+        foreach ($rs as $user) {
+            $cache->delete("full_" . $user->userid);
+        }
+
+        $rs->close();
+
         return true;
     }
 }
