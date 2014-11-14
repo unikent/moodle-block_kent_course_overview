@@ -237,9 +237,7 @@ function kent_enrol_get_my_categories() {
                     AND c.contextlevel=:ctxlevel
             INNER JOIN {role_assignments} ra
                 ON ra.contextid=c.id
-            INNER JOIN {user} u
-                ON ra.userid=u.id
-            WHERE u.id = :userid
+            WHERE ra.userid = :userid
             GROUP BY cc.id";
 
     $categories = $DB->get_records_sql($sql, array(
