@@ -68,4 +68,24 @@ HTML;
         return $content;
 
     }
+
+    /**
+     * Returns search box.
+     */
+    public function print_search_box() {
+        global $CFG;
+
+        return <<<HTML
+            <div class="form_container">
+                <form id="module_search" action="{$CFG->wwwroot}/course/search.php" method="get">
+                    <div class="left">
+                        <input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" />
+                    </div>
+                    <div class="right">
+                        <input class="courseoverview_search_sub" type="submit" value="go" />
+                    </div>
+                </form>
+            </div>
+HTML;
+    }
 }

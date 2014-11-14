@@ -59,7 +59,7 @@ class list_generator
     public function get_courses($userid) {
         $courses = enrol_get_users_courses($userid, false, 'id, shortname, summary, visible', 'shortname ASC');
 
-        foreach ($course as $course) {
+        foreach ($courses as $course) {
             $course = new list_course($course);
         }
 

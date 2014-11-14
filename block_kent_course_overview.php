@@ -72,7 +72,7 @@ class block_kent_course_overview extends block_base {
         $listgen = new \block_kent_course_overview\list_generator();
         $listrender = new \block_kent_course_overview\list_renderer();
 
-        $cancache = true;
+        $cancache = false;
 
         // Get hide/show params (for quick visbility changes).
         $hide = optional_param('hide', 0, PARAM_INT);
@@ -166,18 +166,7 @@ class block_kent_course_overview extends block_base {
         $this->content->footer = '';
 
         // Build the search box.
-        $this->content->text .= <<<HTML
-            <div class="form_container">
-                <form id="module_search" action="{$CFG->wwwroot}/course/search.php" method="get">
-                    <div class="left">
-                        <input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" />
-                    </div>
-                    <div class="right">
-                        <input class="courseoverview_search_sub" type="submit" value="go" />
-                    </div>
-                </form>
-            </div>
-HTML;
+        $this->content->text .= $listrender->print_search_box();
 
         // Are we an admin?
         $isadmin = has_capability('moodle/site:config', context_system::instance());
