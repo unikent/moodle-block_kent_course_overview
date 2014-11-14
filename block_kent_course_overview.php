@@ -246,7 +246,7 @@ class block_kent_course_overview extends block_base {
         if (empty($courses)) {
             $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
         } else {
-            $this->content->text .= kent_course_print_overview($courses, $baseactionurl);
+            $this->content->text .= $listrender->print_courses($courses, $baseactionurl);
         }
 
         if ($paging != '<div class="paging"></div>') {

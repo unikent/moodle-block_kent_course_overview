@@ -101,12 +101,12 @@ class list_course
             $fullname = fullname($ra, $canviewfullnames);
             $rolename = !empty($ra->rolename) ? $ra->rolename : $ra->roleshortname;
 
-            $nameurl = new moodle_url('/user/view.php', array(
+            $nameurl = new \moodle_url('/user/view.php', array(
                 'id' => $ra->userid,
                 'course' => SITEID
             ));
 
-            $namesarray[$ra->userid] = s($rolename) . ': ' . html_writer::link($nameurl, $fullname);
+            $namesarray[$ra->userid] = s($rolename) . ': ' . \html_writer::link($nameurl, $fullname);
         }
 
         return $namesarray;
