@@ -70,6 +70,7 @@ class block_kent_course_overview extends block_base {
         }
 
         $listgen = new \block_kent_course_overview\list_generator();
+        $listrender = new \block_kent_course_overview\list_renderer();
 
         $cancache = true;
 
@@ -261,7 +262,7 @@ HTML;
 
         // Print the category enrollment information.
         if (!empty($categories['categories']) && ($page == 0)) {
-            $this->content->text .= kent_category_print_overview($categories['categories'], $baseactionurl);
+            $this->content->text .= $listrender->print_categories($categories['categories']);
         }
 
         // Print the course enrollment information.

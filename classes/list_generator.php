@@ -27,7 +27,7 @@ namespace block_kent_course_overview;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Kent Course Overview List generator
+ * Kent Course Overview List Generator
  */
 class list_generator
 {
