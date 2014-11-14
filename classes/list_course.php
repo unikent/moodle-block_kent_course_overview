@@ -34,6 +34,9 @@ class list_course
     /** Reference to course object */
     private $_course;
 
+    /** Reference to context object */
+    private $_context;
+
     /**
      * Constructor
      */
@@ -47,6 +50,7 @@ class list_course
         }
 
         $this->_course = $course;
+        $this->_context = \context_course::instance($course->id);
     }
 
     /**
@@ -60,6 +64,51 @@ class list_course
      * Magic get override.
      */
     public function __get($name) {
+        if ($name == "context") {
+            return $this->_context;
+        }
+
         return $this->_course->$name;
+    }
+
+    /*
+     * Function to pull in teachers linked on a course.
+     */
+    public function get_teachers() {
+        global $CFG, $DB;
+
+        // First find all roles that are supposed to be displayed.
+        if (empty($CFG->coursecontact)) {
+            return array();
+        }
+
+        $managerroles = explode(',', $CFG->coursecontact);
+        $namesarray = array();
+
+        $userfields = get_all_user_name_fields(true, 'u');
+        $rusers = get_role_users($managerroles, $this->_context, true,
+            'ra.id AS id, u.id AS userid, u.username, '.$userfields.', r.name AS rolename, r.shortname as roleshortname, r.sortorder, r.id AS roleid',
+            'r.sortorder ASC, u.lastname ASC',
+            'u.lastname, u.firstname');
+
+        $canviewfullnames = has_capability('moodle/site:viewfullnames', $this->_context);
+        foreach ($rusers as $ra) {
+            if (isset($namesarray[$ra->userid])) {
+                // Only display a user once with the higest sortorder role.
+                continue;
+            }
+
+            $fullname = fullname($ra, $canviewfullnames);
+            $rolename = !empty($ra->rolename) ? $ra->rolename : $ra->roleshortname;
+
+            $nameurl = new moodle_url('/user/view.php', array(
+                'id' => $ra->userid,
+                'course' => SITEID
+            ));
+
+            $namesarray[$ra->userid] = s($rolename) . ': ' . html_writer::link($nameurl, $fullname);
+        }
+
+        return $namesarray;
     }
 }

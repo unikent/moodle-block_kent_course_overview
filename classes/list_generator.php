@@ -65,4 +65,5 @@ class list_generator
 
         return $courses;
     }
+
 }

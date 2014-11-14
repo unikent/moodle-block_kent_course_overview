@@ -86,7 +86,11 @@ function kent_course_print_overview($courses, $baseurl) {
             $content .= ' <span class="course_description">' . $summary . '</span>';
         }
 
-        $content .= kent_add_teachers($course, $context);
+        $teachers = $course->get_teachers();
+        if (!empty($teachers)) {
+            $content .= $this->print_teachers($teachers);
+        }
+
         $content .= '</div>';
 
         // If user has ability to update the course and the course is empty to signify a rollover.
@@ -141,61 +145,5 @@ function kent_course_print_overview($courses, $baseurl) {
     }
 
     return $content;
-}
-
-
-/*
- * Function to pull in teachers linked on a course.
- */
-function kent_add_teachers($course, $context) {
-
-    global $CFG, $DB;
-
-    $string = '';
-
-    // First find all roles that are supposed to be displayed.
-    if (!empty($CFG->coursecontact)) {
-        $managerroles = explode(',', $CFG->coursecontact);
-        $namesarray = array();
-
-        $userfields = get_all_user_name_fields(true, 'u');
-        $rusers = get_role_users($managerroles, $context, true,
-            'ra.id AS raid, u.id, u.username, '.$userfields.', r.name AS rolename, r.shortname as roleshortname, r.sortorder, r.id AS roleid',
-            'r.sortorder ASC, u.lastname ASC',
-            'u.lastname, u.firstname');
-
-        $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
-        foreach ($rusers as $ra) {
-            if (isset($namesarray[$ra->id])) {
-                // Only display a user once with the higest sortorder role.
-                continue;
-            }
-
-            $fullname = fullname($ra, $canviewfullnames);
-            $rolename = !empty($ra->rolename) ? $ra->rolename : $ra->roleshortname;
-
-            $nameurl = new moodle_url('/user/view.php', array(
-                'id' => $ra->id,
-                'course' => SITEID
-            ));
-
-            $namesarray[$ra->id] = s($rolename) . ': ' . html_writer::link($nameurl, $fullname);
-        }
-
-        if (!empty($namesarray)) {
-            $string .= '<div class="teachers_show_hide">';
-            $string .= get_string('staff_toggle', 'block_kent_course_overview');
-            $string .= '</div>';
-            $string .= html_writer::start_tag('div', array(
-                'class' => 'teachers'
-            ));
-            foreach ($namesarray as $name) {
-                $string .= html_writer::tag('span', $name);
-            }
-            $string .= html_writer::end_tag('div');
-        }
-    }
-
-    return $string;
 }
 

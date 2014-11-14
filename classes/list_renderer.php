@@ -88,4 +88,23 @@ HTML;
             </div>
 HTML;
     }
+
+    /**
+     * Print teachers.
+     */
+    public function print_teachers($teachers) {
+        $stafftoggle = get_string('staff_toggle', 'block_kent_course_overview');
+        $showhide = html_writer::tag('div', $stafftoggle, array(
+            'class' => 'teachers_show_hide'
+        ));
+
+        $staff = '';
+        foreach ($teachers as $teacher) {
+            $staff .= html_writer::tag('span', $teacher);
+        }
+
+        return $showhide . html_writer::tag('div', $staff, array(
+            'class' => 'teachers'
+        ));
+    }
 }
