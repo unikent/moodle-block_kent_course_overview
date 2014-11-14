@@ -63,6 +63,14 @@ class block_kent_course_overview extends block_base {
             return $this->content;
         }
 
+        // Guest account does not have anything.
+        if (isguestuser() or !isloggedin()) {
+            $this->content = "";
+            return "";
+        }
+
+        $listgen = new \block_kent_course_overview\list_generator();
+
         $cancache = true;
 
         // Get hide/show params (for quick visbility changes).
@@ -124,7 +132,7 @@ class block_kent_course_overview extends block_base {
         $baseactionurl = new moodle_url($PAGE->URL, $params);
 
         // Fetch the Categories that user is enrolled in.
-        $categories = kent_enrol_get_my_categories();
+        $categories = $listgen->get_categories($USER->id);
         $offset = isset($categories['totalcategories']) ? $categories['totalcategories'] : 0;
 
         // Calculate courses to add after category records.

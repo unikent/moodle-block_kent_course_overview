@@ -220,37 +220,6 @@ function kent_enrol_get_my_courses($fields = null, $sort = 'sortorder ASC', $pag
 }
 
 /**
- * Returns a list of categories we are enrolled in.
- */
-function kent_enrol_get_my_categories() {
-    global $DB, $USER;
-
-    // Guest account does not have any courses.
-    if (isguestuser() or !isloggedin()) {
-        return array();
-    }
-
-    $sql = "SELECT cc.id, cc.name, cc.sortorder
-            FROM {course_categories} cc
-            INNER JOIN {context} c
-                ON cc.id=c.instanceid
-                    AND c.contextlevel=:ctxlevel
-            INNER JOIN {role_assignments} ra
-                ON ra.contextid=c.id
-            WHERE ra.userid = :userid
-            GROUP BY cc.id";
-
-    $categories = $DB->get_records_sql($sql, array(
-        'userid' => $USER->id,
-        'ctxlevel' => \CONTEXT_COURSECAT
-    ));
-
-    $totalcategories = count($categories);
-
-    return array('totalcategories' => $totalcategories, 'categories' => $categories);
-}
-
-/**
  * Prints an overview of the categories.
  */
 function kent_category_print_overview($categories, $baseurl) {
