@@ -249,8 +249,8 @@ HTML;
         }
 
         // Print the category enrollment information.
-        if (!empty($categories['categories']) && ($page == 0)) {
-            $this->content->text .= $listrender->print_categories($categories['categories']);
+        if (!empty($categories) && ($page == 0)) {
+            $this->content->text .= $listrender->print_categories($categories);
         }
 
         // Print the course enrollment information.
