@@ -199,23 +199,3 @@ function kent_add_teachers($course, $context) {
     return $string;
 }
 
-/**
- * Returns list of courses current $USER is enrolled in and can access
- *
- * - $fields is an array of field names to ADD
- *   so name the fields you really need, which will
- *   be added and uniq'd
- *
- * @param string|array $fields
- * @param string $sort
- * @param int $limit max number of courses
- * @return array
- */
-function kent_enrol_get_my_courses($fields = null, $sort = 'sortorder ASC', $page, $perpage) {
-    global $USER;
-
-    $courses = enrol_get_users_courses($USER->id, false, $fields, $sort);
-    $courseset = array_slice($courses, $page, $perpage, true);
-    return array('totalcourses' => count($courses), 'courses' => $courseset);
-}
-

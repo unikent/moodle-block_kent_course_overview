@@ -134,7 +134,7 @@ class block_kent_course_overview extends block_base {
 
         // Fetch the Categories that user is enrolled in.
         $categories = $listgen->get_categories($USER->id);
-        $offset = isset($categories['totalcategories']) ? $categories['totalcategories'] : 0;
+        $offset = count($categories);
 
         // Calculate courses to add after category records.
         if ($offset > $perpage && $page == 0) {
@@ -156,12 +156,9 @@ class block_kent_course_overview extends block_base {
         }
 
         // Get the courses for the current page.
-
+        $courses = $listgen->get_courses($USER->id);
         if ($pagelength > 0) {
-            $courses = kent_enrol_get_my_courses('id, shortname, summary, visible', 'shortname ASC', $pagestart, $pagelength);
-        } else {
-            $courses = kent_enrol_get_my_courses('id, shortname, summary, visible', 'shortname ASC', 0, 1);
-            $courses['courses'] = array();
+            $courses = array_slice($courses, $pagestart, $pagelength, true);
         }
 
         $this->content = new stdClass();
@@ -238,7 +235,7 @@ HTML;
         // ----------------------------------------------------------------------------------------------------------------------
 
         $baseurl = new moodle_url($PAGE->URL, array('perpage' => $perpage));
-        $coursecount = $courses['totalcourses'] + $categories['totalcategories'];
+        $coursecount = count($courses) + count($categories);
 
         $paging = $OUTPUT->paging_bar($coursecount, $page, $perpage, $baseurl);
         if ($paging != '<div class="paging"></div>') {
@@ -247,17 +244,8 @@ HTML;
 
         // Remove main site course.
         $site = get_site();
-        if (array_key_exists($site->id, $courses['courses'])) {
-            unset($courses['courses'][$site->id]);
-        }
-
-        // Update access times.
-        foreach ($courses['courses'] as $c) {
-            if (isset($USER->lastcourseaccess[$c->id])) {
-                $courses['courses'][$c->id]->lastaccess = $USER->lastcourseaccess[$c->id];
-            } else {
-                $courses['courses'][$c->id]->lastaccess = 0;
-            }
+        if (array_key_exists($site->id, $courses)) {
+            unset($courses[$site->id]);
         }
 
         // Print the category enrollment information.
@@ -266,10 +254,10 @@ HTML;
         }
 
         // Print the course enrollment information.
-        if (empty($courses['courses'])) {
+        if (empty($courses)) {
             $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
         } else {
-            $this->content->text .= kent_course_print_overview($courses['courses'], $baseactionurl);
+            $this->content->text .= kent_course_print_overview($courses, $baseactionurl);
         }
 
         if ($paging != '<div class="paging"></div>') {

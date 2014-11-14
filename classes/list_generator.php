@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 class list_generator
 {
     /**
-     * Returns a list of categories this user can access.
+     * Returns a list of categories userid has an RA in.
      */
     public function get_categories($userid) {
         global $DB;
@@ -51,5 +51,18 @@ class list_generator
             'userid' => $userid,
             'ctxlevel' => \CONTEXT_COURSECAT
         ));
+    }
+
+    /**
+     * Returns list of courses userid is enrolled in and can access.
+     */
+    public function get_courses($userid) {
+        $courses = enrol_get_users_courses($userid, false, 'id, shortname, summary, visible', 'shortname ASC');
+
+        foreach ($course as $course) {
+            $course = new list_course($course);
+        }
+
+        return $courses;
     }
 }

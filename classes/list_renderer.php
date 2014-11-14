@@ -44,10 +44,10 @@ class list_renderer
             );
 
             // Construct link.
-            $url = new moodle_url('/course/index.php', array(
+            $url = new \moodle_url('/course/index.php', array(
                 'categoryid' => $category->id
             ));
-            $link = html_writer::link($url, $category->name, $attributes);
+            $link = \html_writer::link($url, $category->name, $attributes);
 
             $content .= <<<HTML
             <li class="course">
