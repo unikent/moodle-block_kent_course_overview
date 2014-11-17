@@ -131,6 +131,9 @@ class block_kent_course_overview extends block_base {
         // Fetch the Categories that user is enrolled in.
         $categories = $listgen->get_categories($USER->id);
 
+        // Count now.
+        $total = count($courses) + count($categories);
+
         // Calculate courses to add after category records.
         $offset = count($categories);
         if ($offset >= $perpage && $page == 0) {
@@ -142,7 +145,7 @@ class block_kent_course_overview extends block_base {
         } else if ($offset > 0 && $page > 0) {
             $pagelength = $perpage;
             if ($offset <= $perpage) {
-                $pagestart = $page * $perpage - $offset;
+                $pagestart = ($page * $perpage) - $offset;
             } else {
                 $pagestart = ($page - 1) * $perpage;
             }
@@ -171,9 +174,8 @@ class block_kent_course_overview extends block_base {
         // ----------------------------------------------------------------------------------------------------------------------
 
         $baseurl = new moodle_url($PAGE->url, $params);
-        $coursecount = count($courses) + count($categories);
 
-        $paging = $OUTPUT->paging_bar($coursecount, $page, $perpage, $baseurl);
+        $paging = $OUTPUT->paging_bar($total, $page, $perpage, $baseurl);
         if ($paging != '<div class="paging"></div>') {
             $this->content->text .= $paging;
         }
