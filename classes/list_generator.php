@@ -57,11 +57,14 @@ class list_generator
      * Returns list of courses userid is enrolled in and can access.
      */
     public function get_courses($userid) {
+        $site = get_site();
         $courses = enrol_get_users_courses($userid, false, 'id, shortname, summary, visible', 'shortname ASC');
 
         $objs = array();
         foreach ($courses as $course) {
-            $objs[$course->id] = new list_course($course);
+            if ($course->id !== $site->id) {
+                $objs[$course->id] = new list_course($course);
+            }
         }
 
         return $objs;
