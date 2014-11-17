@@ -21,7 +21,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once($CFG->dirroot . '/blocks/kent_course_overview/lib.php');
 require_once($CFG->dirroot . '/lib/weblib.php');
 require_once($CFG->dirroot . '/lib/formslib.php');
 
@@ -63,7 +62,14 @@ class block_kent_course_overview extends block_base {
             return $this->content;
         }
 
-        $cancache = true;
+        // Guest account does not have anything.
+        if (isguestuser() or !isloggedin()) {
+            $this->content = "";
+            return "";
+        }
+
+        $listgen = new \block_kent_course_overview\list_generator();
+        $listrender = new \block_kent_course_overview\list_renderer();
 
         // Get hide/show params (for quick visbility changes).
         $hide = optional_param('hide', 0, PARAM_INT);
@@ -92,8 +98,6 @@ class block_kent_course_overview extends block_base {
                     'visibleold' => $visible,
                     'timemodified' => time()
                 ));
-
-                $cancache = false;
             }
         }
 
@@ -103,32 +107,35 @@ class block_kent_course_overview extends block_base {
         $cachekey2 = $page . '_' . $perpage;
 
         $cachecontent = $cache->get($cachekey);
-
-        if ($cancache && $cachecontent !== false) {
+        if ($cachecontent !== false) {
             if (isset($cachecontent[$cachekey2])) {
                 $this->content = $cachecontent[$cachekey2];
                 return $this->content;
             }
         }
 
+        $this->content = new \stdClass();
+        $this->content->text = '';
+        $this->content->footer = '';
+
         // Generate page url for page actions from current params.
-        $params = array();
-        if ($page) {
-            $params['page'] = $page;
-        }
+        $params = array(
+            'page' => $page,
+            'perpage' => $perpage
+        );
 
-        if ($perpage) {
-            $params['perpage'] = $perpage;
-        }
-
-        $baseactionurl = new moodle_url($PAGE->URL, $params);
+        // Get the courses for the current page.
+        $courses = $listgen->get_courses($USER->id);
 
         // Fetch the Categories that user is enrolled in.
-        $categories = kent_enrol_get_my_categories();
-        $offset = isset($categories['totalcategories']) ? $categories['totalcategories'] : 0;
+        $categories = $listgen->get_categories($USER->id);
+
+        // Count now.
+        $total = count($courses) + count($categories);
 
         // Calculate courses to add after category records.
-        if ($offset > $perpage && $page == 0) {
+        $offset = count($categories);
+        if ($offset >= $perpage && $page == 0) {
             $pagelength = 0;
             $pagestart  = 0;
         } else if ($offset > 0 && $page == 0) {
@@ -137,7 +144,7 @@ class block_kent_course_overview extends block_base {
         } else if ($offset > 0 && $page > 0) {
             $pagelength = $perpage;
             if ($offset <= $perpage) {
-                $pagestart = $page * $perpage - $offset;
+                $pagestart = ($page * $perpage) - $offset;
             } else {
                 $pagestart = ($page - 1) * $perpage;
             }
@@ -146,121 +153,39 @@ class block_kent_course_overview extends block_base {
             $pagestart  = $page * $perpage;
         }
 
-        // Get the courses for the current page.
-
         if ($pagelength > 0) {
-            $courses = kent_enrol_get_my_courses('id, shortname, summary, visible', 'shortname ASC', $pagestart, $pagelength);
-        } else {
-            $courses = kent_enrol_get_my_courses('id, shortname, summary, visible', 'shortname ASC', 0, 1);
-            $courses['courses'] = array();
+            $courses = array_slice($courses, $pagestart, $pagelength, true);
         }
-
-        $this->content = new stdClass();
-        $this->content->text = '';
-        $this->content->footer = '';
 
         // Build the search box.
-        $this->content->text .= <<<HTML
-            <div class="form_container">
-                <form id="module_search" action="{$CFG->wwwroot}/course/search.php" method="get">
-                    <div class="left">
-                        <input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" />
-                    </div>
-                    <div class="right">
-                        <input class="courseoverview_search_sub" type="submit" value="go" />
-                    </div>
-                </form>
-            </div>
-HTML;
-
-        // Are we an admin?
-        $isadmin = has_capability('moodle/site:config', context_system::instance());
-
-        // Can we rollover any module?
-        $canrollover = $isadmin;
-        if (!$canrollover) {
-            $canrollover = \local_kent\User::has_course_update_role($USER->id);
-        }
+        $this->content->text .= $listrender->print_search_box();
 
         // Build the main admin box.
-        $boxtext = "";
-
-        // Add the rollover links.
-        if ($canrollover) {
-            $boxtext .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
-
-            $rolloveradminpath = "$CFG->wwwroot/local/rollover/";
-            $boxtext .= '<p>'.'<a href="'.$rolloveradminpath.'">Rollover admin page</a></p>';
-
-            // Can we see the DA pages?
-            $depadmin = $isadmin;
-            if (!$depadmin) {
-                $sql = "SELECT COUNT(ra.id) as count
-                        FROM {role_assignments} ra
-                        WHERE userid = :userid AND roleid = (
-                            SELECT id FROM {role} WHERE shortname = :shortname LIMIT 1
-                        )";
-                $count = $DB->count_records_sql($sql, array(
-                    'userid' => $USER->id,
-                    'shortname' => 'dep_admin'
-                ));
-                $depadmin = \local_kent\User::is_dep_admin($USER->id);
-            }
-
-            if ($depadmin) {
-                $connectadminpath = "$CFG->wwwroot/local/connect/";
-                $boxtext .= '<p><a href="' . $connectadminpath . '">Departmental administrator pages</a></p>';
-
-                $metaadminpath = "$CFG->wwwroot/admin/tool/meta";
-                $boxtext .= '<p><a href="' . $metaadminpath . '">Kent meta enrolment pages</a></p>';
-            }
+        $adminbox = $listrender->print_admin_links();
+        if (!empty($adminbox)) {
+            $this->content->text .= $OUTPUT->box($adminbox, 'generalbox rollover_admin_notification');
         }
 
-        if ($isadmin || has_capability('mod/cla:manage', context_system::instance())) {
-            $clapath = $CFG->wwwroot . '/mod/cla/admin.php';
-            $boxtext .= '<p><a href="' . $clapath . '">CLA administration</a></p>';
-        }
+        $baseurl = new moodle_url($PAGE->url, $params);
 
-        // Finalise the main admin block.
-        if (!empty($boxtext)) {
-            $this->content->text .= $OUTPUT->box($boxtext, 'generalbox rollover_admin_notification');
-        }
-
-        // ----------------------------------------------------------------------------------------------------------------------
-
-        $baseurl = new moodle_url($PAGE->URL, array('perpage' => $perpage));
-        $coursecount = $courses['totalcourses'] + $categories['totalcategories'];
-
-        $paging = $OUTPUT->paging_bar($coursecount, $page, $perpage, $baseurl);
+        $paging = $OUTPUT->paging_bar($total, $page, $perpage, $baseurl);
         if ($paging != '<div class="paging"></div>') {
             $this->content->text .= $paging;
         }
 
-        // Remove main site course.
-        $site = get_site();
-        if (array_key_exists($site->id, $courses['courses'])) {
-            unset($courses['courses'][$site->id]);
-        }
-
-        // Update access times.
-        foreach ($courses['courses'] as $c) {
-            if (isset($USER->lastcourseaccess[$c->id])) {
-                $courses['courses'][$c->id]->lastaccess = $USER->lastcourseaccess[$c->id];
-            } else {
-                $courses['courses'][$c->id]->lastaccess = 0;
-            }
-        }
-
         // Print the category enrollment information.
-        if (!empty($categories['categories']) && ($page == 0)) {
-            $this->content->text .= kent_category_print_overview($categories['categories'], $baseactionurl);
+        if (!empty($categories) && ($page == 0)) {
+            $this->content->text .= $listrender->print_categories($categories);
         }
 
         // Print the course enrollment information.
-        if (empty($courses['courses'])) {
-            $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
-        } else {
-            $this->content->text .= kent_course_print_overview($courses['courses'], $baseactionurl);
+        if ($pagelength > 0) {
+            if (empty($courses)) {
+                $nocourses = get_string('nocourses', 'block_kent_course_overview');
+                $this->content->text .= '<div class="co_no_crs">' . $nocourses . '</div>';
+            } else {
+                $this->content->text .= $listrender->print_courses($courses, $baseurl);
+            }
         }
 
         if ($paging != '<div class="paging"></div>') {
