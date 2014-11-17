@@ -37,6 +37,12 @@ class list_generator
     public function get_categories($userid) {
         global $DB;
 
+        $cache = \cache::make('block_kent_course_overview', 'data');
+        $content = $cache->get('categories_' . $userid);
+        if ($content !== false) {
+            return $content;
+        }
+
         $sql = "SELECT cc.id, cc.name, cc.sortorder
                 FROM {course_categories} cc
                 INNER JOIN {context} c
@@ -47,16 +53,26 @@ class list_generator
                 WHERE ra.userid = :userid
                 GROUP BY cc.id";
 
-        return $DB->get_records_sql($sql, array(
+        $objs = $DB->get_records_sql($sql, array(
             'userid' => $userid,
             'ctxlevel' => \CONTEXT_COURSECAT
         ));
+
+        $cache->set('categories_' . $userid, $objs);
+
+        return $objs;
     }
 
     /**
      * Returns list of courses userid is enrolled in and can access.
      */
     public function get_courses($userid) {
+        $cache = \cache::make('block_kent_course_overview', 'data');
+        $content = $cache->get('courses_' . $userid);
+        if ($content !== false) {
+            return $content;
+        }
+
         $site = get_site();
         $courses = enrol_get_users_courses($userid, false, 'id, shortname, summary, visible', 'shortname ASC');
 
@@ -66,6 +82,8 @@ class list_generator
                 $objs[$course->id] = new list_course($course);
             }
         }
+
+        $cache->set('courses_' . $userid, $objs);
 
         return $objs;
     }

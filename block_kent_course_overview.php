@@ -71,8 +71,6 @@ class block_kent_course_overview extends block_base {
         $listgen = new \block_kent_course_overview\list_generator();
         $listrender = new \block_kent_course_overview\list_renderer();
 
-        $cancache = false;
-
         // Get hide/show params (for quick visbility changes).
         $hide = optional_param('hide', 0, PARAM_INT);
         $show = optional_param('show', 0, PARAM_INT);
@@ -100,8 +98,6 @@ class block_kent_course_overview extends block_base {
                     'visibleold' => $visible,
                     'timemodified' => time()
                 ));
-
-                $cancache = false;
             }
         }
 
@@ -111,13 +107,16 @@ class block_kent_course_overview extends block_base {
         $cachekey2 = $page . '_' . $perpage;
 
         $cachecontent = $cache->get($cachekey);
-
-        if ($cancache && $cachecontent !== false) {
+        if ($cachecontent !== false) {
             if (isset($cachecontent[$cachekey2])) {
                 $this->content = $cachecontent[$cachekey2];
                 return $this->content;
             }
         }
+
+        $this->content = new \stdClass();
+        $this->content->text = '';
+        $this->content->footer = '';
 
         // Generate page url for page actions from current params.
         $params = array(
@@ -158,10 +157,6 @@ class block_kent_course_overview extends block_base {
             $courses = array_slice($courses, $pagestart, $pagelength, true);
         }
 
-        $this->content = new stdClass();
-        $this->content->text = '';
-        $this->content->footer = '';
-
         // Build the search box.
         $this->content->text .= $listrender->print_search_box();
 
@@ -170,8 +165,6 @@ class block_kent_course_overview extends block_base {
         if (!empty($adminbox)) {
             $this->content->text .= $OUTPUT->box($adminbox, 'generalbox rollover_admin_notification');
         }
-
-        // ----------------------------------------------------------------------------------------------------------------------
 
         $baseurl = new moodle_url($PAGE->url, $params);
 
@@ -188,7 +181,8 @@ class block_kent_course_overview extends block_base {
         // Print the course enrollment information.
         if ($pagelength > 0) {
             if (empty($courses)) {
-                $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
+                $nocourses = get_string('nocourses', 'block_kent_course_overview');
+                $this->content->text .= '<div class="co_no_crs">' . $nocourses . '</div>';
             } else {
                 $this->content->text .= $listrender->print_courses($courses, $baseurl);
             }
