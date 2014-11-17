@@ -260,4 +260,46 @@ HTML;
 
         return $content;
     }
+
+
+    /**
+     * Print courses.
+     */
+    public function print_admin_links() {
+        global $DB, $USER;
+
+        $ctx = \context_system::instance();
+        $boxtext = "";
+
+        // Are we an admin?
+        $isadmin = has_capability('moodle/site:config', $ctx);
+        $rolloveradmin = $isadmin || \local_kent\User::has_course_update_role($USER->id);
+        $claadmin = $isadmin || has_capability('mod/cla:manage', $ctx);
+        $depadmin = $isadmin ||  \local_kent\User::is_dep_admin($USER->id);
+
+        // Add the rollover links.
+        if ($rolloveradmin) {
+            $boxtext .= '<p>' . get_string('admin_course_text', 'block_kent_course_overview') . '</p>';
+
+            $rolloveradminpath = new \moodle_url("/local/rollover/");
+            $boxtext .= '<p><a href="' . $rolloveradminpath . '">Rollover admin page</a></p>';
+        }
+
+        // Add dep admin links.
+        if ($depadmin) {
+            $connectadminpath = new \moodle_url("/local/connect/");
+            $boxtext .= '<p><a href="' . $connectadminpath . '">Departmental administrator pages</a></p>';
+
+            $metaadminpath = new \moodle_url("/admin/tool/meta");
+            $boxtext .= '<p><a href="' . $metaadminpath . '">Kent meta enrolment pages</a></p>';
+        }
+
+        // Add CLA links.
+        if ($claadmin) {
+            $clapath = new \moodle_url('/mod/cla/admin.php');
+            $boxtext .= '<p><a href="' . $clapath . '">CLA administration</a></p>';
+        }
+
+        return $boxtext;
+    }
 }

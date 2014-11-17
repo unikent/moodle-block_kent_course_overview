@@ -167,57 +167,10 @@ class block_kent_course_overview extends block_base {
         // Build the search box.
         $this->content->text .= $listrender->print_search_box();
 
-        // Are we an admin?
-        $isadmin = has_capability('moodle/site:config', context_system::instance());
-
-        // Can we rollover any module?
-        $canrollover = $isadmin;
-        if (!$canrollover) {
-            $canrollover = \local_kent\User::has_course_update_role($USER->id);
-        }
-
         // Build the main admin box.
-        $boxtext = "";
-
-        // Add the rollover links.
-        if ($canrollover) {
-            $boxtext .= '<p>'.get_string('admin_course_text', 'block_kent_course_overview').'</p>';
-
-            $rolloveradminpath = "$CFG->wwwroot/local/rollover/";
-            $boxtext .= '<p>'.'<a href="'.$rolloveradminpath.'">Rollover admin page</a></p>';
-
-            // Can we see the DA pages?
-            $depadmin = $isadmin;
-            if (!$depadmin) {
-                $sql = "SELECT COUNT(ra.id) as count
-                        FROM {role_assignments} ra
-                        WHERE userid = :userid AND roleid = (
-                            SELECT id FROM {role} WHERE shortname = :shortname LIMIT 1
-                        )";
-                $count = $DB->count_records_sql($sql, array(
-                    'userid' => $USER->id,
-                    'shortname' => 'dep_admin'
-                ));
-                $depadmin = \local_kent\User::is_dep_admin($USER->id);
-            }
-
-            if ($depadmin) {
-                $connectadminpath = "$CFG->wwwroot/local/connect/";
-                $boxtext .= '<p><a href="' . $connectadminpath . '">Departmental administrator pages</a></p>';
-
-                $metaadminpath = "$CFG->wwwroot/admin/tool/meta";
-                $boxtext .= '<p><a href="' . $metaadminpath . '">Kent meta enrolment pages</a></p>';
-            }
-        }
-
-        if ($isadmin || has_capability('mod/cla:manage', context_system::instance())) {
-            $clapath = $CFG->wwwroot . '/mod/cla/admin.php';
-            $boxtext .= '<p><a href="' . $clapath . '">CLA administration</a></p>';
-        }
-
-        // Finalise the main admin block.
-        if (!empty($boxtext)) {
-            $this->content->text .= $OUTPUT->box($boxtext, 'generalbox rollover_admin_notification');
+        $adminbox = $listrender->print_admin_links();
+        if (!empty($adminbox)) {
+            $this->content->text .= $OUTPUT->box($adminbox, 'generalbox rollover_admin_notification');
         }
 
         // ----------------------------------------------------------------------------------------------------------------------
