@@ -120,16 +120,10 @@ class block_kent_course_overview extends block_base {
         }
 
         // Generate page url for page actions from current params.
-        $params = array();
-        if ($page) {
-            $params['page'] = $page;
-        }
-
-        if ($perpage) {
-            $params['perpage'] = $perpage;
-        }
-
-        $baseactionurl = new moodle_url($PAGE->URL, $params);
+        $params = array(
+            'page' => $page,
+            'perpage' => $perpage
+        );
 
         // Fetch the Categories that user is enrolled in.
         $categories = $listgen->get_categories($USER->id);
@@ -175,18 +169,12 @@ class block_kent_course_overview extends block_base {
 
         // ----------------------------------------------------------------------------------------------------------------------
 
-        $baseurl = new moodle_url($PAGE->URL, array('perpage' => $perpage));
+        $baseurl = new moodle_url($PAGE->url, $params);
         $coursecount = count($courses) + count($categories);
 
         $paging = $OUTPUT->paging_bar($coursecount, $page, $perpage, $baseurl);
         if ($paging != '<div class="paging"></div>') {
             $this->content->text .= $paging;
-        }
-
-        // Remove main site course.
-        $site = get_site();
-        if (array_key_exists($site->id, $courses)) {
-            unset($courses[$site->id]);
         }
 
         // Print the category enrollment information.
@@ -198,7 +186,7 @@ class block_kent_course_overview extends block_base {
         if (empty($courses)) {
             $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
         } else {
-            $this->content->text .= $listrender->print_courses($courses, $baseactionurl);
+            $this->content->text .= $listrender->print_courses($courses, $baseurl);
         }
 
         if ($paging != '<div class="paging"></div>') {
