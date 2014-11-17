@@ -125,14 +125,19 @@ HTML;
             $fullname = format_string($course->fullname, true, array('context' => $context));
             $shortname = format_string($course->shortname, true, array('context' => $context));
 
-            $cdclass = array('course_details_ovrv');
-            $listclass = array();
             $adminhide = 'admin_hide';
-            $attributes = array('title' => s($fullname), 'class' => 'course_list');
-
-            $permstorollover = has_capability('moodle/course:update', $context);
+            $listclass = array();
+            $cdclass = array(
+                'course_details_ovrv'
+            );
+            $attributes = array(
+                'title' => s($fullname),
+                'class' => 'course_list'
+            );
 
             if ($rolloverinstalled) {
+                $permstorollover = has_capability('moodle/course:update', $context);
+
                 $rollover = new \local_rollover\Course($course->id);
                 $rolloverstatus = $rollover->get_status();
                 $rolloverable = $rollover->can_rollover();
