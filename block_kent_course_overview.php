@@ -125,12 +125,15 @@ class block_kent_course_overview extends block_base {
             'perpage' => $perpage
         );
 
+        // Get the courses for the current page.
+        $courses = $listgen->get_courses($USER->id);
+
         // Fetch the Categories that user is enrolled in.
         $categories = $listgen->get_categories($USER->id);
-        $offset = count($categories);
 
         // Calculate courses to add after category records.
-        if ($offset > $perpage && $page == 0) {
+        $offset = count($categories);
+        if ($offset >= $perpage && $page == 0) {
             $pagelength = 0;
             $pagestart  = 0;
         } else if ($offset > 0 && $page == 0) {
@@ -148,8 +151,6 @@ class block_kent_course_overview extends block_base {
             $pagestart  = $page * $perpage;
         }
 
-        // Get the courses for the current page.
-        $courses = $listgen->get_courses($USER->id);
         if ($pagelength > 0) {
             $courses = array_slice($courses, $pagestart, $pagelength, true);
         }
@@ -183,10 +184,12 @@ class block_kent_course_overview extends block_base {
         }
 
         // Print the course enrollment information.
-        if (empty($courses)) {
-            $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
-        } else {
-            $this->content->text .= $listrender->print_courses($courses, $baseurl);
+        if ($pagelength > 0) {
+            if (empty($courses)) {
+                $this->content->text .= '<div class="co_no_crs">' . get_string('nocourses', 'block_kent_course_overview') . '</div>';
+            } else {
+                $this->content->text .= $listrender->print_courses($courses, $baseurl);
+            }
         }
 
         if ($paging != '<div class="paging"></div>') {
