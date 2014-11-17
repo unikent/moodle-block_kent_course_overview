@@ -114,62 +114,70 @@ HTML;
     public function print_courses($courses, $baseurl) {
         global $CFG, $USER, $DB, $OUTPUT;
 
+        // Ensure Rollover is installed before we do anything and that the course doesn't have content.
+        $rolloverinstalled = \local_kent\util\sharedb::available();
+
         $content = '';
 
         foreach ($courses as $course) {
-            $rollover = new \local_rollover\Course($course->id);
-
+            $course->visible = (int)$course->visible == 1 ? true : false;
             $context = \context_course::instance($course->id);
             $fullname = format_string($course->fullname, true, array('context' => $context));
             $shortname = format_string($course->shortname, true, array('context' => $context));
 
-            $width = '';
-            $listclass = '';
+            $cdclass = array('course_details_ovrv');
+            $listclass = array();
             $adminhide = 'admin_hide';
             $attributes = array('title' => s($fullname), 'class' => 'course_list');
 
             $permstorollover = has_capability('moodle/course:update', $context);
 
-            // Ensure Rollover is installed before we do anything and that the course doesn't have content.
-            $rolloverinstalled = \local_kent\util\sharedb::available();
-
             if ($rolloverinstalled) {
+                $rollover = new \local_rollover\Course($course->id);
                 $rolloverstatus = $rollover->get_status();
                 $rolloverable = $rollover->can_rollover();
 
                 if ($rolloverable && $permstorollover) {
-                    $width = 'admin_width';
                     $adminhide = '';
-                    $listclass = 'rollover_'.$rolloverstatus.' ';
+                    $cdclass[] = 'admin_width';
+                    $listclass[] = "rollover_{$rolloverstatus}";
                 }
             }
 
+            // Add unavailable link.
+            if (!$course->visible) {
+                $listclass[] = 'course_unavailable';
+            }
+
             // Construct link.
-            $content .= '<li class="' . $listclass . (!$course->visible ? 'course_unavailable' : '').'">';
-            if (has_capability('moodle/course:visibility', $context) && has_capability('moodle/course:viewhiddencourses', $context)) {
+            $listclass = implode(' ', $listclass);
+            $content .= '<li class="' . $listclass . '">';
+            if (has_capability('moodle/course:visibility', $context) &&
+                has_capability('moodle/course:viewhiddencourses', $context)) {
                 // If user can view hidden and can adjust visibility, we'll let them change it from here.
-                if (!empty($course->visible)) {
+                if ($course->visible) {
                     $url = new \moodle_url($baseurl, array('hide' => $course->id));
                     $img = $OUTPUT->action_icon($url, new \pix_icon('t/hide', get_string('hide')));
                 } else {
                     $url = new \moodle_url($baseurl, array('show' => $course->id));
                     $img = $OUTPUT->action_icon($url, new \pix_icon('t/show', get_string('show')));
                 }
+
                 $content .= "<div class='visibility_tri'></div><div class='course_adjust_visibility'>" . $img . "</div>";
             }
-            $content .= '<div class="course_details_ovrv '.$width. '" >';
+
+            $cdclass = implode(' ', $cdclass);
+            $content .= '<div class="' . $cdclass. '">';
 
             $name = $fullname;
-            if (isset($CFG->courselistshortnames)) {
-                if ($CFG->courselistshortnames === '1') {
-                    $name = $shortname . ': ' . $fullname;
-                }
+            if (isset($CFG->courselistshortnames) && $CFG->courselistshortnames === '1') {
+                $name = $shortname . ': ' . $fullname;
             }
 
             $viewurl = new \moodle_url('/course/view.php', array(
                 'id' => $course->id
             ));
-            $content .= '<span class="title">'.\html_writer::link($viewurl, $name, $attributes) . '</span>';
+            $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes) . '</span>';
 
             if (!empty($course->summary)) {
                 $summary = $course->summary;
@@ -193,13 +201,21 @@ HTML;
                 $clearmodule = get_config('block_kent_course_overview', 'clearmodule');
                 $clearmodulebutton = get_string('clearmodulebutton', 'block_kent_course_overview');
 
-                $rolloverpath = $CFG->wwwroot.'/local/rollover/index.php?srch='.$course->shortname;
+                $rolloverpath = new \moodle_url('/local/rollover/index.php', array(
+                    'srch' => $course->shortname
+                ));
 
                 if ($rolloverstatus == \local_rollover\Rollover::STATUS_NONE && !($rolloverable) && $clearmodule) {
                     $adminhide = '';
                 }
 
-                $content .= ' <div class="course_admin_options '.$adminhide.'">';
+                $classes = array('course_admin_options');
+                if (!empty($adminhide)) {
+                    $classes[] = $adminhide;
+                }
+                $classes = implode(' ', $classes);
+
+                $content .= ' <div class="'.$classes.'">';
                 switch ($rolloverstatus) {
                     case $rolloverable && \local_rollover\Rollover::STATUS_NONE:
                     case $rolloverable && \local_rollover\Rollover::STATUS_DELETED:
@@ -221,7 +237,6 @@ HTML;
                     case \local_rollover\Rollover::STATUS_ERROR:
                     default:
                         if ($clearmodule) {
-                            $adminhide = '';
                             $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.$clearmodulebutton.'</a>';
                         }
                     break;
