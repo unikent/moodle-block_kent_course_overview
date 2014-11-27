@@ -81,10 +81,10 @@ class block_kent_course_overview extends block_base {
         if (!empty($hide) or !empty($show)) {
             if (!empty($hide)) {
                 $course = $DB->get_record('course', array('id' => $hide));
-                $visible = 0;
+                $course->visible = 0;
             } else {
                 $course = $DB->get_record('course', array('id' => $show));
-                $visible = 1;
+                $course->visible = 1;
             }
 
             if ($course) {
@@ -92,12 +92,7 @@ class block_kent_course_overview extends block_base {
                 require_capability('moodle/course:visibility', $coursecontext);
 
                 // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
-                $DB->update_record('course', array(
-                    'id' => $course->id,
-                    'visible' => $visible,
-                    'visibleold' => $visible,
-                    'timemodified' => time()
-                ));
+                update_course($course);
             }
         }
 
