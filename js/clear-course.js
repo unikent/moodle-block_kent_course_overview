@@ -29,10 +29,11 @@ jQuery(document).ready(function() {
                         });
 
                         return jQuery.ajax({
-                            url: M.cfg.wwwroot + "/local/rollover/clear.php",
+                            url: M.cfg.wwwroot + "/local/rollover/ajax/clear.php",
                             type: "POST",
                             data: {
-                                'course': button.attr('href').replace("#", "")
+                                'course': button.attr('href').replace("#", ""),
+                                'sesskey': M.cfg.sesskey
                             },
                             success: function() {
                                 button.after('<p><b>Module cleared</b></p>');
