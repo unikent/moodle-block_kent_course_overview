@@ -161,9 +161,13 @@ class block_kent_course_overview extends block_base {
         $this->content->text .= $listrender->print_search_box();
 
         // Build the main admin box.
-        $adminbox = $listrender->print_admin_links();
-        if (!empty($adminbox)) {
-            $this->content->text .= $OUTPUT->box($adminbox, 'generalbox rollover_admin_notification');
+        $tryadmin = isset($this->config->admin_links) ? $this->config->admin_links == 'yes' : true;
+        if ($tryadmin === null || $tryadmin === true) {
+            $adminbox = $listrender->print_admin_links();
+            if (!empty($adminbox)) {
+                $admintext = '<p>' . get_string('admin_course_text', 'block_kent_course_overview') . '</p>';
+                $this->content->text .= $OUTPUT->box($admintext . $adminbox, 'generalbox rollover_admin_notification');
+            }
         }
 
         $baseurl = new moodle_url($PAGE->url, $params);
@@ -209,6 +213,14 @@ class block_kent_course_overview extends block_base {
      * @return boolean
      */
     public function has_config() {
+        return true;
+    }
+
+    /**
+     * Allow the user to configure a block instance
+     * @return bool Returns true
+     */
+    public function instance_allow_config() {
         return true;
     }
 

@@ -279,8 +279,6 @@ HTML;
 
         // Add the rollover links.
         if ($rolloveradmin) {
-            $boxtext .= '<p>' . get_string('admin_course_text', 'block_kent_course_overview') . '</p>';
-
             $rolloveradminpath = new \moodle_url("/local/rollover/");
             $boxtext .= '<p><a href="' . $rolloveradminpath . '">Rollover admin page</a></p>';
         }
