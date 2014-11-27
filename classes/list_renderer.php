@@ -161,10 +161,16 @@ HTML;
                 has_capability('moodle/course:viewhiddencourses', $context)) {
                 // If user can view hidden and can adjust visibility, we'll let them change it from here.
                 if ($course->visible) {
-                    $url = new \moodle_url($baseurl, array('hide' => $course->id));
+                    $url = new \moodle_url($baseurl, array(
+                        'hide' => $course->id,
+                        'sesskey' => sesskey()
+                    ));
                     $img = $OUTPUT->action_icon($url, new \pix_icon('t/hide', get_string('hide')));
                 } else {
-                    $url = new \moodle_url($baseurl, array('show' => $course->id));
+                    $url = new \moodle_url($baseurl, array(
+                        'show' => $course->id,
+                        'sesskey' => sesskey()
+                    ));
                     $img = $OUTPUT->action_icon($url, new \pix_icon('t/show', get_string('show')));
                 }
 

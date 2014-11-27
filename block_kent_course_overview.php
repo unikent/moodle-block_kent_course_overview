@@ -79,6 +79,8 @@ class block_kent_course_overview extends block_base {
 
         // Process show/hide if there is one.
         if (!empty($hide) or !empty($show)) {
+            require_sesskey();
+
             if (!empty($hide)) {
                 $course = $DB->get_record('course', array('id' => $hide));
                 $course->visible = 0;
