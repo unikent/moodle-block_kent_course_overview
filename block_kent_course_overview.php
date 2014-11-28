@@ -29,7 +29,7 @@ class block_kent_course_overview extends block_base {
      * block initializations
      */
     public function init() {
-        $this->title = get_string('pluginname', 'block_kent_course_overview');
+        $this->title = get_string('blocktitle', 'block_kent_course_overview');
     }
 
     /**
