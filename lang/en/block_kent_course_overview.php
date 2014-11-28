@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$string['pluginname'] = 'Kent course overview';
+$string['pluginname'] = 'My Modules';
 $string['blocktitle'] = 'My modules';
 
 $string['kent_course_overview:addinstance'] = 'Add a new Kent course overview block';
@@ -26,7 +26,7 @@ $string['nocourses'] = 'Sorry, there is currently no module information to show.
 $string['archive_old_moodle_link_text'] = '';
 $string['archive_current_moodle_link_text'] = '';
 
-$string['admin_course_text'] = 'Below are the modules on which users are enrolled. Admin users may not be enrolled onto any modules. If you need to rollover any modules, or manage your SDS deliveries, please use the links below.';
+$string['admin_course_text'] = 'Below is a list of the modules on which you are enrolled. Admin users may not be enrolled onto any modules. If you need to do any rollover work - please use the link below to go to the rollover admin page';
 $string['staff_toggle'] = 'Teaching staff';
 
 $string['kent_course_overview:editcourse'] = 'View rollover options';
@@ -39,9 +39,6 @@ $string['rolledoverclearmodulebutton'] = 'Rollover complete. Empty this module';
 
 $string['clearmoduleoption'] = 'Enable clear module option';
 $string['configclearmoduleoption'] = 'Enabling this option will give course editors and admins the option of clearing their module.';
-
-$string['showmissingmoduleslinkoption'] = 'Enable show missing modules link';
-$string['configshowmissingmoduleslinkoption'] = 'Enabling this option will provide students with a link to fix their enrolments.';
 
 $string['current_text'] = 'For current Moodle, please see the navigation bar at the top of the page.';
 $string['archives_text'] = 'To see a previous years Moodle, please see the navigation bar at the top of the page.';

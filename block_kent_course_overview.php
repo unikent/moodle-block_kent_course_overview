@@ -29,7 +29,7 @@ class block_kent_course_overview extends block_base {
      * block initializations
      */
     public function init() {
-        $this->title = get_string('pluginname', 'block_kent_course_overview');
+        $this->title = get_string('blocktitle', 'block_kent_course_overview');
     }
 
     /**
@@ -79,12 +79,14 @@ class block_kent_course_overview extends block_base {
 
         // Process show/hide if there is one.
         if (!empty($hide) or !empty($show)) {
+            require_sesskey();
+
             if (!empty($hide)) {
                 $course = $DB->get_record('course', array('id' => $hide));
-                $visible = 0;
+                $course->visible = 0;
             } else {
                 $course = $DB->get_record('course', array('id' => $show));
-                $visible = 1;
+                $course->visible = 1;
             }
 
             if ($course) {
@@ -92,12 +94,7 @@ class block_kent_course_overview extends block_base {
                 require_capability('moodle/course:visibility', $coursecontext);
 
                 // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
-                $DB->update_record('course', array(
-                    'id' => $course->id,
-                    'visible' => $visible,
-                    'visibleold' => $visible,
-                    'timemodified' => time()
-                ));
+                update_course($course);
             }
         }
 
@@ -161,9 +158,13 @@ class block_kent_course_overview extends block_base {
         $this->content->text .= $listrender->print_search_box();
 
         // Build the main admin box.
-        $adminbox = $listrender->print_admin_links();
-        if (!empty($adminbox)) {
-            $this->content->text .= $OUTPUT->box($adminbox, 'generalbox rollover_admin_notification');
+        $tryadmin = isset($this->config->admin_links) ? $this->config->admin_links == 'yes' : true;
+        if ($tryadmin === null || $tryadmin === true) {
+            $adminbox = $listrender->print_admin_links();
+            if (!empty($adminbox)) {
+                $admintext = '<p>' . get_string('admin_course_text', 'block_kent_course_overview') . '</p>';
+                $this->content->text .= $OUTPUT->box($admintext . $adminbox, 'generalbox rollover_admin_notification');
+            }
         }
 
         $baseurl = new moodle_url($PAGE->url, $params);
@@ -209,6 +210,14 @@ class block_kent_course_overview extends block_base {
      * @return boolean
      */
     public function has_config() {
+        return true;
+    }
+
+    /**
+     * Allow the user to configure a block instance
+     * @return bool Returns true
+     */
+    public function instance_allow_config() {
         return true;
     }
 
