@@ -98,10 +98,12 @@ class block_kent_course_overview extends block_base {
             }
         }
 
+        $showadminlinks = isset($this->config->admin_links) ? $this->config->admin_links == 'yes' : true;
+
         // Cache block data.
         $cache = cache::make('block_kent_course_overview', 'data');
         $cachekey = 'full_' . $USER->id;
-        $cachekey2 = $page . '_' . $perpage;
+        $cachekey2 = $page . '_' . $perpage . '_' . $showadminlinks;
 
         $cachecontent = $cache->get($cachekey);
         if ($cachecontent !== false) {
@@ -158,8 +160,7 @@ class block_kent_course_overview extends block_base {
         $this->content->text .= $listrender->print_search_box();
 
         // Build the main admin box.
-        $tryadmin = isset($this->config->admin_links) ? $this->config->admin_links == 'yes' : true;
-        if ($tryadmin === null || $tryadmin === true) {
+        if ($showadminlinks === null || $showadminlinks === true) {
             $adminbox = $listrender->print_admin_links();
             if (!empty($adminbox)) {
                 $admintext = '<p>' . get_string('admin_course_text', 'block_kent_course_overview') . '</p>';
