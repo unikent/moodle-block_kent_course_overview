@@ -201,7 +201,7 @@ HTML;
                     $summary = \core_text::substr($summary, 0, 252) . '...';
                     $summary = strip_tags($summary);
                 }
-                $content .= ' <span class="course_description row">' . $summary . '</span>';
+                $content .= ' <span class="course_description">' . $summary . '</span>';
             }
 
             $teachers = $course->get_teachers();
