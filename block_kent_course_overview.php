@@ -40,14 +40,9 @@ class block_kent_course_overview extends block_base {
 
         // We need jQuery.
         $this->page->requires->jquery();
-        $this->page->requires->jquery_plugin('migrate');
-        $this->page->requires->jquery_plugin('ui');
-        $this->page->requires->jquery_plugin('ui-css');
-        $this->page->requires->jquery_plugin('blockui', 'theme_kent');
 
         // And some custom things.
         $this->page->requires->js('/blocks/kent_course_overview/js/block.js');
-        $this->page->requires->js('/blocks/kent_course_overview/js/clear-course.js');
     }
 
     /**
@@ -169,9 +164,6 @@ class block_kent_course_overview extends block_base {
         if ($paging != '<div class="paging"></div>') {
             $this->content->text .= $paging;
         }
-
-        $this->content->text .= '<div id="dialog_sure">'.get_string('areyousure', 'block_kent_course_overview').'</div>';
-        $this->content->text .= '<div id="dialog_clear_error">'.get_string('clearerror', 'block_kent_course_overview').'</div>';
 
         $cachecontent[$cachekey2] = $this->content;
 

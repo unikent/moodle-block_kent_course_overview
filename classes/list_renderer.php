@@ -204,10 +204,6 @@ HTML;
 
             // If user has ability to update the course and the course is empty to signify a rollover.
             if ($rolloverinstalled && $permstorollover) {
-
-                $clearmodule = get_config('block_kent_course_overview', 'clearmodule');
-                $clearmodulebutton = get_string('clearmodulebutton', 'block_kent_course_overview');
-
                 $rolloverpath = new \moodle_url('/local/rollover/index.php', array(
                     'srch' => $course->shortname
                 ));
@@ -240,12 +236,16 @@ HTML;
                         $content .= '<div class="course_rollover_optns pending">Rollover in process</div>';
                     break;
 
-                    case \local_rollover\Rollover::STATUS_COMPLETE:
                     case \local_rollover\Rollover::STATUS_ERROR:
+                        $url = new \moodle_url("/local/rollover/clear.php", array(
+                            'id' => $course->id
+                        ));
+                        $content .= '<a class="course_clear_optns error" href="'.$url.'">There was an error rolling over. Reset Module?</a>';
+                    break;
+
+                    case \local_rollover\Rollover::STATUS_COMPLETE:
                     default:
-                        if ($clearmodule) {
-                            $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.$clearmodulebutton.'</a>';
-                        }
+                        // Do nothing.
                     break;
                 }
 
