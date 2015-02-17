@@ -172,6 +172,7 @@
 
         #kent_course_list_overview li .course_adjust_visibility i {
             cursor: pointer;
+            margin-left: 8px;
         }
 
         #kent_course_list_overview li .visibility_tri {
@@ -227,10 +228,6 @@
             /*float: left;*/
             padding: 10px;
         }
-
-            #kent_course_list_overview .course_details_ovrv .course_adjust_visibility {
-                float: right;
-            }
 
         #kent_course_list_overview .course_details_ovrv.admin_width {
             float:left;
