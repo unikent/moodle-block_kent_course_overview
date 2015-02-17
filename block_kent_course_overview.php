@@ -109,7 +109,7 @@ class block_kent_course_overview extends block_base {
         if ($cachecontent !== false) {
             if (isset($cachecontent[$cachekey2])) {
                 $this->content = $cachecontent[$cachekey2];
-                //return $this->content;
+                return $this->content;
             }
         }
 

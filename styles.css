@@ -22,15 +22,11 @@
     .block_kent_course_overview.block div.content .form_container #coursesearchbox{
         width: 100%;
         height: 24px;
-        -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-        -moz-box-sizing: border-box;    /* Firefox, other Gecko */
-        box-sizing: border-box;         /* Opera/IE 8+ */
+        box-sizing: border-box;
         padding: 4px;
         border-color: #dcdcdc;
         margin: 0;
         box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
-        -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
-        -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
     }
 
     .block_kent_course_overview.block div.content .form_container #coursesearchbox:focus{
@@ -49,11 +45,6 @@
         text-align: center;
         text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
         background-color: #f5f5f5;
-        background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-        background-image: -ms-linear-gradient(top, #ffffff, #e6e6e6);
-        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-        background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-        background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
         background-image: linear-gradient(top, #ffffff, #e6e6e6);
         background-repeat: repeat-x;
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e6e6e6', GradientType=0);
@@ -62,19 +53,11 @@
         border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
         border-left: 0px;
         border-color: #dcdcdc;
-        -webkit-border-radius: 4px;
-        -webkit-border-top-left-radius: 0px;
-        -webkit-border-bottom-left-radius: 0px;
-        -moz-border-radius: 4px;
-        -moz-border-radius-topleft: 0px;
-        -moz-border-radius-bottomleft: 0px;
         border-radius: 4px;
         border-top-left-radius: 0px;
         border-bottom-left-radius: 0px;
         vertical-align: inherit;
         box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
-        -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
-        -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
     }
 
      .block_kent_course_overview.block div.content .form_container .courseoverview_search_sub:hover {
@@ -82,10 +65,6 @@
         text-decoration: none;
         background-color: #e6e6e6;
         background-position: 0 -15px;
-        -webkit-transition: background-position 0.1s linear;
-        -moz-transition: background-position 0.1s linear;
-        -ms-transition: background-position 0.1s linear;
-        -o-transition: background-position 0.1s linear;
         transition: background-position 0.1s linear;
      }
 
@@ -112,11 +91,7 @@
         height: 27px;
         float: left;
         border-left: 0px;
-        -moz-border-radius: 0 0.6em 0.6em 0;
-        -webkit-border-radius: 0 0.6em 0.6em 0;
         border-radius: 0 0.6em 0.6em 0;
-        -moz-box-shadow: 0px 0px 0px /*{global-box-shadow-size}*/ rgba(0,0,0,.3) /*{global-box-shadow-color}*/;
-        -webkit-box-shadow: 0px 0px 0px /*{global-box-shadow-size}*/ rgba(0, 0, 0, .3) /*{global-box-shadow-color}*/;
         box-shadow: 0px 0px 0px /*{global-box-shadow-size}*/ rgba(0, 0, 0, .3) /*{global-box-shadow-color}*/;
     }
 
@@ -182,12 +157,28 @@
         margin-bottom: 10px;
         position: relative;
         box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
-        -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
-        -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
     }
 
-        #kent_course_list_overview li .title .action-icon img {
-            vertical-align: baseline;      
+        #kent_course_list_overview li .course_adjust_visibility {
+            position: absolute;
+            right: -6px;
+            top: 5px;
+            background: #dcdcdc;
+            width: 30px;
+            height: 23px;
+            padding: 0 0 0 3  px;
+            box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);     
+        }
+
+        #kent_course_list_overview li .visibility_tri {
+            border-color: transparent transparent transparent #b0b0b0;
+            border-style:solid;
+            border-width:5px;
+            height:0;
+            width:0;
+            position: absolute;
+            right: -11px;
+            top: 23px;
         }
 
     #kent_course_list_overview li.course_unavailable {
@@ -236,6 +227,11 @@
             #kent_course_list_overview .course_details_ovrv .course_adjust_visibility {
                 float: right;
             }
+
+        #kent_course_list_overview .course_details_ovrv.admin_width {
+            float:left;
+            width: 70%;
+        }
     
             #kent_course_list_overview .course_details_ovrv .title, 
             #kent_category_list_overview .course_details_ovrv .title {
@@ -303,8 +299,10 @@
                     }
             
        #kent_course_list_overview  .course_admin_options {
+            padding: 50px 15px 15px 15px;
+            float: right;
             display: block;
-            border-top: 1px solid #EFEFEF;
+            width: 20%;
         }
 
         #kent_course_list_overview  .course_admin_options.admin_hide {
@@ -323,13 +321,11 @@
                 font-size: 13px;
                 text-align: center;
                 color: #6f6f6f;
+                border-radius: 5px;
             }
             
             #kent_course_list_overview  .course_admin_options .new {
                 background-color: #E9FAD0;
-                -webkit-transition: background-color 0.4s linear;
-                -moz-transition: background-color 0.4s linear;
-                -o-transition: background-color 0.4s linear;
                 transition: background-color 0.4s linear;
             } 
             
@@ -348,9 +344,6 @@
             }
             
             #kent_course_list_overview .course_admin_options .error:hover {
-                -webkit-transition: background-color 0.4s linear;
-                -moz-transition: background-color 0.4s linear;
-                -o-transition: background-color 0.4s linear;
                 transition: background-color 0.4s linear;
                 background-color: #E3C3C3;
             }
@@ -389,10 +382,6 @@
     background: #fafafa;
     border-top: 1px solid #eee;
     padding: 10px 10px 10px 10px;
-    -webkit-border-bottom-right-radius: 5px;
--webkit-border-bottom-left-radius: 5px;
--moz-border-radius-bottomright: 5px;
--moz-border-radius-bottomleft: 5px;
 border-bottom-right-radius: 5px;
 border-bottom-left-radius: 5px;
 }
@@ -409,11 +398,6 @@ border-bottom-left-radius: 5px;
         rgba(255, 255, 255, 0.75);
         vertical-align: middle;
         background-color: whiteSmoke;
-        background-image: -moz-linear-gradient(top, white, #E6E6E6);
-        background-image: -ms-linear-gradient(top, white, #E6E6E6);
-        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(white), to(#E6E6E6));
-        background-image: -webkit-linear-gradient(top, white, #E6E6E6);
-        background-image: -o-linear-gradient(top, white, #E6E6E6);
         background-image: linear-gradient(top, white, #E6E6E6);
         background-repeat: repeat-x;
         filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e6e6e6', GradientType=0);
@@ -422,13 +406,10 @@ border-bottom-left-radius: 5px;
         filter: progid:dximagetransform.microsoft.gradient(enabled=false);
         border: 1px solid #CCC;
         border-bottom-color: #B3B3B3;
-        -webkit-border-radius: 4px;
-        -moz-border-radius: 4px;
         border-radius: 4px;
         -webkit-box-shadow: inset 0 1px 0 
         rgba(255, 255, 255, 0.2), 0 1px 2px 
         rgba(0, 0, 0, 0.05);
-        -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
         box-shadow: inset 0 1px 0 
         rgba(255, 255, 255, 0.2), 0 1px 2px 
         rgba(0, 0, 0, 0.05);

@@ -190,7 +190,7 @@ HTML;
                     $img = $OUTPUT->action_icon($url, new \pix_icon('t/show', get_string('show')));
                 }
 
-                $content .= $img;
+                $content .= "<div class='visibility_tri'></div><div class='course_adjust_visibility'>" . $img . "</div>";
             }
 
             $content .= '</span>';
