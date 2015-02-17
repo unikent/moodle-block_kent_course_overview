@@ -170,6 +170,10 @@
             box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);     
         }
 
+        #kent_course_list_overview li .course_adjust_visibility i {
+            cursor: pointer;
+        }
+
         #kent_course_list_overview li .visibility_tri {
             border-color: transparent transparent transparent #b0b0b0;
             border-style:solid;

@@ -46,7 +46,7 @@ class block_kent_course_overview extends block_base {
         $this->page->requires->jquery_plugin('blockui', 'theme_kent');
 
         // And some custom things.
-        $this->page->requires->js('/blocks/kent_course_overview/js/showhide.js');
+        $this->page->requires->js('/blocks/kent_course_overview/js/block.js');
         $this->page->requires->js('/blocks/kent_course_overview/js/clear-course.js');
     }
 
@@ -68,35 +68,8 @@ class block_kent_course_overview extends block_base {
             return "";
         }
 
-        $listgen = new \block_kent_course_overview\list_generator();
-        $listrender = new \block_kent_course_overview\list_renderer();
-
-        // Get hide/show params (for quick visbility changes).
-        $hide = optional_param('hide', 0, PARAM_INT);
-        $show = optional_param('show', 0, PARAM_INT);
         $page = optional_param('page', 0, PARAM_INT);
         $perpage = optional_param('perpage', 20, PARAM_INT);
-
-        // Process show/hide if there is one.
-        if (!empty($hide) or !empty($show)) {
-            require_sesskey();
-
-            if (!empty($hide)) {
-                $course = $DB->get_record('course', array('id' => $hide));
-                $course->visible = 0;
-            } else {
-                $course = $DB->get_record('course', array('id' => $show));
-                $course->visible = 1;
-            }
-
-            if ($course) {
-                $coursecontext = context_course::instance($course->id);
-                require_capability('moodle/course:visibility', $coursecontext);
-
-                // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
-                update_course($course);
-            }
-        }
 
         $showadminlinks = isset($this->config->admin_links) ? $this->config->admin_links == 'yes' : true;
 
@@ -109,9 +82,12 @@ class block_kent_course_overview extends block_base {
         if ($cachecontent !== false) {
             if (isset($cachecontent[$cachekey2])) {
                 $this->content = $cachecontent[$cachekey2];
-                return $this->content;
+                //return $this->content;
             }
         }
+
+        $listgen = new \block_kent_course_overview\list_generator();
+        $listrender = new \block_kent_course_overview\list_renderer();
 
         $this->content = new \stdClass();
         $this->content->text = '';

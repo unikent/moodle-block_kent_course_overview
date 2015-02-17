@@ -1,9 +1,9 @@
-jQuery(document).ready(function() {
-    jQuery(".course_clear_optns").each( function() {
-        jQuery(this).click(function(e) {
+$(function() {
+    $(".course_clear_optns").each( function() {
+        $(this).click(function(e) {
             e.preventDefault();
 
-            var button = jQuery(this);
+            var button = $(this);
 
             $("#dialog_clear_error").dialog({
                 autoOpen: false,
@@ -24,11 +24,11 @@ jQuery(document).ready(function() {
                  buttons: {
                     "Yes": function() {
                         $(this).dialog("close");
-                        jQuery.blockUI({
+                        $.blockUI({
                             message: '<div class="blockui_loading">Please wait, clearing module.  This may take a little while.</div>'
                         });
 
-                        return jQuery.ajax({
+                        return $.ajax({
                             url: M.cfg.wwwroot + "/local/rollover/ajax/clear.php",
                             type: "POST",
                             data: {
@@ -38,13 +38,13 @@ jQuery(document).ready(function() {
                             success: function() {
                                 button.after('<p><b>Module cleared</b></p>');
                                 button.remove();
-                                jQuery.unblockUI();
+                                $.unblockUI();
                                 location.reload();
                             },
                             error: function(x, t, m){
                                 button.after('<p><b>Error!</b></p>');
                                 button.remove();
-                                jQuery.unblockUI();
+                                $.unblockUI();
                                 $("#dialog_clear_error").dialog("open");
                             },
                             timeout: 60000 // 60 Seconds max to try and clear.

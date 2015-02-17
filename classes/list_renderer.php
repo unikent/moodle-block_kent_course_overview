@@ -172,22 +172,13 @@ HTML;
             ));
             $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes);
 
-            // The eye.
+            // If user can view hidden and can adjust visibility, we'll let them change it from here.
             if (has_capability('moodle/course:visibility', $context) &&
                 has_capability('moodle/course:viewhiddencourses', $context)) {
-                // If user can view hidden and can adjust visibility, we'll let them change it from here.
+                
+                $img = '<i class="fa fa-eye-slash" data-action="show" data-id="'.$course->id.'"></i>';
                 if ($course->visible) {
-                    $url = new \moodle_url($baseurl, array(
-                        'hide' => $course->id,
-                        'sesskey' => sesskey()
-                    ));
-                    $img = $OUTPUT->action_icon($url, new \pix_icon('t/hide', get_string('hide')));
-                } else {
-                    $url = new \moodle_url($baseurl, array(
-                        'show' => $course->id,
-                        'sesskey' => sesskey()
-                    ));
-                    $img = $OUTPUT->action_icon($url, new \pix_icon('t/show', get_string('show')));
+                    $img = '<i class="fa fa-eye" data-action="hide" data-id="'.$course->id.'"></i>';
                 }
 
                 $content .= "<div class='visibility_tri'></div><div class='course_adjust_visibility'>" . $img . "</div>";
