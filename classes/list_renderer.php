@@ -195,8 +195,8 @@ HTML;
 
             $content .= '</span>';
 
-            if (!empty($course->summary)) {
-                $summary = $course->summary;
+            $summary = $course->summary;
+            if (!empty($summary)) {
                 if (strlen($summary) > 250) {
                     $summary = \core_text::substr($summary, 0, 252) . '...';
                     $summary = strip_tags($summary);
