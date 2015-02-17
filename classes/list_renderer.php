@@ -126,9 +126,10 @@ HTML;
             $shortname = format_string($course->shortname, true, array('context' => $context));
 
             $adminhide = 'admin_hide';
-            $listclass = array();
+            $listclass = array('container');
             $cdclass = array(
-                'course_details_ovrv'
+                'course_details_ovrv',
+                'row'
             );
             $attributes = array(
                 'title' => s($fullname),
@@ -157,6 +158,21 @@ HTML;
             // Construct link.
             $listclass = implode(' ', $listclass);
             $content .= '<li class="' . $listclass . '">';
+
+            $cdclass = implode(' ', $cdclass);
+            $content .= '<div class="' . $cdclass. '">';
+
+            $name = $fullname;
+            if (isset($CFG->courselistshortnames) && $CFG->courselistshortnames === '1') {
+                $name = $shortname . ': ' . $fullname;
+            }
+
+            $viewurl = new \moodle_url('/course/view.php', array(
+                'id' => $course->id
+            ));
+            $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes);
+
+            // The eye.
             if (has_capability('moodle/course:visibility', $context) &&
                 has_capability('moodle/course:viewhiddencourses', $context)) {
                 // If user can view hidden and can adjust visibility, we'll let them change it from here.
@@ -174,21 +190,10 @@ HTML;
                     $img = $OUTPUT->action_icon($url, new \pix_icon('t/show', get_string('show')));
                 }
 
-                $content .= "<div class='visibility_tri'></div><div class='course_adjust_visibility'>" . $img . "</div>";
+                $content .= $img;
             }
 
-            $cdclass = implode(' ', $cdclass);
-            $content .= '<div class="' . $cdclass. '">';
-
-            $name = $fullname;
-            if (isset($CFG->courselistshortnames) && $CFG->courselistshortnames === '1') {
-                $name = $shortname . ': ' . $fullname;
-            }
-
-            $viewurl = new \moodle_url('/course/view.php', array(
-                'id' => $course->id
-            ));
-            $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes) . '</span>';
+            $content .= '</span>';
 
             if (!empty($course->summary)) {
                 $summary = $course->summary;
@@ -220,7 +225,7 @@ HTML;
                     $adminhide = '';
                 }
 
-                $classes = array('course_admin_options');
+                $classes = array('course_admin_options', 'row');
                 if (!empty($adminhide)) {
                     $classes[] = $adminhide;
                 }
@@ -230,8 +235,8 @@ HTML;
                 switch ($rolloverstatus) {
                     case $rolloverable && \local_rollover\Rollover::STATUS_NONE:
                     case $rolloverable && \local_rollover\Rollover::STATUS_DELETED:
-                        $content .= '<a class="course_rollover_optns new" href="'.$rolloverpath.'">Empty module. <br / > ';
-                        $content .= 'Click here to <br /><strong>Rollover module</strong></a>';
+                        $content .= '<a class="course_rollover_optns new" href="'.$rolloverpath.'">Empty module. ';
+                        $content .= 'Click here to Rollover</a>';
                     break;
 
                     case \local_rollover\Rollover::STATUS_WAITING_SCHEDULE:

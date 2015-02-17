@@ -186,28 +186,8 @@
         -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
     }
 
-        #kent_course_list_overview li .course_adjust_visibility {
-            position: absolute;
-            right: -6px;
-            top: 5px;
-            background: #dcdcdc;
-            width: 30px;
-            height: 23px;
-            padding: 5px 0 0 9px;
-            box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.05);
-            -webkit-box-shadow: 0px 0px 3px rgba(0,0,0,0.05);
-            -moz-box-shadow: 0px 0px 3px rgba(0,0,0,0.05);        
-        }
-
-        #kent_course_list_overview li .visibility_tri {
-            border-color: transparent transparent transparent #b0b0b0;
-            border-style:solid;
-            border-width:5px;
-            height:0;
-            width:0;
-            position: absolute;
-            right: -11px;
-            top: 27px;
+        #kent_course_list_overview li .title .action-icon img {
+            vertical-align: baseline;      
         }
 
     #kent_course_list_overview li.course_unavailable {
@@ -256,11 +236,6 @@
             #kent_course_list_overview .course_details_ovrv .course_adjust_visibility {
                 float: right;
             }
-
-        #kent_course_list_overview .course_details_ovrv.admin_width {
-            float:left;
-            width: 70%;
-        }
     
             #kent_course_list_overview .course_details_ovrv .title, 
             #kent_category_list_overview .course_details_ovrv .title {
@@ -328,10 +303,8 @@
                     }
             
        #kent_course_list_overview  .course_admin_options {
-            padding: 50px 15px 15px 15px;
-            float: right;
             display: block;
-            width: 20%;
+            border-top: 1px solid #EFEFEF;
         }
 
         #kent_course_list_overview  .course_admin_options.admin_hide {
@@ -349,10 +322,7 @@
                 background: #E0E0E0;
                 font-size: 13px;
                 text-align: center;
-                color: #6f6f6f;  
-                -webkit-border-radius: 5px;
-                -moz-border-radius: 5px;
-                border-radius: 5px;
+                color: #6f6f6f;
             }
             
             #kent_course_list_overview  .course_admin_options .new {
