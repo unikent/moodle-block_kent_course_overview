@@ -14,10 +14,32 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die;
+define('AJAX_SCRIPT', true);
 
-$settings->add(new admin_setting_configcheckbox('block_kent_course_overview/clearmodule',
-    get_string('clearmoduleoption', 'block_kent_course_overview'),
-    get_string('configclearmoduleoption', 'block_kent_course_overview'),
-    0
+require(dirname(__FILE__) . '/../../../config.php');
+require($CFG->dirroot . '/course/lib.php');
+
+require_sesskey();
+
+$id = required_param('id', PARAM_INT);
+$action = required_param('action', PARAM_ALPHA);
+
+$ctx = context_course::instance($id);
+require_capability('moodle/course:visibility', $ctx);
+
+$course = $DB->get_record('course', array(
+	'id' => $id
+), '*', MUST_EXIST);
+
+if ($action == 'hide') {
+	$course->visible = 0;
+} else {
+	$course->visible = 1;
+}
+
+// Set the visibility of the course. we set the old flag when user manually changes visibility of course.
+update_course($course);
+
+echo json_encode(array(
+	'result' => 'success'
 ));

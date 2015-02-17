@@ -126,9 +126,10 @@ HTML;
             $shortname = format_string($course->shortname, true, array('context' => $context));
 
             $adminhide = 'admin_hide';
-            $listclass = array();
+            $listclass = array('container');
             $cdclass = array(
-                'course_details_ovrv'
+                'course_details_ovrv',
+                'row'
             );
             $attributes = array(
                 'title' => s($fullname),
@@ -157,25 +158,6 @@ HTML;
             // Construct link.
             $listclass = implode(' ', $listclass);
             $content .= '<li class="' . $listclass . '">';
-            if (has_capability('moodle/course:visibility', $context) &&
-                has_capability('moodle/course:viewhiddencourses', $context)) {
-                // If user can view hidden and can adjust visibility, we'll let them change it from here.
-                if ($course->visible) {
-                    $url = new \moodle_url($baseurl, array(
-                        'hide' => $course->id,
-                        'sesskey' => sesskey()
-                    ));
-                    $img = $OUTPUT->action_icon($url, new \pix_icon('t/hide', get_string('hide')));
-                } else {
-                    $url = new \moodle_url($baseurl, array(
-                        'show' => $course->id,
-                        'sesskey' => sesskey()
-                    ));
-                    $img = $OUTPUT->action_icon($url, new \pix_icon('t/show', get_string('show')));
-                }
-
-                $content .= "<div class='visibility_tri'></div><div class='course_adjust_visibility'>" . $img . "</div>";
-            }
 
             $cdclass = implode(' ', $cdclass);
             $content .= '<div class="' . $cdclass. '">';
@@ -188,10 +170,24 @@ HTML;
             $viewurl = new \moodle_url('/course/view.php', array(
                 'id' => $course->id
             ));
-            $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes) . '</span>';
+            $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes);
 
-            if (!empty($course->summary)) {
-                $summary = $course->summary;
+            // If user can view hidden and can adjust visibility, we'll let them change it from here.
+            if (has_capability('moodle/course:visibility', $context) &&
+                has_capability('moodle/course:viewhiddencourses', $context)) {
+                
+                $img = '<i class="fa fa-eye-slash" data-action="show" data-id="'.$course->id.'"></i>';
+                if ($course->visible) {
+                    $img = '<i class="fa fa-eye" data-action="hide" data-id="'.$course->id.'"></i>';
+                }
+
+                $content .= "<div class='visibility_tri'></div><div class='course_adjust_visibility'>" . $img . "</div>";
+            }
+
+            $content .= '</span>';
+
+            $summary = $course->summary;
+            if (!empty($summary)) {
                 if (strlen($summary) > 250) {
                     $summary = \core_text::substr($summary, 0, 252) . '...';
                     $summary = strip_tags($summary);
@@ -208,10 +204,6 @@ HTML;
 
             // If user has ability to update the course and the course is empty to signify a rollover.
             if ($rolloverinstalled && $permstorollover) {
-
-                $clearmodule = get_config('block_kent_course_overview', 'clearmodule');
-                $clearmodulebutton = get_string('clearmodulebutton', 'block_kent_course_overview');
-
                 $rolloverpath = new \moodle_url('/local/rollover/index.php', array(
                     'srch' => $course->shortname
                 ));
@@ -220,7 +212,7 @@ HTML;
                     $adminhide = '';
                 }
 
-                $classes = array('course_admin_options');
+                $classes = array('course_admin_options', 'row');
                 if (!empty($adminhide)) {
                     $classes[] = $adminhide;
                 }
@@ -230,8 +222,8 @@ HTML;
                 switch ($rolloverstatus) {
                     case $rolloverable && \local_rollover\Rollover::STATUS_NONE:
                     case $rolloverable && \local_rollover\Rollover::STATUS_DELETED:
-                        $content .= '<a class="course_rollover_optns new" href="'.$rolloverpath.'">Empty module. <br / > ';
-                        $content .= 'Click here to <br /><strong>Rollover module</strong></a>';
+                        $content .= '<a class="course_rollover_optns new" href="'.$rolloverpath.'">Empty module. ';
+                        $content .= 'Click here to Rollover</a>';
                     break;
 
                     case \local_rollover\Rollover::STATUS_WAITING_SCHEDULE:
@@ -244,12 +236,16 @@ HTML;
                         $content .= '<div class="course_rollover_optns pending">Rollover in process</div>';
                     break;
 
-                    case \local_rollover\Rollover::STATUS_COMPLETE:
                     case \local_rollover\Rollover::STATUS_ERROR:
+                        $url = new \moodle_url("/local/rollover/clear.php", array(
+                            'id' => $course->id
+                        ));
+                        $content .= '<a class="course_clear_optns error" href="'.$url.'">There was an error rolling over. Reset Module?</a>';
+                    break;
+
+                    case \local_rollover\Rollover::STATUS_COMPLETE:
                     default:
-                        if ($clearmodule) {
-                            $content .= '<a class="course_clear_optns new" href="#'.$course->id.'">'.$clearmodulebutton.'</a>';
-                        }
+                        // Do nothing.
                     break;
                 }
 

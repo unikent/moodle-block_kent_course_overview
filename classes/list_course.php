@@ -71,6 +71,13 @@ class list_course
         return $this->_course->$name;
     }
 
+    /**
+     * Magic isset override.
+     */
+    public function __isset($name) {
+        return isset($this->_course->$name);
+    }
+
     /*
      * Function to pull in teachers linked on a course.
      */
