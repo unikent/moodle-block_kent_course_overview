@@ -208,7 +208,7 @@ HTML;
                     'srch' => $course->shortname
                 ));
 
-                if ($rolloverstatus == \local_rollover\Rollover::STATUS_NONE && !($rolloverable) && $clearmodule) {
+                if ($rolloverstatus == \local_rollover\Rollover::STATUS_NONE && !($rolloverable)) {
                     $adminhide = '';
                 }
 
