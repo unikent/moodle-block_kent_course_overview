@@ -142,7 +142,7 @@ class block_kent_course_overview extends block_base {
         $baseurl = new moodle_url($PAGE->url, $params);
 
         $paging = $OUTPUT->paging_bar($total, $page, $perpage, $baseurl);
-        if ($paging != '<div class="paging"></div>') {
+        if ($paging != '<div class="paging paging-top"></div>') {
             $this->content->text .= $paging;
         }
 
@@ -161,7 +161,7 @@ class block_kent_course_overview extends block_base {
             }
         }
 
-        if ($paging != '<div class="paging"></div>') {
+        if ($paging != '<div class="paging paging-bottom"></div>') {
             $this->content->text .= $paging;
         }
 
