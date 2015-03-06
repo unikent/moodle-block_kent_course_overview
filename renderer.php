@@ -202,7 +202,7 @@ HTML;
 
             $teachers = $course->get_teachers();
             if (!empty($teachers)) {
-                $content .= $this->print_teachers($teachers);
+                $content .= $this->render_teachers($teachers);
             }
 
             $content .= '</div>';
