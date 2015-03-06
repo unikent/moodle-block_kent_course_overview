@@ -15,26 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Kent Course Overview Block
+ * kent_course_overview block rendrer
  *
- * @package    blocks_kent_course_overview
- * @copyright  2014 Skylar Kelty <S.Kelty@kent.ac.uk>
+ * @package    block_kent_course_overview
+ * @copyright  2015 Skylar Kelty <S.Kelty@kent.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace block_kent_course_overview;
-
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 /**
- * Kent Course Overview List Renderer
+ * Kent Course Overview block rendrer
+ *
+ * @copyright  2015 Skylar Kelty <S.Kelty@kent.ac.uk>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class list_renderer
+class block_kent_course_overview_renderer extends plugin_renderer_base
 {
     /**
      * Prints an overview of the categories.
      */
-    public function print_categories($categories) {
+    public function render_categories($categories) {
         $content = '';
 
         foreach ($categories as $category) {
@@ -72,7 +72,7 @@ HTML;
     /**
      * Returns search box.
      */
-    public function print_search_box() {
+    public function render_search_box() {
         global $CFG;
 
         return <<<HTML
@@ -92,7 +92,7 @@ HTML;
     /**
      * Print teachers.
      */
-    public function print_teachers($teachers) {
+    public function render_teachers($teachers) {
         $stafftoggle = get_string('staff_toggle', 'block_kent_course_overview');
         $showhide = \html_writer::tag('div', $stafftoggle, array(
             'class' => 'teachers_show_hide'
@@ -111,8 +111,13 @@ HTML;
     /**
      * Print courses.
      */
-    public function print_courses($courses, $baseurl) {
+    public function render_courses($courses, $baseurl) {
         global $CFG, $USER, $DB, $OUTPUT;
+
+		if (empty($courses)) {
+		    $nocourses = get_string('nocourses', 'block_kent_course_overview');
+		    return '<div class="co_no_crs">' . $nocourses . '</div>';
+		}
 
         // Ensure Rollover is installed before we do anything and that the course doesn't have content.
         $rolloverinstalled = \local_kent\util\sharedb::available();
@@ -197,7 +202,7 @@ HTML;
 
             $teachers = $course->get_teachers();
             if (!empty($teachers)) {
-                $content .= $this->print_teachers($teachers);
+                $content .= $this->render_teachers($teachers);
             }
 
             $content .= '</div>';
@@ -267,8 +272,8 @@ HTML;
     /**
      * Print courses.
      */
-    public function print_admin_links() {
-        global $DB, $USER;
+    public function render_admin_links() {
+        global $DB, $USER, $OUTPUT;
 
         $ctx = \context_system::instance();
         $boxtext = "";
@@ -300,6 +305,22 @@ HTML;
             $boxtext .= '<p><a href="' . $clapath . '">CLA administration</a></p>';
         }
 
-        return $boxtext;
+        if (!empty($boxtext)) {
+	        $admintext = '<p>' . get_string('admin_course_text', 'block_kent_course_overview') . '</p>';
+	        return $OUTPUT->box($admintext . $boxtext, 'generalbox rollover_admin_notification');
+	    }
+
+        return "";
+    }
+
+    /**
+     * Render a paging bar.
+     */
+    public function render_paging_bar($paging, $position) {
+        if ($paging != '<div class="paging"></div>') {
+            return $paging;
+        }
+
+        return '';
     }
 }

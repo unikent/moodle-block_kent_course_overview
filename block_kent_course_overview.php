@@ -77,12 +77,12 @@ class block_kent_course_overview extends block_base {
         if ($cachecontent !== false) {
             if (isset($cachecontent[$cachekey2])) {
                 $this->content = $cachecontent[$cachekey2];
-                //return $this->content;
+                return $this->content;
             }
         }
 
         $listgen = new \block_kent_course_overview\list_generator();
-        $listrender = new \block_kent_course_overview\list_renderer();
+        $renderer = $this->page->get_renderer('block_kent_course_overview');
 
         $this->content = new \stdClass();
         $this->content->text = '';
@@ -128,42 +128,31 @@ class block_kent_course_overview extends block_base {
         }
 
         // Build the search box.
-        $this->content->text .= $listrender->print_search_box();
+        $this->content->text .= $renderer->render_search_box();
 
         // Build the main admin box.
         if ($showadminlinks === null || $showadminlinks === true) {
-            $adminbox = $listrender->print_admin_links();
-            if (!empty($adminbox)) {
-                $admintext = '<p>' . get_string('admin_course_text', 'block_kent_course_overview') . '</p>';
-                $this->content->text .= $OUTPUT->box($admintext . $adminbox, 'generalbox rollover_admin_notification');
-            }
+            $adminbox = $renderer->render_admin_links();
+            $this->content->text .= $adminbox;
         }
 
         $baseurl = new moodle_url($PAGE->url, $params);
 
         $paging = $OUTPUT->paging_bar($total, $page, $perpage, $baseurl);
-        if ($paging != '<div class="paging"></div>') {
-            $this->content->text .= $paging;
-        }
+
+        $this->content->text .= $renderer->render_paging_bar($paging, 'top');
 
         // Print the category enrollment information.
         if (!empty($categories) && ($page == 0)) {
-            $this->content->text .= $listrender->print_categories($categories);
+            $this->content->text .= $renderer->render_categories($categories);
         }
 
         // Print the course enrollment information.
         if ($pagelength > 0) {
-            if (empty($courses)) {
-                $nocourses = get_string('nocourses', 'block_kent_course_overview');
-                $this->content->text .= '<div class="co_no_crs">' . $nocourses . '</div>';
-            } else {
-                $this->content->text .= $listrender->print_courses($courses, $baseurl);
-            }
+            $this->content->text .= $renderer->render_courses($courses, $baseurl);
         }
 
-        if ($paging != '<div class="paging"></div>') {
-            $this->content->text .= $paging;
-        }
+        $this->content->text .= $renderer->render_paging_bar($paging, 'bottom');
 
         $cachecontent[$cachekey2] = $this->content;
 
