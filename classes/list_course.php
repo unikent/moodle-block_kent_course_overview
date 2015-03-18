@@ -111,12 +111,18 @@ class list_course
                 $rolename = $ra->rolecoursealias;
             }
 
+            switch ($rolename) {
+                case 'editingteacher':
+                    $rolename = 'Teacher';
+                break;
+            }
+
             $nameurl = new \moodle_url('/user/view.php', array(
                 'id' => $ra->userid,
                 'course' => SITEID
             ));
 
-            $namesarray[$ra->userid] = s($rolename) . ': ' . \html_writer::link($nameurl, $fullname);
+            $namesarray[$ra->userid] = s(ucwords($rolename)) . ': ' . \html_writer::link($nameurl, $fullname);
         }
 
         return $namesarray;
