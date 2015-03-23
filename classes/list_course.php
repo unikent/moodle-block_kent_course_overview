@@ -94,7 +94,7 @@ class list_course
 
         $userfields = get_all_user_name_fields(true, 'u');
         $rusers = get_role_users($managerroles, $this->_context, true,
-            'ra.id AS id, u.id AS userid, u.username, '.$userfields.', r.name AS rolename, r.shortname as roleshortname, r.sortorder, r.id AS roleid',
+            'ra.id AS id, u.id AS userid, u.username, '.$userfields.', r.name AS rolename, rn.name AS rolecoursealias, r.shortname as roleshortname, r.sortorder, r.id AS roleid',
             'r.sortorder ASC, u.lastname ASC',
             'u.lastname, u.firstname');
 
@@ -107,13 +107,22 @@ class list_course
 
             $fullname = fullname($ra, $canviewfullnames);
             $rolename = !empty($ra->rolename) ? $ra->rolename : $ra->roleshortname;
+            if (!empty($ra->rolecoursealias)) {
+                $rolename = $ra->rolecoursealias;
+            }
+
+            switch ($rolename) {
+                case 'editingteacher':
+                    $rolename = 'Teacher';
+                break;
+            }
 
             $nameurl = new \moodle_url('/user/view.php', array(
                 'id' => $ra->userid,
                 'course' => SITEID
             ));
 
-            $namesarray[$ra->userid] = s($rolename) . ': ' . \html_writer::link($nameurl, $fullname);
+            $namesarray[$ra->userid] = s(ucwords($rolename)) . ': ' . \html_writer::link($nameurl, $fullname);
         }
 
         return $namesarray;
