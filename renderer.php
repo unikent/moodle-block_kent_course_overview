@@ -268,49 +268,27 @@ HTML;
         return $content;
     }
 
-
     /**
-     * Print courses.
+     * Print admin links.
      */
-    public function render_admin_links() {
+    public function render_admin_links($links) {
         global $DB, $USER, $OUTPUT;
 
-        $ctx = \context_system::instance();
-        $boxtext = "";
-
-        // Are we an admin?
-        $isadmin = has_capability('moodle/site:config', $ctx);
-        $rolloveradmin = $isadmin || \local_kent\User::has_course_update_role($USER->id);
-        $claadmin = $isadmin || has_capability('mod/cla:manage', $ctx);
-        $depadmin = $isadmin ||  \local_kent\User::is_dep_admin($USER->id);
-
-        // Add the rollover links.
-        if ($rolloveradmin) {
-            $rolloveradminpath = new \moodle_url("/local/rollover/");
-            $boxtext .= '<p><a href="' . $rolloveradminpath . '">Rollover admin page</a></p>';
+        $content = '';
+        foreach ($links as $link => $text) {
+            $content .= \html_writer::start_tag('p');
+            $content .= \html_writer::tag('a', $text, array(
+                'href' => $link
+            ));
+            $content .= \html_writer::end_tag('p');
         }
 
-        // Add dep admin links.
-        if ($depadmin) {
-            $connectadminpath = new \moodle_url("/local/connect/");
-            $boxtext .= '<p><a href="' . $connectadminpath . '">Departmental administrator pages</a></p>';
-
-            $metaadminpath = new \moodle_url("/admin/tool/meta");
-            $boxtext .= '<p><a href="' . $metaadminpath . '">Kent meta enrolment pages</a></p>';
+        if (!empty($content)) {
+            $content = \html_writer::tag('p', get_string('admin_course_text', 'block_kent_course_overview')) . $content;
+            return $OUTPUT->box($content, 'generalbox rollover_admin_notification');
         }
 
-        // Add CLA links.
-        if ($claadmin) {
-            $clapath = new \moodle_url('/mod/cla/admin.php');
-            $boxtext .= '<p><a href="' . $clapath . '">CLA administration</a></p>';
-        }
-
-        if (!empty($boxtext)) {
-	        $admintext = '<p>' . get_string('admin_course_text', 'block_kent_course_overview') . '</p>';
-	        return $OUTPUT->box($admintext . $boxtext, 'generalbox rollover_admin_notification');
-	    }
-
-        return "";
+        return '';
     }
 
     /**
