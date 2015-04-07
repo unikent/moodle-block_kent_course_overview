@@ -132,7 +132,8 @@ class block_kent_course_overview extends block_base {
 
         // Build the main admin box.
         if ($showadminlinks === null || $showadminlinks === true) {
-            $adminbox = $renderer->render_admin_links();
+            $links = $listgen->get_admin_links();
+            $adminbox = $renderer->render_admin_links($links);
             $this->content->text .= $adminbox;
         }
 
