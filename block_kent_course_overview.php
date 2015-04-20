@@ -169,7 +169,7 @@ class block_kent_course_overview extends block_base {
      * @return boolean
      */
     public function has_config() {
-        return true;
+        return false;
     }
 
     /**
@@ -188,6 +188,7 @@ class block_kent_course_overview extends block_base {
      */
     public function applicable_formats() {
         return array(
+            'my' => true,
             'my-index' => true
         );
     }
