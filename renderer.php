@@ -141,14 +141,14 @@ HTML;
                 'class' => 'course_list'
             );
 
-            if ($rolloverinstalled) {
-                $permstorollover = has_capability('moodle/course:update', $context);
+            $permstoupdate = has_capability('moodle/course:update', $context);
 
+            if ($rolloverinstalled) {
                 $rollover = new \local_rollover\Course($course->id);
                 $rolloverstatus = $rollover->get_status();
                 $rolloverable = $rollover->can_rollover();
 
-                if ($rolloverable && $permstorollover) {
+                if ($rolloverable && $permstoupdate) {
                     $adminhide = '';
                     $cdclass[] = 'admin_width';
                     $listclass[] = "rollover_{$rolloverstatus}";
@@ -189,6 +189,16 @@ HTML;
                 $content .= "<div class='visibility_tri'></div><div class='course_adjust_visibility'>" . $img . "</div>";
             }
 
+            // Check if there are any actionable notifications and show badge
+            if($permstoupdate) {
+                $cn = new \local_kent\Course($course->id);
+                $actions = $cn->get_actionable_notifications_count();
+                if($actions >= 1) {
+                    $plural = ($actions > 1) ? "s" : "";
+                    $content .= '<span class="badge">' . $actions . ' action' . $plural . ' required</span>';
+                }
+            }
+
             $content .= '</span>';
 
             $summary = $course->summary;
@@ -208,7 +218,7 @@ HTML;
             $content .= '</div>';
 
             // If user has ability to update the course and the course is empty to signify a rollover.
-            if ($rolloverinstalled && $permstorollover) {
+            if ($rolloverinstalled && $permstoupdate) {
                 $rolloverpath = new \moodle_url('/local/rollover/index.php', array(
                     'srch' => $course->shortname
                 ));

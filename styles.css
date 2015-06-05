@@ -379,6 +379,11 @@
         display: block;
     }
 
+    #kent_course_list_overview li span.badge {
+        display: inline-block;
+        margin-left: 6px;
+    }
+
 .archive_link {
     background: #fafafa;
     border-top: 1px solid #eee;
