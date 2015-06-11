@@ -33,19 +33,6 @@ class block_kent_course_overview extends block_base {
     }
 
     /**
-     * Required JS
-     */
-    public function get_required_javascript() {
-        parent::get_required_javascript();
-
-        // We need jQuery.
-        $this->page->requires->jquery();
-
-        // And some custom things.
-        $this->page->requires->js('/blocks/kent_course_overview/js/block.js');
-    }
-
-    /**
      * block contents
      *
      * @return object
@@ -76,8 +63,8 @@ class block_kent_course_overview extends block_base {
         $cachecontent = $cache->get($cachekey);
         if ($cachecontent !== false) {
             if (isset($cachecontent[$cachekey2])) {
-                //$this->content = $cachecontent[$cachekey2];
-                //return $this->content;
+                $this->content = $cachecontent[$cachekey2];
+                return $this->content;
             }
         }
 
