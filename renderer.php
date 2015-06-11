@@ -177,18 +177,6 @@ HTML;
             ));
             $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes);
 
-            // If user can view hidden and can adjust visibility, we'll let them change it from here.
-            if (has_capability('moodle/course:visibility', $context) &&
-                has_capability('moodle/course:viewhiddencourses', $context)) {
-                
-                $img = '<i class="fa fa-eye-slash" data-action="show" data-id="'.$course->id.'"></i>';
-                if ($course->visible) {
-                    $img = '<i class="fa fa-eye" data-action="hide" data-id="'.$course->id.'"></i>';
-                }
-
-                $content .= "<div class='visibility_tri'></div><div class='course_adjust_visibility'>" . $img . "</div>";
-            }
-
             // Check if there are any actionable notifications and show badge
             if($permstoupdate) {
                 $cn = new \local_kent\Course($course->id);
