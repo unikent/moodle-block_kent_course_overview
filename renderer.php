@@ -175,19 +175,7 @@ HTML;
             $viewurl = new \moodle_url('/course/view.php', array(
                 'id' => $course->id
             ));
-            $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes);
-
-            // Check if there are any actionable notifications and show badge
-            if($permstoupdate) {
-                $cn = new \local_kent\Course($course->id);
-                $actions = $cn->get_actionable_notifications_count();
-                if($actions >= 1) {
-                    $plural = ($actions > 1) ? "s" : "";
-                    $content .= '<span class="badge">' . $actions . ' action' . $plural . ' required</span>';
-                }
-            }
-
-            $content .= '</span>';
+            $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes) . '</span>';
 
             $summary = $course->summary;
             if (!empty($summary)) {
