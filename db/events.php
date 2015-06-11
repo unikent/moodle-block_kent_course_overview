@@ -49,9 +49,4 @@ $observers = array (
         'callback' => '\block_kent_course_overview\observers::clear_course_cache',
     ),
 
-    array (
-        'eventname' => '\mod_cla\event\rolled_over_updated',
-        'callback' => '\block_kent_course_overview\observers::clear_course_cache',
-    ),
-
 );
