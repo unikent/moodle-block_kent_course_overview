@@ -222,15 +222,4 @@ HTML5;
 
         return '';
     }
-
-    /**
-     * Render a paging bar.
-     */
-    public function render_paging_bar($paging, $position) {
-        if ($position != 'top' && $paging != '<div class="paging"></div>') {
-            return $paging;
-        }
-
-        return '';
-    }
 }
