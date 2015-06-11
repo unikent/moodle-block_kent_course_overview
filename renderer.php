@@ -112,15 +112,12 @@ HTML;
      * Print courses.
      */
     public function render_courses($courses, $baseurl) {
-        global $CFG, $USER, $DB, $OUTPUT;
+        global $CFG;
 
-		if (empty($courses)) {
-		    $nocourses = get_string('nocourses', 'block_kent_course_overview');
-		    return '<div class="co_no_crs">' . $nocourses . '</div>';
-		}
-
-        // Ensure Rollover is installed before we do anything and that the course doesn't have content.
-        $rolloverinstalled = \local_kent\util\sharedb::available();
+        if (empty($courses)) {
+            $nocourses = get_string('nocourses', 'block_kent_course_overview');
+            return '<div class="co_no_crs">' . $nocourses . '</div>';
+        }
 
         $content = '';
 
@@ -140,20 +137,6 @@ HTML;
                 'title' => s($fullname),
                 'class' => 'course_list'
             );
-
-            $permstoupdate = has_capability('moodle/course:update', $context);
-
-            if ($rolloverinstalled) {
-                $rollover = new \local_rollover\Course($course->id);
-                $rolloverstatus = $rollover->get_status();
-                $rolloverable = $rollover->can_rollover();
-
-                if ($rolloverable && $permstoupdate) {
-                    $adminhide = '';
-                    $cdclass[] = 'admin_width';
-                    $listclass[] = "rollover_{$rolloverstatus}";
-                }
-            }
 
             // Add unavailable link.
             if (!$course->visible) {
@@ -192,56 +175,6 @@ HTML;
             }
 
             $content .= '</div>';
-
-            // If user has ability to update the course and the course is empty to signify a rollover.
-            if ($rolloverinstalled && $permstoupdate) {
-                $rolloverpath = new \moodle_url('/local/rollover/index.php', array(
-                    'srch' => $course->shortname
-                ));
-
-                if ($rolloverstatus == \local_rollover\Rollover::STATUS_NONE && !($rolloverable)) {
-                    $adminhide = '';
-                }
-
-                $classes = array('course_admin_options', 'row');
-                if (!empty($adminhide)) {
-                    $classes[] = $adminhide;
-                }
-                $classes = implode(' ', $classes);
-
-                $content .= ' <div class="'.$classes.'">';
-                switch ($rolloverstatus) {
-                    case $rolloverable && \local_rollover\Rollover::STATUS_NONE:
-                    case $rolloverable && \local_rollover\Rollover::STATUS_DELETED:
-                        $content .= '<a class="course_rollover_optns new" href="'.$rolloverpath.'">Empty module. ';
-                        $content .= 'Click here to Rollover</a>';
-                    break;
-
-                    case \local_rollover\Rollover::STATUS_WAITING_SCHEDULE:
-                        $content .= '<div class="course_rollover_optns pending">Rollover pending</div>';
-                    break;
-
-                    case \local_rollover\Rollover::STATUS_BACKED_UP:
-                    case \local_rollover\Rollover::STATUS_IN_PROGRESS:
-                    case \local_rollover\Rollover::STATUS_SCHEDULED:
-                        $content .= '<div class="course_rollover_optns pending">Rollover in process</div>';
-                    break;
-
-                    case \local_rollover\Rollover::STATUS_ERROR:
-                        $url = new \moodle_url("/local/rollover/clear.php", array(
-                            'id' => $course->id
-                        ));
-                        $content .= '<a class="course_clear_optns error" href="'.$url.'">There was an error rolling over. Reset Module?</a>';
-                    break;
-
-                    case \local_rollover\Rollover::STATUS_COMPLETE:
-                    default:
-                        // Do nothing.
-                    break;
-                }
-
-                $content .= '</div><div style="clear: both"></div>';
-            }
 
             $content .= '</li>';
 
