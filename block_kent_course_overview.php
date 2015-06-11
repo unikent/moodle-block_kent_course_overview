@@ -76,8 +76,8 @@ class block_kent_course_overview extends block_base {
         $cachecontent = $cache->get($cachekey);
         if ($cachecontent !== false) {
             if (isset($cachecontent[$cachekey2])) {
-                $this->content = $cachecontent[$cachekey2];
-                return $this->content;
+                //$this->content = $cachecontent[$cachekey2];
+                //return $this->content;
             }
         }
 
@@ -89,6 +89,7 @@ class block_kent_course_overview extends block_base {
         $this->content->footer = '';
 
         // Generate page url for page actions from current params.
+        // Don't move this further down!
         $params = array(
             'page' => $page,
             'perpage' => $perpage

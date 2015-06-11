@@ -75,27 +75,34 @@ HTML;
     public function render_search_box() {
         global $CFG;
 
-        return <<<HTML
+        return <<<HTML5
             <div class="form_container">
-                <form id="module_search" action="{$CFG->wwwroot}/course/search.php" method="get">
-                    <div class="left">
-                        <input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" />
-                    </div>
-                    <div class="right">
-                        <input class="courseoverview_search_sub" type="submit" value="go" />
+                <form id="module_search" action="{$CFG->wwwroot}/course/search.php" method="GET">
+                    <div class="input-group input-group-sm">
+                        <input class="form-control" type="text" name="search" placeholder="Search modules" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                        </span>
                     </div>
                 </form>
             </div>
-HTML;
+HTML5;
     }
 
     /**
      * Print teachers.
      */
     public function render_teachers($teachers) {
-        $stafftoggle = get_string('staff_toggle', 'block_kent_course_overview');
-        $showhide = \html_writer::tag('div', $stafftoggle, array(
-            'class' => 'teachers_show_hide'
+        static $tid = 0;
+
+        $id = 'teacherscollapse' . ($tid++);
+
+        $stafftoggle = '<i class="fa fa-chevron-down"></i> ' . get_string('staff_toggle', 'block_kent_course_overview');
+        $showhide = \html_writer::tag('a', $stafftoggle, array(
+            'data-toggle' => 'collapse',
+            'href' => '#' . $id,
+            'aria-expanded' => 'false',
+            'aria-controls' => $id,
         ));
 
         $staff = '';
@@ -103,8 +110,13 @@ HTML;
             $staff .= \html_writer::tag('span', $teacher);
         }
 
-        return $showhide . \html_writer::tag('div', $staff, array(
-            'class' => 'teachers'
+        $staffwell = \html_writer::tag('div', $staff, array(
+            'class' => 'well'
+        ));
+
+        return $showhide . \html_writer::tag('div', $staffwell, array(
+            'id' => $id,
+            'class' => 'collapse'
         ));
     }
 
@@ -195,14 +207,15 @@ HTML;
 
         $content = '';
         foreach ($links as $link => $text) {
-            $content .= \html_writer::start_tag('p');
+            $content .= \html_writer::start_tag('li');
             $content .= \html_writer::tag('a', $text, array(
                 'href' => $link
             ));
-            $content .= \html_writer::end_tag('p');
+            $content .= \html_writer::end_tag('li');
         }
 
         if (!empty($content)) {
+            $content = \html_writer::tag('ul', $content);
             $content = \html_writer::tag('p', get_string('admin_course_text', 'block_kent_course_overview')) . $content;
             return $OUTPUT->box($content, 'generalbox rollover_admin_notification');
         }
@@ -214,7 +227,7 @@ HTML;
      * Render a paging bar.
      */
     public function render_paging_bar($paging, $position) {
-        if ($paging != '<div class="paging"></div>') {
+        if ($position != 'top' && $paging != '<div class="paging"></div>') {
             return $paging;
         }
 
