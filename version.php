@@ -24,10 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2015061100;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2015061200;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2013110500;        // Requires this Moodle version
 $plugin->component = 'block_kent_course_overview'; // Full name of the plugin (used for diagnostics).
 
 $plugin->dependencies = array(
-    'local_kent' => 2015060500
+    'local_kent' => 2015060500,
+    'local_notifications' => 2015061100
 );
