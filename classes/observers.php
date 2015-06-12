@@ -52,21 +52,20 @@ class observers {
     public static function clear_course_cache($event) {
         global $DB;
 
-        $cache = \cache::make('block_kent_course_overview', 'data');
-
         // Delete cache for everyone who is related to this course (roughly).
         $rs = $DB->get_recordset_sql("
             SELECT ra.userid
             FROM {role_assignments} ra
             INNER JOIN {context} ctx
                 ON ctx.id=ra.contextid
-            WHERE ctx.contextlevel=:level AND ctx.instanceid=:courseid
+            WHERE ctx.contextlevel = :level AND ctx.instanceid = :courseid
             GROUP BY ra.userid
         ", array(
             "level" => \CONTEXT_COURSE,
-            "courseid" => $event->objectid
+            "courseid" => isset($event->courseid) ? $event->courseid : $event->objectid
         ));
 
+        $cache = \cache::make('block_kent_course_overview', 'data');
         foreach ($rs as $user) {
             $cache->delete("full_" . $user->userid);
             $cache->delete("categories_" . $user->userid);
