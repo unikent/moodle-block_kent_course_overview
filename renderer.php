@@ -173,10 +173,10 @@ HTML5;
             $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes);
 
             // Check if there are any actionable notifications and show badge
-            if($permstoupdate) {
+            if (\has_capability('moodle/course:update', $context)) {
                 $cn = new \local_kent\Course($course->id);
                 $actions = $cn->get_actionable_notifications_count();
-                if($actions >= 1) {
+                if ($actions >= 1) {
                     $plural = ($actions > 1) ? "s" : "";
                     $content .= '<span class="badge">' . $actions . ' action' . $plural . ' required</span>';
                 }
