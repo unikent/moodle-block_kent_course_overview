@@ -33,25 +33,12 @@ class block_kent_course_overview extends block_base {
     }
 
     /**
-     * Required JS
-     */
-    public function get_required_javascript() {
-        parent::get_required_javascript();
-
-        // We need jQuery.
-        $this->page->requires->jquery();
-
-        // And some custom things.
-        $this->page->requires->js('/blocks/kent_course_overview/js/block.js');
-    }
-
-    /**
      * block contents
      *
      * @return object
      */
     public function get_content() {
-        global $USER, $CFG, $OUTPUT, $DB, $PAGE;
+        global $USER, $OUTPUT, $PAGE;
 
         if ($this->content !== null) {
             return $this->content;
@@ -89,6 +76,7 @@ class block_kent_course_overview extends block_base {
         $this->content->footer = '';
 
         // Generate page url for page actions from current params.
+        // Don't move this further down!
         $params = array(
             'page' => $page,
             'perpage' => $perpage
@@ -139,10 +127,6 @@ class block_kent_course_overview extends block_base {
 
         $baseurl = new moodle_url($PAGE->url, $params);
 
-        $paging = $OUTPUT->paging_bar($total, $page, $perpage, $baseurl);
-
-        $this->content->text .= $renderer->render_paging_bar($paging, 'top');
-
         // Print the category enrollment information.
         if (!empty($categories) && ($page == 0)) {
             $this->content->text .= $renderer->render_categories($categories);
@@ -153,7 +137,9 @@ class block_kent_course_overview extends block_base {
             $this->content->text .= $renderer->render_courses($courses, $baseurl);
         }
 
-        $this->content->text .= $renderer->render_paging_bar($paging, 'bottom');
+        if ($total > $perpage) {
+            $this->content->text .= $OUTPUT->paging_bar($total, $page, $perpage, $baseurl);
+        }
 
         $cachecontent[$cachekey2] = $this->content;
 

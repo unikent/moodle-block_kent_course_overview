@@ -18,7 +18,7 @@
  * Kent Course List Block
  *
  * @package    blocks_kent_course_overview
- * @copyright  2014 Skylar Kelty <S.Kelty@kent.ac.uk>
+ * @copyright  2015 Skylar Kelty <S.Kelty@kent.ac.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -50,8 +50,18 @@ $observers = array (
     ),
 
     array (
-        'eventname' => '\mod_cla\event\rolled_over_updated',
+        'eventname' => '\local_notifications\event\notification_created',
         'callback' => '\block_kent_course_overview\observers::clear_course_cache',
     ),
+
+    array (
+        'eventname' => '\local_notifications\event\notification_deleted',
+        'callback' => '\block_kent_course_overview\observers::clear_course_cache',
+    ),
+
+    array (
+        'eventname' => '\local_notifications\event\notification_seen',
+        'callback' => '\block_kent_course_overview\observers::clear_cache',
+    )
 
 );

@@ -75,27 +75,34 @@ HTML;
     public function render_search_box() {
         global $CFG;
 
-        return <<<HTML
+        return <<<HTML5
             <div class="form_container">
-                <form id="module_search" action="{$CFG->wwwroot}/course/search.php" method="get">
-                    <div class="left">
-                        <input type="text" id="coursesearchbox" size="30" name="search" placeholder="Module search" />
-                    </div>
-                    <div class="right">
-                        <input class="courseoverview_search_sub" type="submit" value="go" />
+                <form id="module_search" action="{$CFG->wwwroot}/course/search.php" method="GET">
+                    <div class="input-group input-group-sm">
+                        <input class="form-control" type="text" name="search" placeholder="Search modules" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                        </span>
                     </div>
                 </form>
             </div>
-HTML;
+HTML5;
     }
 
     /**
      * Print teachers.
      */
     public function render_teachers($teachers) {
-        $stafftoggle = get_string('staff_toggle', 'block_kent_course_overview');
-        $showhide = \html_writer::tag('div', $stafftoggle, array(
-            'class' => 'teachers_show_hide'
+        static $tid = 0;
+
+        $id = 'teacherscollapse' . ($tid++);
+
+        $stafftoggle = '<i class="fa fa-chevron-down"></i> ' . get_string('staff_toggle', 'block_kent_course_overview');
+        $showhide = \html_writer::tag('a', $stafftoggle, array(
+            'data-toggle' => 'collapse',
+            'href' => '#' . $id,
+            'aria-expanded' => 'false',
+            'aria-controls' => $id,
         ));
 
         $staff = '';
@@ -103,8 +110,13 @@ HTML;
             $staff .= \html_writer::tag('span', $teacher);
         }
 
-        return $showhide . \html_writer::tag('div', $staff, array(
-            'class' => 'teachers'
+        $staffwell = \html_writer::tag('div', $staff, array(
+            'class' => 'well'
+        ));
+
+        return $showhide . \html_writer::tag('div', $staffwell, array(
+            'id' => $id,
+            'class' => 'collapse'
         ));
     }
 
@@ -112,15 +124,12 @@ HTML;
      * Print courses.
      */
     public function render_courses($courses, $baseurl) {
-        global $CFG, $USER, $DB, $OUTPUT;
+        global $CFG;
 
-		if (empty($courses)) {
-		    $nocourses = get_string('nocourses', 'block_kent_course_overview');
-		    return '<div class="co_no_crs">' . $nocourses . '</div>';
-		}
-
-        // Ensure Rollover is installed before we do anything and that the course doesn't have content.
-        $rolloverinstalled = \local_kent\util\sharedb::available();
+        if (empty($courses)) {
+            $nocourses = get_string('nocourses', 'block_kent_course_overview');
+            return '<div class="co_no_crs">' . $nocourses . '</div>';
+        }
 
         $content = '';
 
@@ -140,20 +149,6 @@ HTML;
                 'title' => s($fullname),
                 'class' => 'course_list'
             );
-
-            $permstoupdate = has_capability('moodle/course:update', $context);
-
-            if ($rolloverinstalled) {
-                $rollover = new \local_rollover\Course($course->id);
-                $rolloverstatus = $rollover->get_status();
-                $rolloverable = $rollover->can_rollover();
-
-                if ($rolloverable && $permstoupdate) {
-                    $adminhide = '';
-                    $cdclass[] = 'admin_width';
-                    $listclass[] = "rollover_{$rolloverstatus}";
-                }
-            }
 
             // Add unavailable link.
             if (!$course->visible) {
@@ -177,23 +172,11 @@ HTML;
             ));
             $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes);
 
-            // If user can view hidden and can adjust visibility, we'll let them change it from here.
-            if (has_capability('moodle/course:visibility', $context) &&
-                has_capability('moodle/course:viewhiddencourses', $context)) {
-                
-                $img = '<i class="fa fa-eye-slash" data-action="show" data-id="'.$course->id.'"></i>';
-                if ($course->visible) {
-                    $img = '<i class="fa fa-eye" data-action="hide" data-id="'.$course->id.'"></i>';
-                }
-
-                $content .= "<div class='visibility_tri'></div><div class='course_adjust_visibility'>" . $img . "</div>";
-            }
-
             // Check if there are any actionable notifications and show badge
-            if($permstoupdate) {
+            if (\has_capability('moodle/course:update', $context)) {
                 $cn = new \local_kent\Course($course->id);
                 $actions = $cn->get_actionable_notifications_count();
-                if($actions >= 1) {
+                if ($actions >= 1) {
                     $plural = ($actions > 1) ? "s" : "";
                     $content .= '<span class="badge">' . $actions . ' action' . $plural . ' required</span>';
                 }
@@ -217,56 +200,6 @@ HTML;
 
             $content .= '</div>';
 
-            // If user has ability to update the course and the course is empty to signify a rollover.
-            if ($rolloverinstalled && $permstoupdate) {
-                $rolloverpath = new \moodle_url('/local/rollover/index.php', array(
-                    'srch' => $course->shortname
-                ));
-
-                if ($rolloverstatus == \local_rollover\Rollover::STATUS_NONE && !($rolloverable)) {
-                    $adminhide = '';
-                }
-
-                $classes = array('course_admin_options', 'row');
-                if (!empty($adminhide)) {
-                    $classes[] = $adminhide;
-                }
-                $classes = implode(' ', $classes);
-
-                $content .= ' <div class="'.$classes.'">';
-                switch ($rolloverstatus) {
-                    case $rolloverable && \local_rollover\Rollover::STATUS_NONE:
-                    case $rolloverable && \local_rollover\Rollover::STATUS_DELETED:
-                        $content .= '<a class="course_rollover_optns new" href="'.$rolloverpath.'">Empty module. ';
-                        $content .= 'Click here to Rollover</a>';
-                    break;
-
-                    case \local_rollover\Rollover::STATUS_WAITING_SCHEDULE:
-                        $content .= '<div class="course_rollover_optns pending">Rollover pending</div>';
-                    break;
-
-                    case \local_rollover\Rollover::STATUS_BACKED_UP:
-                    case \local_rollover\Rollover::STATUS_IN_PROGRESS:
-                    case \local_rollover\Rollover::STATUS_SCHEDULED:
-                        $content .= '<div class="course_rollover_optns pending">Rollover in process</div>';
-                    break;
-
-                    case \local_rollover\Rollover::STATUS_ERROR:
-                        $url = new \moodle_url("/local/rollover/clear.php", array(
-                            'id' => $course->id
-                        ));
-                        $content .= '<a class="course_clear_optns error" href="'.$url.'">There was an error rolling over. Reset Module?</a>';
-                    break;
-
-                    case \local_rollover\Rollover::STATUS_COMPLETE:
-                    default:
-                        // Do nothing.
-                    break;
-                }
-
-                $content .= '</div><div style="clear: both"></div>';
-            }
-
             $content .= '</li>';
 
         }
@@ -286,27 +219,17 @@ HTML;
 
         $content = '';
         foreach ($links as $link => $text) {
-            $content .= \html_writer::start_tag('p');
+            $content .= \html_writer::start_tag('li');
             $content .= \html_writer::tag('a', $text, array(
                 'href' => $link
             ));
-            $content .= \html_writer::end_tag('p');
+            $content .= \html_writer::end_tag('li');
         }
 
         if (!empty($content)) {
+            $content = \html_writer::tag('ul', $content);
             $content = \html_writer::tag('p', get_string('admin_course_text', 'block_kent_course_overview')) . $content;
             return $OUTPUT->box($content, 'generalbox rollover_admin_notification');
-        }
-
-        return '';
-    }
-
-    /**
-     * Render a paging bar.
-     */
-    public function render_paging_bar($paging, $position) {
-        if ($paging != '<div class="paging"></div>') {
-            return $paging;
         }
 
         return '';
