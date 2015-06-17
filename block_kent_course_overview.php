@@ -20,10 +20,6 @@
  * @package   blocks
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-require_once($CFG->dirroot . '/lib/weblib.php');
-require_once($CFG->dirroot . '/lib/formslib.php');
-
 class block_kent_course_overview extends block_base {
     /**
      * block initializations
