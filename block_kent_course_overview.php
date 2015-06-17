@@ -174,8 +174,7 @@ class block_kent_course_overview extends block_base {
      */
     public function applicable_formats() {
         return array(
-            'my' => true,
-            'my-index' => true
+            'my' => true
         );
     }
 }
