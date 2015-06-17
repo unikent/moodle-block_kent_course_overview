@@ -210,28 +210,4 @@ HTML5;
 
         return $content;
     }
-
-    /**
-     * Print admin links.
-     */
-    public function render_admin_links($links) {
-        global $DB, $USER, $OUTPUT;
-
-        $content = '';
-        foreach ($links as $link => $text) {
-            $content .= \html_writer::start_tag('li');
-            $content .= \html_writer::tag('a', $text, array(
-                'href' => $link
-            ));
-            $content .= \html_writer::end_tag('li');
-        }
-
-        if (!empty($content)) {
-            $content = \html_writer::tag('ul', $content);
-            $content = \html_writer::tag('p', get_string('admin_course_text', 'block_kent_course_overview')) . $content;
-            return $OUTPUT->box($content, 'generalbox rollover_admin_notification');
-        }
-
-        return '';
-    }
 }
