@@ -158,6 +158,15 @@ class block_kent_course_overview extends block_base {
     }
 
     /**
+     * Returns the role that best describes the navigation block... 'navigation'
+     *
+     * @return string 'navigation'
+     */
+    public function get_aria_role() {
+        return 'navigation';
+    }
+
+    /**
      * locations where block can be displayed
      * Moodle override.
      *
