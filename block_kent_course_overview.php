@@ -53,12 +53,10 @@ class block_kent_course_overview extends block_base {
         $page = optional_param('page', 0, PARAM_INT);
         $perpage = optional_param('perpage', 20, PARAM_INT);
 
-        $showadminlinks = isset($this->config->admin_links) ? $this->config->admin_links == 'yes' : true;
-
         // Cache block data.
-        $cache = cache::make('block_kent_course_overview', 'data');
+        $cache = \cache::make('block_kent_course_overview', 'data');
         $cachekey = 'full_' . $USER->id;
-        $cachekey2 = $page . '_' . $perpage . '_' . $showadminlinks;
+        $cachekey2 = $page . '_' . $perpage;
 
         $cachecontent = $cache->get($cachekey);
         if ($cachecontent !== false) {
@@ -118,13 +116,6 @@ class block_kent_course_overview extends block_base {
         // Build the search box.
         $this->content->text .= $renderer->render_search_box();
 
-        // Build the main admin box.
-        if ($showadminlinks === null || $showadminlinks === true) {
-            $links = $listgen->get_admin_links();
-            $adminbox = $renderer->render_admin_links($links);
-            $this->content->text .= $adminbox;
-        }
-
         $baseurl = new moodle_url($PAGE->url, $params);
 
         // Print the category enrollment information.
@@ -163,7 +154,7 @@ class block_kent_course_overview extends block_base {
      * @return bool Returns true
      */
     public function instance_allow_config() {
-        return true;
+        return false;
     }
 
     /**

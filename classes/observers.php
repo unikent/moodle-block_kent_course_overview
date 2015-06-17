@@ -38,6 +38,7 @@ class observers {
     public static function clear_cache($event) {
         $cache = \cache::make('block_kent_course_overview', 'data');
         $cache->delete("full_" . $event->relateduserid);
+        $cache->delete("links_" . $event->relateduserid);
         $cache->delete("categories_" . $event->relateduserid);
         $cache->delete("courses_" . $event->relateduserid);
 
@@ -68,6 +69,7 @@ class observers {
         $cache = \cache::make('block_kent_course_overview', 'data');
         foreach ($rs as $user) {
             $cache->delete("full_" . $user->userid);
+            $cache->delete("links_" . $event->relateduserid);
             $cache->delete("categories_" . $user->userid);
             $cache->delete("courses_" . $user->userid);
         }

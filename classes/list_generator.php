@@ -87,44 +87,4 @@ class list_generator
 
         return $objs;
     }
-
-    /**
-     * Returns admin links.
-     */
-    public function get_admin_links() {
-        global $USER;
-
-        $links = array();
-
-        $ctx = \context_system::instance();
-
-        // Are we an admin?
-        $isadmin = has_capability('moodle/site:config', $ctx);
-        $rolloveradmin = $isadmin || \local_kent\User::has_course_update_role($USER->id);
-        $claadmin = $isadmin || has_capability('mod/cla:manage', $ctx);
-        $depadmin = $isadmin ||  \local_kent\User::is_dep_admin($USER->id);
-
-        // Add the rollover links.
-        if ($rolloveradmin) {
-            $rolloveradminpath = new \moodle_url("/local/rollover/");
-            $links[$rolloveradminpath . ''] = 'Rollover admin page';
-        }
-
-        // Add dep admin links.
-        if ($depadmin) {
-            $connectadminpath = new \moodle_url("/local/connect/");
-            $links[$connectadminpath . ''] = 'Departmental administrator pages';
-
-            $metaadminpath = new \moodle_url("/admin/tool/meta");
-            $links[$metaadminpath . ''] = 'Kent meta enrolment pages';
-        }
-
-        // Add CLA links.
-        if ($claadmin) {
-            $clapath = new \moodle_url('/mod/cla/admin.php');
-            $links[$clapath . ''] = 'CLA administration';
-        }
-
-        return $links;
-    }
 }
