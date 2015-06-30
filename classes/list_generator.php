@@ -34,11 +34,11 @@ class list_generator
     /**
      * Returns a list of categories userid has an RA in.
      */
-    public function get_categories($userid) {
-        global $DB;
+    public function get_categories() {
+        global $DB, $USER;
 
         $cache = \cache::make('block_kent_course_overview', 'data');
-        $content = $cache->get('categories_' . $userid);
+        $content = $cache->get('categories_' . $USER->id);
         if ($content !== false) {
             return $content;
         }
@@ -54,11 +54,11 @@ class list_generator
                 GROUP BY cc.id";
 
         $objs = $DB->get_records_sql($sql, array(
-            'userid' => $userid,
+            'userid' => $USER->id,
             'ctxlevel' => \CONTEXT_COURSECAT
         ));
 
-        $cache->set('categories_' . $userid, $objs);
+        $cache->set('categories_' . $USER->id, $objs);
 
         return $objs;
     }
@@ -66,24 +66,42 @@ class list_generator
     /**
      * Returns list of courses userid is enrolled in and can access.
      */
-    public function get_courses($userid) {
+    public function get_courses() {
+        global $USER;
+
         $cache = \cache::make('block_kent_course_overview', 'data');
-        $content = $cache->get('courses_' . $userid);
+        $content = $cache->get('courses_' . $USER->id);
         if ($content !== false) {
             return $content;
         }
 
+        // Grab courses.
+        $courses = enrol_get_my_courses(array(
+            'id', 'category', 'sortorder',
+            'shortname', 'fullname', 'summary',
+            'idnumber', 'startdate', 'visible'
+        ));
+
+        // Remove $site.
         $site = get_site();
-        $courses = enrol_get_users_courses($userid, false, 'id, shortname, summary, visible', 'shortname ASC');
+        if (array_key_exists($site->id, $courses)) {
+            unset($courses[$site->id]);
+        }
+
+        // Fetch mod data.
+        $overviews = block_course_overview_get_overviews($courses);
 
         $objs = array();
         foreach ($courses as $course) {
-            if ($course->id !== $site->id) {
-                $objs[$course->id] = new list_course($course);
+            $lc = new list_course($course);
+            if (isset($overviews[$course->id])) {
+                $lc->set_overview_data($overviews[$course->id]);
             }
+
+            $objs[$course->id] = $lc;
         }
 
-        $cache->set('courses_' . $userid, $objs);
+        $cache->set('courses_' . $USER->id, $objs);
 
         return $objs;
     }

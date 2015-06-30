@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+require_once("{$CFG->dirroot}/blocks/course_overview/locallib.php");
+
 /**
  * Course overview block
  *
@@ -48,19 +50,6 @@ class block_kent_course_overview extends block_base {
 
         $page = optional_param('page', 0, PARAM_INT);
         $perpage = optional_param('perpage', 20, PARAM_INT);
-
-        // Cache block data.
-        $cache = \cache::make('block_kent_course_overview', 'data');
-        $cachekey = 'full_' . $USER->id;
-        $cachekey2 = $page . '_' . $perpage;
-
-        $cachecontent = $cache->get($cachekey);
-        if ($cachecontent !== false) {
-            if (isset($cachecontent[$cachekey2])) {
-                $this->content = $cachecontent[$cachekey2];
-                return $this->content;
-            }
-        }
 
         $listgen = new \block_kent_course_overview\list_generator();
         $renderer = $this->page->get_renderer('block_kent_course_overview');
@@ -127,10 +116,6 @@ class block_kent_course_overview extends block_base {
         if ($total > $perpage) {
             $this->content->text .= $OUTPUT->paging_bar($total, $page, $perpage, $baseurl);
         }
-
-        $cachecontent[$cachekey2] = $this->content;
-
-        $cache->set($cachekey, $cachecontent);
 
         return $this->content;
     }
