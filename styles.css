@@ -2,6 +2,14 @@
     padding: 0px;
 }
 
+.block_kent_course_overview .activity-overview .alert {
+    margin-bottom: 5px;
+}
+
+.block_kent_course_overview .activity-overview .alert > a {
+    padding-right: 5px;
+}
+
 .block_kent_course_overview.block div.content .form_container {
     background: #efefef;
     border-bottom: 1px solid #fff;

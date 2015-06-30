@@ -35,4 +35,4 @@ $string['kent_course_overview:departmentaladmin'] = 'View departmental admin lin
 $string['current_text'] = 'For current Moodle, please see the navigation bar at the top of the page.';
 $string['archives_text'] = 'To see a previous years Moodle, please see the navigation bar at the top of the page.';
 
-$string['cachedef_data'] = 'KCO Data (Paged)';
+$string['activityoverview'] = 'You have {$a} that need attention.';

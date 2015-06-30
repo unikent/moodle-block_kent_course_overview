@@ -133,10 +133,16 @@ class list_course
     }
 
     /**
+     * Returns activities.
+     */
+    public function get_activities() {
+        return $this->_overview_data;
+    }
+
+    /**
      * Set overview data.
      */
     public function set_overview_data($data) {
         $this->_overview_data = $data;
-        print_r($data);
     }
 }

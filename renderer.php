@@ -139,6 +139,8 @@ HTML5;
             $fullname = format_string($course->fullname, true, array('context' => $context));
             $shortname = format_string($course->shortname, true, array('context' => $context));
 
+            $activities = $course->get_activities();
+
             $adminhide = 'admin_hide';
             $listclass = array('container');
             $cdclass = array(
@@ -173,16 +175,29 @@ HTML5;
             $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes);
 
             // Check if there are any actionable notifications and show badge
+            $actions = count($activities);
             if (\has_capability('moodle/course:update', $context)) {
-                $actions = \local_notifications\core::count_actions($course->id);
-                if ($actions >= 1) {
-                    $plural = ($actions > 1) ? "s" : "";
-                    $content .= '<span class="badge">' . $actions . ' action' . $plural . ' required</span>';
-                }
+                $actions += \local_notifications\core::count_actions($course->id);
+            }
+
+            // Add actions badge.
+            if ($actions >= 1) {
+                $plural = ($actions > 1) ? "s" : "";
+                $content .= '<span class="badge">' . $actions . ' action' . $plural . ' required</span>';
             }
 
             $content .= '</span>';
 
+            // Render the activities block.
+            if (!empty($activities)) {
+                $content .= '<div class="activity-overview">';
+                foreach ($activities as $module => $activity) {
+                    $content .= '<div class="alert alert-warning">' . $this->render_activity($course, $module, $activity) . '</div>';
+                }
+                $content .= '</div>';
+            }
+
+            // Render the summary.
             $summary = $course->summary;
             if (!empty($summary)) {
                 if (strlen($summary) > 250) {
@@ -192,6 +207,7 @@ HTML5;
                 $content .= ' <span class="course_description">' . $summary . '</span>';
             }
 
+            // Render the teacher block.
             $teachers = $course->get_teachers();
             if (!empty($teachers)) {
                 $content .= $this->render_teachers($teachers);
@@ -208,5 +224,27 @@ HTML5;
         }
 
         return $content;
+    }
+
+    /**
+     * Render activity content.
+     */
+    public function render_activity($course, $module, $activity) {
+        global $OUTPUT;
+
+        $modulename = get_string('modulenameplural', $module);
+
+        $url = new \moodle_url("/mod/$module/index.php", array('id' => $course->id));
+        $icontext = html_writer::link($url, $OUTPUT->pix_icon('icon', $modulename, 'mod_' . $module, array(
+            'class' => 'iconsmall'
+        )));
+
+        if (get_string_manager()->string_exists("activityoverview", $module)) {
+            $icontext .= get_string("activityoverview", $module);
+        } else {
+            $icontext .= get_string("activityoverview", 'block_kent_course_overview', $modulename);
+        }
+
+        return $icontext;
     }
 }
