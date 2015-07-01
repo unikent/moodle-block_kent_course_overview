@@ -31,11 +31,14 @@ defined('MOODLE_INTERNAL') || die();
  */
 class list_course
 {
-    /** Reference to course object */
+    /** Reference to course object. */
     private $_course;
 
-    /** Reference to context object */
+    /** Reference to context object. */
     private $_context;
+
+    /** Reference to array(modname => data). */
+    private $_overview_data;
 
     /**
      * Constructor
@@ -51,6 +54,7 @@ class list_course
 
         $this->_course = $course;
         $this->_context = \context_course::instance($course->id);
+        $this->_overview_data = array();
     }
 
     /**
@@ -126,5 +130,19 @@ class list_course
         }
 
         return $namesarray;
+    }
+
+    /**
+     * Returns activities.
+     */
+    public function get_activities() {
+        return $this->_overview_data;
+    }
+
+    /**
+     * Set overview data.
+     */
+    public function set_overview_data($data) {
+        $this->_overview_data = $data;
     }
 }
