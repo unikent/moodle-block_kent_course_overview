@@ -81,7 +81,7 @@ class list_generator
 
         // Fetch mod data.
         $overviews = array();
-        if (\local_kent\User::get_beta_preference("kco_notifications", false)) {
+        if (\local_kent\User::get_preference("kco_notifications", false)) {
             $overviews = block_course_overview_get_overviews($courses);
         }
 
