@@ -34,14 +34,8 @@ class list_generator
     /**
      * Returns a list of categories userid has an RA in.
      */
-    public function get_categories($userid) {
-        global $DB;
-
-        $cache = \cache::make('block_kent_course_overview', 'data');
-        $content = $cache->get('categories_' . $userid);
-        if ($content !== false) {
-            return $content;
-        }
+    public function get_categories() {
+        global $DB, $USER;
 
         $sql = "SELECT cc.id, cc.name, cc.sortorder
                 FROM {course_categories} cc
@@ -54,11 +48,9 @@ class list_generator
                 GROUP BY cc.id";
 
         $objs = $DB->get_records_sql($sql, array(
-            'userid' => $userid,
+            'userid' => $USER->id,
             'ctxlevel' => \CONTEXT_COURSECAT
         ));
-
-        $cache->set('categories_' . $userid, $objs);
 
         return $objs;
     }
@@ -66,24 +58,42 @@ class list_generator
     /**
      * Returns list of courses userid is enrolled in and can access.
      */
-    public function get_courses($userid) {
-        $cache = \cache::make('block_kent_course_overview', 'data');
-        $content = $cache->get('courses_' . $userid);
-        if ($content !== false) {
-            return $content;
+    public function get_courses() {
+        global $USER;
+
+        // Grab courses.
+        $courses = enrol_get_my_courses('*');
+
+        // Remove $site.
+        $site = get_site();
+        if (array_key_exists($site->id, $courses)) {
+            unset($courses[$site->id]);
         }
 
-        $site = get_site();
-        $courses = enrol_get_users_courses($userid, false, 'id, shortname, summary, visible', 'shortname ASC');
-
-        $objs = array();
-        foreach ($courses as $course) {
-            if ($course->id !== $site->id) {
-                $objs[$course->id] = new list_course($course);
+        // Add lastaccess.
+        foreach ($courses as $c) {
+            if (isset($USER->lastcourseaccess[$c->id])) {
+                $courses[$c->id]->lastaccess = $USER->lastcourseaccess[$c->id];
+            } else {
+                $courses[$c->id]->lastaccess = 0;
             }
         }
 
-        $cache->set('courses_' . $userid, $objs);
+        // Fetch mod data.
+        $overviews = array();
+        if (\local_kent\User::get_preference("kco_notifications", false)) {
+            $overviews = block_course_overview_get_overviews($courses);
+        }
+
+        $objs = array();
+        foreach ($courses as $course) {
+            $lc = new list_course($course);
+            if (isset($overviews[$course->id])) {
+                $lc->set_overview_data($overviews[$course->id]);
+            }
+
+            $objs[$course->id] = $lc;
+        }
 
         return $objs;
     }

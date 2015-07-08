@@ -2,6 +2,18 @@
     padding: 0px;
 }
 
+.block_kent_course_overview .activity-overview {
+    margin-top: 5px;
+}
+
+.block_kent_course_overview .activity-overview .alert {
+    margin-bottom: 5px;
+}
+
+.block_kent_course_overview .activity-overview .alert > a {
+    padding-right: 5px;
+}
+
 .block_kent_course_overview.block div.content .form_container {
     background: #efefef;
     border-bottom: 1px solid #fff;
@@ -124,7 +136,7 @@
 
 .block_kent_course_overview.block div.content .co_no_crs {
     border-top: 1px solid #e3e3e3;
-    padding: 30px 10px 20px 10px;
+    padding: 10px;
     font-size: 14px;
     color: #333;
 }

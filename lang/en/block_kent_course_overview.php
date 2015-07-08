@@ -20,11 +20,7 @@ $string['blocktitle'] = 'My modules';
 $string['kent_course_overview:addinstance'] = 'Add a new Kent course overview block';
 $string['kent_course_overview:myaddinstance'] = 'Add a new Kent course overview block to My home';
 
-$string['nocategories'] = 'Sorry, there are no category enrollments to show.';
-$string['nocourses'] = 'Sorry, there is currently no module information to show.';
-
-$string['archive_old_moodle_link_text'] = '';
-$string['archive_current_moodle_link_text'] = '';
+$string['nocourses'] = 'You are not currently enrolled on any modules.';
 
 $string['admin_course_text'] = 'Below is a list of the modules on which you are enrolled. Admin users may not be enrolled onto any modules. If you need to do any rollover work - please use the link below to go to the rollover admin page';
 $string['staff_toggle'] = 'Teaching staff';
@@ -35,4 +31,4 @@ $string['kent_course_overview:departmentaladmin'] = 'View departmental admin lin
 $string['current_text'] = 'For current Moodle, please see the navigation bar at the top of the page.';
 $string['archives_text'] = 'To see a previous years Moodle, please see the navigation bar at the top of the page.';
 
-$string['cachedef_data'] = 'KCO Data (Paged)';
+$string['activityoverview'] = 'You have {$a} that need attention.';
