@@ -1,0 +1,170 @@
+/**
+ * KCO block styles.
+ */
+
+@import "../../../../theme/kent/style/less/lib/bootstrap/variables";
+@import "../../../../theme/kent/style/less/kent/variables";
+
+.block.block_kent_course_overview {
+    .content {
+        padding: 0;
+        margin: 0;
+        border-bottom-left-radius: @border-radius-base;
+        border-bottom-right-radius: @border-radius-base;
+
+        .form_container {
+            height: auto;
+            padding: 5px;
+            background: transparent;
+
+            border-bottom: 1px solid @border-color;
+        }
+
+        .rollover_admin_notification {
+            border: none;
+            border-bottom: 1px solid @border-color;
+            background: none;
+        }
+
+        .paging {
+            border: none;
+            border-top: 1px solid @border-color;
+            padding: 10px;
+            background: #f6f6f6;
+        }
+
+        .co_no_crs {
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+    }
+
+    .activity-overview {
+        margin-top: 5px;
+
+        .alert {
+            margin-bottom: 5px;
+
+            > a {
+                padding-right: 5px;
+            }
+        }
+    }
+
+    #kent_course_list_overview,
+    #kent_category_list_overview {
+        margin: 0;
+        padding: 0;
+        border: none;
+        list-style: none;
+        list-style-type: none;
+
+        li {
+            width: auto;
+            padding: 5px 10px;
+            border-bottom: 1px solid @border-color;
+
+            span {
+                display: block;
+
+                &.badge {
+                    display: inline-block;
+                    margin-left: 6px;
+                }
+            }
+        }
+
+        .course_details_ovrv {
+            padding: 10px;
+
+            .title {
+                padding: 3px 0;
+                font-size: 16px;
+                font-weight: bold;
+                color: #333;
+
+                a {
+                    color: #333;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+
+            .course_description {
+                padding: 5px 0;
+                font-size: 14px;
+                color: #6f6f6f;
+
+                p {
+                    margin: 0px
+                }
+            }
+        }
+    }
+
+    #kent_course_list_overview {
+        li {
+            &:first-child {
+                margin-top: 0;
+            }
+
+            &:last-child {
+                border: none;
+                margin-bottom: 0;
+            }
+
+            &.course_unavailable {
+                background: #fafafa;
+                color: #aaa;
+
+                .course_details_ovrv {
+                    .title,
+                    .title a,
+                    .course_description,
+                    .course_description a {
+                        color: #aaa;
+                    }
+                }
+            }
+
+            .title {
+                .action-icon img {
+                    vertical-align: baseline;
+                }
+            }
+        }
+
+        .course_admin_options {
+            display: none;
+            width: auto;
+            float: none;
+            padding: 0;
+            border: none;
+            margin: 0 -10px -5px -10px;
+
+            &.admin_hide {
+                border-radius: 0;
+                color: #6f6f6f;
+            }
+
+            .new {
+                color: @info-text-color;
+                background-color: @info-bg-color;
+                margin: 0 -10px;
+
+                &:hover {
+                    color: darken(@info-text-color, 10%);
+                    background-color: darken(@info-bg-color, 10%);
+                }
+            }
+
+            .course_rollover_optns, .course_clear_optns {
+                border-radius: 0;
+            }
+        }
+    }
+}
