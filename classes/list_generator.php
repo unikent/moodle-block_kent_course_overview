@@ -95,6 +95,11 @@ class list_generator
             $objs[$course->id] = $lc;
         }
 
+        // Sort alphabetically.
+        uasort($objs, function($a, $b) {
+            return strcmp($a->shortname, $b->shortname);
+        });
+
         return $objs;
     }
 }
