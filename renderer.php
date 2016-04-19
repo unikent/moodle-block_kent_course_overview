@@ -78,11 +78,6 @@ HTML;
     public function render_search_box() {
         global $CFG;
 
-        // Don't show this if global search is a thing.
-        if (isset($CFG->enableglobalsearch) && \core_search\manager::is_global_search_enabled()) {
-            return;
-        }
-
         return <<<HTML5
             <div class="form_container">
                 <form id="module_search" action="{$CFG->wwwroot}/course/search.php" method="GET">

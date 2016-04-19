@@ -36,7 +36,7 @@ class block_kent_course_overview extends block_base {
      * @return object
      */
     public function get_content() {
-        global $USER, $OUTPUT, $PAGE;
+        global $CFG, $USER, $OUTPUT, $PAGE;
 
         if ($this->content !== null) {
             return $this->content;
@@ -99,14 +99,16 @@ class block_kent_course_overview extends block_base {
         }
 
         // Build the search box.
-        $this->content->text .= $renderer->render_search_box();
-
-        $baseurl = new moodle_url($PAGE->url, $params);
+        if (!isset($CFG->enableglobalsearch) || !\core_search\manager::is_global_search_enabled()) {
+            $this->content->text .= $renderer->render_search_box();
+        }
 
         // Print the category enrollment information.
         if (!empty($categories) && ($page == 0)) {
             $this->content->text .= $renderer->render_categories($categories);
         }
+
+        $baseurl = new moodle_url($PAGE->url, $params);
 
         // Print the course enrollment information.
         if ($pagelength > 0) {
