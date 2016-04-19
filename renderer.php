@@ -78,13 +78,18 @@ HTML;
     public function render_search_box() {
         global $CFG;
 
+        // Don't show this if global search is a thing.
+        if (isset($CFG->enableglobalsearch) && \core_search\manager::is_global_search_enabled()) {
+            return;
+        }
+
         return <<<HTML5
             <div class="form_container">
                 <form id="module_search" action="{$CFG->wwwroot}/course/search.php" method="GET">
                     <div class="input-group input-group-sm">
                         <input class="form-control" type="text" name="search" placeholder="Search modules" />
                         <span class="input-group-btn">
-                            <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                            <button class="btn btn-default" type="button" title="Search"><i class="fa fa-search" aria-hidden="true"></i></button>
                         </span>
                     </div>
                 </form>
@@ -100,7 +105,7 @@ HTML5;
 
         $id = 'teacherscollapse' . ($tid++);
 
-        $stafftoggle = '<i class="fa fa-chevron-down"></i> ' . get_string('staff_toggle', 'block_kent_course_overview');
+        $stafftoggle = '<i class="fa fa-chevron-down" aria-hidden="true"></i> ' . get_string('staff_toggle', 'block_kent_course_overview');
         $showhide = \html_writer::tag('a', $stafftoggle, array(
             'data-toggle' => 'collapse',
             'href' => '#' . $id,
