@@ -141,28 +141,15 @@ HTML5;
 
             $activities = $course->get_activities();
 
-            $adminhide = 'admin_hide';
-            $listclass = array('container');
-            $cdclass = array(
-                'course_details_ovrv',
-                'row'
-            );
-            $attributes = array(
-                'title' => s($fullname),
-                'class' => 'course_list'
-            );
-
             // Add unavailable link.
+            $listclass = '';
             if (!$course->visible) {
-                $listclass[] = 'course_unavailable';
+                $listclass .= 'course_unavailable';
             }
 
             // Construct link.
-            $listclass = implode(' ', $listclass);
             $content .= '<li class="' . $listclass . '">';
-
-            $cdclass = implode(' ', $cdclass);
-            $content .= '<div class="' . $cdclass. '">';
+            $content .= '<div class="course_details_ovrv">';
 
             $name = $fullname;
             if (isset($CFG->courselistshortnames) && $CFG->courselistshortnames === '1') {
@@ -172,9 +159,12 @@ HTML5;
             $viewurl = new \moodle_url('/course/view.php', array(
                 'id' => $course->id
             ));
-            $content .= '<span class="title">' . \html_writer::link($viewurl, $name, $attributes);
+            $content .= '<span class="title">' . \html_writer::link($viewurl, $name, array(
+                'title' => s($fullname),
+                'class' => 'course_list'
+            ));
 
-            // Check if there are any actionable notifications and show badge
+            // Check if there are any actionable notifications and show badge.
             $actions = count($activities);
             if (\has_capability('moodle/course:update', $context)) {
                 $actions += \local_notifications\core::count_actions($course->id);
@@ -192,7 +182,8 @@ HTML5;
             if (!empty($activities)) {
                 $content .= '<div class="activity-overview">';
                 foreach ($activities as $module => $activity) {
-                    $content .= '<div class="alert alert-warning">' . $this->render_activity($course, $module, $activity) . '</div>';
+                    $activity = $this->render_activity($course, $module, $activity);
+                    $content .= \html_writer::div($activity, 'alert alert-warning');
                 }
                 $content .= '</div>';
             }
@@ -214,9 +205,7 @@ HTML5;
             }
 
             $content .= '</div>';
-
             $content .= '</li>';
-
         }
 
         if (!empty($content)) {
