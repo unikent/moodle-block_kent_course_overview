@@ -62,7 +62,10 @@ HTML;
         }
 
         if (!empty($content)) {
-            $content = '<ul id="kent_category_list_overview">' . $content . '</ul>';
+            $content = \html_writer::tag('ul', $content, array(
+                'id' => 'kent_category_list_overview',
+                'class' => 'list-unstyled'
+            ));
         }
 
         return $content;
@@ -159,7 +162,7 @@ HTML5;
             $viewurl = new \moodle_url('/course/view.php', array(
                 'id' => $course->id
             ));
-            $content .= '<span class="title">' . \html_writer::link($viewurl, $name, array(
+            $content .= '<h4 class="title">' . \html_writer::link($viewurl, $name, array(
                 'title' => s($fullname),
                 'class' => 'course_list'
             ));
@@ -176,7 +179,7 @@ HTML5;
                 $content .= '<span class="badge">' . $actions . ' action' . $plural . ' required</span>';
             }
 
-            $content .= '</span>';
+            $content .= '</h4>';
 
             // Render the activities block.
             if (!empty($activities)) {
@@ -195,7 +198,7 @@ HTML5;
                     $summary = \core_text::substr($summary, 0, 252) . '...';
                     $summary = strip_tags($summary);
                 }
-                $content .= ' <span class="course_description">' . $summary . '</span>';
+                $content .= '<p class="course_description">' . $summary . '</p>';
             }
 
             // Render the teacher block.
@@ -209,7 +212,10 @@ HTML5;
         }
 
         if (!empty($content)) {
-            $content = '<ul id="kent_course_list_overview">' . $content . '</ul>';
+            $content = \html_writer::tag('ul', $content, array(
+                'id' => 'kent_course_list_overview',
+                'class' => 'list-unstyled'
+            ));
         }
 
         return $content;

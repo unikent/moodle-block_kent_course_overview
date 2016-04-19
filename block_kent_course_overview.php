@@ -31,19 +31,6 @@ class block_kent_course_overview extends block_base {
     }
 
     /**
-     * Allows the block to load any JS it requires into the page.
-     *
-     * By default this function simply permits the user to dock the block if it is dockable.
-     */
-    public function get_required_javascript() {
-        global $CFG, $PAGE;
-
-        parent::get_required_javascript();
-
-        $PAGE->requires->css("/blocks/kent_course_overview/less/build/build.css");
-    }
-
-    /**
      * block contents
      *
      * @return object

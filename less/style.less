@@ -2,11 +2,11 @@
  * KCO block styles.
  */
 
-@import "../../../../theme/kent/style/less/lib/bootstrap/variables";
-@import "../../../../theme/kent/style/less/kent/variables";
+@import "../../../theme/kent/style/less/lib/bootstrap/variables";
+@import "../../../theme/kent/style/less/kent/variables";
 
 .block.block_kent_course_overview {
-    .content {
+    > .content {
         padding: 0;
         margin: 0;
         border-bottom-left-radius: @border-radius-base;
@@ -26,18 +26,15 @@
             background: none;
         }
 
-        .paging {
-            border: none;
-            border-top: 1px solid @border-color;
-            padding: 10px;
-            background: #f6f6f6;
-        }
-
         .co_no_crs {
             border: none;
             padding: 10px;
             font-size: 14px;
             color: #333;
+        }
+
+        > nav {
+            text-align: center;
         }
     }
 
@@ -79,7 +76,6 @@
             padding: 10px 15px;
 
             .title {
-                padding: 3px 0;
                 font-size: 16px;
                 font-weight: bold;
 
@@ -91,8 +87,6 @@
             }
 
             .course_description {
-                padding: 0 0 5px 0;
-
                 p {
                     margin: 0px
                 }
