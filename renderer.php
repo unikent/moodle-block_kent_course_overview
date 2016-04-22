@@ -84,7 +84,9 @@ HTML;
                     <div class="input-group input-group-sm">
                         <input class="form-control" type="text" name="search" placeholder="Search modules" />
                         <span class="input-group-btn">
-                            <button class="btn btn-default" type="button" title="Search"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            <button class="btn btn-default" type="submit" title="Search">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </button>
                         </span>
                     </div>
                 </form>
