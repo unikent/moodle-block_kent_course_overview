@@ -99,9 +99,9 @@ class block_kent_course_overview extends block_base {
         }
 
         // Build the search box.
-        if (!isset($CFG->enableglobalsearch) || !\core_search\manager::is_global_search_enabled()) {
+        //if (!isset($CFG->enableglobalsearch) || !\core_search\manager::is_global_search_enabled()) {
             $this->content->text .= $renderer->render_search_box();
-        }
+        //}
 
         // Print the category enrollment information.
         if (!empty($categories) && ($page == 0)) {
