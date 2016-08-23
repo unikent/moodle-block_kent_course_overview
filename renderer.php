@@ -129,7 +129,7 @@ HTML5;
      * Print courses.
      */
     public function render_courses($courses, $baseurl) {
-        global $CFG;
+        global $CFG, $USER;
 
         if (empty($courses)) {
             $nocourses = get_string('nocourses', 'block_kent_course_overview');
@@ -172,7 +172,7 @@ HTML5;
             // Check if there are any actionable notifications and show badge.
             $actions = count($activities);
             if (\has_capability('moodle/course:update', $context)) {
-                $actions += \local_notifications\core::count_actions($course->id);
+                $actions += \local_notifications\core::count_actions($course->id, $USER->id);
             }
 
             // Add actions badge.
